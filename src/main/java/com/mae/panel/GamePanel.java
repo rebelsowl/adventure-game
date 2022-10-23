@@ -2,6 +2,7 @@ package com.mae.panel;
 
 import com.mae.config.Settings;
 import com.mae.handler.KeyboardInputHandler;
+import com.mae.object.Player;
 
 import javax.swing.*;
 import java.awt.*;
@@ -10,10 +11,7 @@ public class GamePanel extends JPanel implements Runnable {
     Thread gameThread;
     KeyboardInputHandler keyHandler = new KeyboardInputHandler();
 
-
-    int playerX = 100;
-    int playerY = 100;
-    int playerSpeed = 4;
+    Player player = new Player(this, keyHandler);
 
     public GamePanel() {
         this.setPreferredSize(new Dimension(Settings.screenWidth, Settings.screenHeight));
@@ -92,33 +90,20 @@ public class GamePanel extends JPanel implements Runnable {
 */
 
     public void update() {
-        if (KeyboardInputHandler.upPressed) {
-            playerY -= playerSpeed;
-        }
 
-        if (KeyboardInputHandler.downPressed) {
-            playerY += playerSpeed;
-        }
-        if (KeyboardInputHandler.leftPressed) {
-            playerX -= playerSpeed;
-        }
-        if (KeyboardInputHandler.rightPressed) {
-            playerX += playerSpeed;
-        }
-
+        player.update();
 
     }
 
     public void paintComponent(Graphics g) { // built-in method for drawing
         super.paintComponent(g);
 
-
         Graphics2D g2 = (Graphics2D) g;
 
-        g2.setColor(Color.CYAN);
-        g2.fillRect(playerX, playerY, Settings.tileSize, Settings.tileSize);
-        g2.dispose();
+        player.draw(g2);
 
+
+        g2.dispose();
 
     }
 
