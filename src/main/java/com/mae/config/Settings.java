@@ -17,4 +17,15 @@ public class Settings {
     public static final int FPS = 60;
 
 
+    // WORLD SETTINGS
+    public static final int maxWorldCol = 50;
+    public static final int maxWorldRow = 50;
+    public static final int worldWidth = tileSize * maxWorldCol;
+    public static final int worldHeight = tileSize * maxWorldRow;
+
+
+
+
+
+
 }

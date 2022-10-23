@@ -3,6 +3,7 @@ package com.mae.panel;
 import com.mae.config.Settings;
 import com.mae.handler.KeyboardInputHandler;
 import com.mae.object.Player;
+import com.mae.tile.TileManager;
 
 import javax.swing.*;
 import java.awt.*;
@@ -11,7 +12,8 @@ public class GamePanel extends JPanel implements Runnable {
     Thread gameThread;
     KeyboardInputHandler keyHandler = new KeyboardInputHandler();
 
-    Player player = new Player(this, keyHandler);
+    public Player player = new Player(this, keyHandler);
+    TileManager tileManager = new TileManager(this);
 
     public GamePanel() {
         this.setPreferredSize(new Dimension(Settings.screenWidth, Settings.screenHeight));
@@ -100,6 +102,7 @@ public class GamePanel extends JPanel implements Runnable {
 
         Graphics2D g2 = (Graphics2D) g;
 
+        tileManager.draw(g2);
         player.draw(g2);
 
 
