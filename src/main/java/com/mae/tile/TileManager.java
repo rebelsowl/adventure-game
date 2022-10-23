@@ -60,7 +60,12 @@ public class TileManager {
             int screenX = worldX - gp.player.getWorldX() + gp.player.getScreenX();
             int screenY = worldY - gp.player.getWorldY() + gp.player.getScreenY();
 
-            g2.drawImage(tileTypes[tileNum].getImage(), screenX, screenY, Settings.tileSize, Settings.tileSize, null);
+            if (worldX + Settings.tileSize > gp.player.getWorldX() - gp.player.getScreenX() &&
+                worldX - Settings.tileSize < gp.player.getWorldX() + gp.player.getScreenX() &&
+                worldY + Settings.tileSize > gp.player.getWorldY() - gp.player.getScreenY() &&
+                worldY - Settings.tileSize < gp.player.getWorldY() + gp.player.getScreenY()) { // Only draw the tiles around the player
+                g2.drawImage(tileTypes[tileNum].getImage(), screenX, screenY, Settings.tileSize, Settings.tileSize, null);
+            }
 
             worldCol++;
             if (worldCol == Settings.maxWorldCol) {
@@ -86,7 +91,7 @@ public class TileManager {
                 while (col < Settings.maxWorldCol) {
                     int num = Integer.parseInt(numbers[col]);
                     mapTileNum[col][row] = num;
-                    col ++;
+                    col++;
                 }
                 if (col == Settings.maxWorldCol) {
                     col = 0;
