@@ -2,6 +2,7 @@ package com.mae.handler;
 
 import com.mae.config.Settings;
 import com.mae.entity.Entity;
+import com.mae.object.SuperObject;
 import com.mae.panel.GamePanel;
 
 public class CollisionHandler {
@@ -9,10 +10,7 @@ public class CollisionHandler {
 
     public CollisionHandler(GamePanel gp){
         this.gp = gp;
-
     }
-
-
 
     public  void  checkTile(Entity entity) {
         int entityLeftWorldX = entity.getWorldX() + entity.getSolidArea().x;
@@ -65,4 +63,75 @@ public class CollisionHandler {
 
     }
 
+    /**
+     * Check if entity is in contact with any object
+     * @param entity players, npcs any entity type
+     * @param player is method caller a player
+     * @return index of object | -1 if there is no contact
+     */
+    public int checkObject(Entity entity, boolean player){
+        int index = -1;
+
+        int i = 0;
+        for (SuperObject obj: gp.getObjects()) {
+            if (obj != null) {
+                entity.getSolidArea().x = entity.getWorldX() + entity.getSolidArea().x;
+                entity.getSolidArea().y = entity.getWorldY() + entity.getSolidArea().y;
+
+                obj.getSolidArea().x =  obj.getWorldX() + obj.getSolidArea().x;
+                obj.getSolidArea().y = obj.getWorldY() + obj.getSolidArea().y;
+
+                switch (entity.getDirection()) {
+                    case UP:
+                        entity.getSolidArea().y -= entity.getSpeed();
+                        if (entity.getSolidArea().intersects(obj.getSolidArea())) {
+                            if (obj.isCollision())
+                                entity.setCollision(true);
+                            if (player)
+                                index = i;
+                        }
+                        break;
+                    case DOWN:
+                        entity.getSolidArea().y += entity.getSpeed();
+                        if (entity.getSolidArea().intersects(obj.getSolidArea())) {
+                            if (obj.isCollision())
+                                entity.setCollision(true);
+                            if (player)
+                                index = i;
+                        }
+                        break;
+                    case LEFT:
+                        entity.getSolidArea().x -= entity.getSpeed();
+                        if (entity.getSolidArea().intersects(obj.getSolidArea())) {
+                            if (obj.isCollision())
+                                entity.setCollision(true);
+                            if (player)
+                                index = i;
+                        }
+                        break;
+                    case RIGHT:
+                        entity.getSolidArea().x += entity.getSpeed();
+                        if (entity.getSolidArea().intersects(obj.getSolidArea())) {
+                            if (obj.isCollision())
+                                entity.setCollision(true);
+                            if (player)
+                                index = i;
+                        }
+                        break;
+
+                }
+
+                entity.getSolidArea().x = entity.getSolidAreaDefaultX();
+                entity.getSolidArea().y = entity.getSolidAreaDefaultY();
+
+                obj.getSolidArea().x = obj.getSolidAreaDefaultX();
+                obj.getSolidArea().y = obj.getSolidAreaDefaultY();
+
+
+            }
+            i++;
+        }
+
+        return index;
+    }
 }

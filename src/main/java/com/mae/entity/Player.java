@@ -19,16 +19,20 @@ public class Player extends Entity {
     GamePanel gp;
     KeyboardInputHandler keyHandler;
 
+    int hasKey = 0;
+
     public Player(GamePanel gp, KeyboardInputHandler keyHandler) {
         this.gp = gp;
         this.keyHandler = keyHandler;
         // setting initial values
         setWorldX(Settings.tileSize * 23);
         setWorldY(Settings.tileSize * 21);
-        setSpeed(4);
+        setSpeed(12); // 4
         direction = Directions.DOWN;
 
-        solidArea = new Rectangle(8, 16, 32, 32);
+        solidArea = new Rectangle(8, 16, 27, 27);
+        setSolidAreaDefaultX(solidArea.x);
+        setSolidAreaDefaultY(solidArea.y);
 
         initPlayerImages();
     }
@@ -53,26 +57,23 @@ public class Player extends Entity {
     public void update() {
         if (movementKeyPressed()) {
 
-
             if (keyHandler.upPressed) {
                 setDirection(Directions.UP);
-            }
-            if (keyHandler.downPressed) {
+            } else if (keyHandler.downPressed) {
                 setDirection(Directions.DOWN);
-
-            }
-            if (keyHandler.leftPressed) {
+            } else if (keyHandler.leftPressed) {
                 setDirection(Directions.LEFT);
-
-            }
-            if (keyHandler.rightPressed) {
+            } else if (keyHandler.rightPressed) {
                 setDirection(Directions.RIGHT);
-
             }
 
-
+            // tile collision
             setCollision(false);
-            gp.collisionChecker.checkTile(this);
+            gp.getCollisionChecker().checkTile(this);
+
+            // object collision
+            int objIndex = gp.getCollisionChecker().checkObject(this, true);
+            interactWithObject(objIndex);
 
             if (!isCollision()) {
                 switch (direction) {
@@ -101,6 +102,24 @@ public class Player extends Entity {
         }
     }
 
+    public void interactWithObject(int index) {
+        if (index > -1) {
+            switch (gp.getObjects()[index].getName()) {
+                case "Key":
+                    hasKey++;
+                    gp.getObjects()[index] = null; // delete the object from the map
+                    System.out.println("KEY FOUND, keyNum: " + hasKey);
+                    break;
+                case "Door":
+                    if (hasKey > 0) {
+                        gp.getObjects()[index] = null;
+                        hasKey--;
+                        System.out.println("DOOR OPENED, keyNum: " + hasKey);
+                    }
+                    break;
+            }
+        }
+    }
 
     public void draw(Graphics2D g2) {
         BufferedImage img = null;
