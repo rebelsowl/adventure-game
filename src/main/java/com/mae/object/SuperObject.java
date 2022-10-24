@@ -9,10 +9,14 @@ import java.awt.image.BufferedImage;
 
 @Data
 public abstract class SuperObject {
-    protected BufferedImage image;
-    protected String name;
-    protected boolean collision = false;
     protected int worldX, worldY;
+    protected String name;
+    protected BufferedImage image;
+    protected Rectangle solidArea = new Rectangle(0,0,Settings.tileSize,Settings.tileSize); // making whole object solid
+    protected int solidAreaDefaultX = 0;
+    protected int solidAreaDefaultY = 0;
+    protected boolean collision = false;
+
 
 
     public void draw(Graphics2D g2, GamePanel gp){

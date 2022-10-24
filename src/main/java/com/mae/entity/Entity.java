@@ -17,6 +17,8 @@ public abstract class Entity { // parent class for Player, NPCs, Monsters
     protected Enums.Directions direction;
 
     protected Rectangle solidArea;
+    protected int solidAreaDefaultX;
+    protected int solidAreaDefaultY;
     protected boolean collision = false;
 
 

@@ -7,6 +7,7 @@ public class DoorObject extends SuperObject {
 
     public DoorObject() {
         setName("Door");
+        setCollision(true);
         try {
             setImage(ImageIO.read(getClass().getResourceAsStream("/objects/door.png")));
         } catch (IOException e) {
