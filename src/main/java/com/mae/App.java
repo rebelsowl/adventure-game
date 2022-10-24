@@ -4,13 +4,9 @@ import com.mae.panel.GamePanel;
 
 import javax.swing.*;
 
-/**
- * Hello world!
- */
+
 public class App {
     public static void main(String[] args) {
-        System.out.println("Hello World!");
-
         JFrame window = new JFrame();
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         window.setResizable(false);
@@ -23,12 +19,7 @@ public class App {
         window.setLocationRelativeTo(null); // displayed at the center
         window.setVisible(true);
 
-
-
-
         gamePanel.startGameThread();
-
-
 
     }
 }

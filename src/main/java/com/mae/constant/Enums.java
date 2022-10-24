@@ -1,4 +1,4 @@
-package com.mae.constants;
+package com.mae.constant;
 
 public class Enums {
 
