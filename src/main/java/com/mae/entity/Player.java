@@ -1,4 +1,4 @@
-package com.mae.object;
+package com.mae.entity;
 
 import com.mae.config.Settings;
 import com.mae.constant.Enums.Directions;
@@ -12,16 +12,12 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 
 @Data
-public class Player extends SuperObject {
+public class Player extends Entity {
 
     private final int screenX = (Settings.screenWidth / 2) - (Settings.tileSize / 2); // coordinates on the visible screen
     private final int screenY = (Settings.screenHeight / 2) - (Settings.tileSize / 2); // subtracted the half tile size because frame starts at top left with 0,0
     GamePanel gp;
     KeyboardInputHandler keyHandler;
-    private BufferedImage up1, up2, down1, down2, left1, left2, right1, right2;
-    private int spriteCounter = 0;
-    private int spriteNumber = 0;
-    private Directions direction;
 
     public Player(GamePanel gp, KeyboardInputHandler keyHandler) {
         this.gp = gp;
@@ -31,6 +27,9 @@ public class Player extends SuperObject {
         setWorldY(Settings.tileSize * 21);
         setSpeed(4);
         direction = Directions.DOWN;
+
+        solidArea = new Rectangle(8, 16, 32, 32);
+
         initPlayerImages();
     }
 
@@ -52,28 +51,48 @@ public class Player extends SuperObject {
 
 
     public void update() {
-
         if (movementKeyPressed()) {
+
+
             if (keyHandler.upPressed) {
                 setDirection(Directions.UP);
-                setWorldY(getWorldY() - getSpeed());
             }
             if (keyHandler.downPressed) {
                 setDirection(Directions.DOWN);
-                setWorldY(getWorldY() + getSpeed());
-            }
 
+            }
             if (keyHandler.leftPressed) {
                 setDirection(Directions.LEFT);
-                setWorldX(getWorldX() - getSpeed());
-            }
 
+            }
             if (keyHandler.rightPressed) {
                 setDirection(Directions.RIGHT);
-                setWorldX(getWorldX() + getSpeed());
+
             }
 
-            spriteCounter++; // for movement
+
+            setCollision(false);
+            gp.collisionChecker.checkTile(this);
+
+            if (!isCollision()) {
+                switch (direction) {
+                    case UP:
+                        setWorldY(getWorldY() - getSpeed());
+                        break;
+                    case DOWN:
+                        setWorldY(getWorldY() + getSpeed());
+                        break;
+                    case LEFT:
+                        setWorldX(getWorldX() - getSpeed());
+                        break;
+                    case RIGHT:
+                        setWorldX(getWorldX() + getSpeed());
+                        break;
+                }
+            }
+
+
+            spriteCounter++; // for movement animation
             if (spriteCounter > 12) {
                 spriteNumber = (spriteNumber + 1) % 2;
                 spriteCounter = 0;
@@ -112,4 +131,6 @@ public class Player extends SuperObject {
     private boolean movementKeyPressed() {
         return keyHandler.upPressed || keyHandler.downPressed || keyHandler.leftPressed || keyHandler.rightPressed;
     }
+
+    //TODO: add focus lost halt  other vids - Episode #07 dk 17
 }
