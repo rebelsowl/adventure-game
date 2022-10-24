@@ -28,7 +28,7 @@ public class Player extends Entity {
         setSpeed(4);
         direction = Directions.DOWN;
 
-        solidArea = new Rectangle(8, 16, 32, 32);
+        solidArea = new Rectangle(8, 16, 27, 27);
 
         initPlayerImages();
     }

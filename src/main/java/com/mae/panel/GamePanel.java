@@ -4,6 +4,9 @@ import com.mae.config.Settings;
 import com.mae.entity.Player;
 import com.mae.handler.CollisionHandler;
 import com.mae.handler.KeyboardInputHandler;
+import com.mae.handler.ObjectHandler;
+import com.mae.object.KeyObject;
+import com.mae.object.SuperObject;
 import com.mae.tile.TileManager;
 import lombok.Data;
 
@@ -12,11 +15,20 @@ import java.awt.*;
 
 @Data
 public class GamePanel extends JPanel implements Runnable {
-    public CollisionHandler collisionChecker = new CollisionHandler(this);
     Thread gameThread;
+
+
+    public CollisionHandler collisionChecker = new CollisionHandler(this);
+
     KeyboardInputHandler keyHandler = new KeyboardInputHandler();
     public Player player = new Player(this, keyHandler);
     TileManager tileManager = new TileManager(this);
+
+    SuperObject objects[] = new SuperObject[10];
+
+    ObjectHandler assetSetter = new ObjectHandler(this);
+
+
 
     public GamePanel() {
         this.setPreferredSize(new Dimension(Settings.screenWidth, Settings.screenHeight));
@@ -28,6 +40,10 @@ public class GamePanel extends JPanel implements Runnable {
     }
 
 
+
+    public void setupGame(){
+        assetSetter.placeInitialObjectsInWorld();
+    }
     public void startGameThread() {
         gameThread = new Thread(this);
         gameThread.start(); // calls the run method
@@ -68,9 +84,7 @@ public class GamePanel extends JPanel implements Runnable {
 
 
     public void update() {
-
         player.update();
-
     }
 
     public void paintComponent(Graphics g) { // built-in method for drawing
@@ -79,12 +93,18 @@ public class GamePanel extends JPanel implements Runnable {
         Graphics2D g2 = (Graphics2D) g;
 
         tileManager.draw(g2);
+
+        for (SuperObject obj : objects) {
+            if (obj != null) {
+                obj.draw(g2, this);
+            }
+        }
+
         player.draw(g2);
 
 
         g2.dispose();
 
     }
-
 
 }
