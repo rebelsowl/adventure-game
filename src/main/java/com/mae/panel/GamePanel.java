@@ -16,19 +16,18 @@ import java.awt.*;
 
 @Data
 public class GamePanel extends JPanel implements Runnable {
+    public CollisionHandler collisionChecker = new CollisionHandler(this);
     // SYSTEM
     TileManager tileManager = new TileManager(this);
     KeyboardInputHandler keyHandler = new KeyboardInputHandler();
+    // ENTITY AND OBJECT
+    public Player player = new Player(this, keyHandler);
     SoundHandler soundEffectHandler = new SoundHandler();
     SoundHandler themeMusicHandler = new SoundHandler();
-    public CollisionHandler collisionChecker = new CollisionHandler(this);
     ObjectHandler assetSetter = new ObjectHandler(this);
     UI ui = new UI(this);
     Thread gameThread;
-    // ENTITY AND OBJECT
-    public Player player = new Player(this, keyHandler);
-    SuperObject[]  objects= new SuperObject[10];
-
+    SuperObject[] objects = new SuperObject[10];
 
 
     public GamePanel() {
@@ -41,10 +40,11 @@ public class GamePanel extends JPanel implements Runnable {
     }
 
 
-    public void setupGame(){
+    public void setupGame() {
         assetSetter.placeInitialObjectsInWorld();
         playThemeSong(0);
     }
+
     public void startGameThread() {
         gameThread = new Thread(this);
         gameThread.start(); // calls the run method
@@ -90,8 +90,11 @@ public class GamePanel extends JPanel implements Runnable {
 
     public void paintComponent(Graphics g) { // built-in method for drawing
         super.paintComponent(g);
-
         Graphics2D g2 = (Graphics2D) g;
+
+        //performance test
+        long drawStartTime = System.nanoTime();
+
         tileManager.draw(g2);
         for (SuperObject obj : objects) {
             if (obj != null) {
@@ -100,20 +103,24 @@ public class GamePanel extends JPanel implements Runnable {
         }
         player.draw(g2);
         ui.draw(g2);
+
+        // performance test
+        System.out.println("draw time: " + (System.nanoTime() - drawStartTime));
+
         g2.dispose();
     }
 
-    public void playThemeSong(int i){
+    public void playThemeSong(int i) {
         themeMusicHandler.setFile(i);
         themeMusicHandler.play();
         themeMusicHandler.loop();
     }
 
-    public void stopThemeSong(){
+    public void stopThemeSong() {
         themeMusicHandler.stop();
     }
 
-    public void playSoundEffect(int i){
+    public void playSoundEffect(int i) {
         soundEffectHandler.setFile(i);
         soundEffectHandler.play();
     }

@@ -2,20 +2,23 @@ package com.mae.tile;
 
 import com.mae.config.Settings;
 import com.mae.panel.GamePanel;
+import com.mae.utility.UtilityTool;
 import lombok.Data;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
+import static com.mae.config.Settings.tileSize;
+
 @Data
 public class TileManager {
-    GamePanel gp;
     public Tile[] tileTypes;
-
+    GamePanel gp;
     int[][] mapTileNum;
 
     public TileManager(GamePanel gp) {
@@ -29,25 +32,22 @@ public class TileManager {
     }
 
     private void initializeTileTypes() {
-        try {
-            tileTypes[0] = new Tile();
-            tileTypes[0].setImage(ImageIO.read(getClass().getResourceAsStream("/tiles/grass.png")));
-            tileTypes[1] = new Tile();
-            tileTypes[1].setImage(ImageIO.read(getClass().getResourceAsStream("/tiles/wall.png")));
-            tileTypes[1].setCollision(true);
-            tileTypes[2] = new Tile();
-            tileTypes[2].setImage(ImageIO.read(getClass().getResourceAsStream("/tiles/water.png")));
-            tileTypes[2].setCollision(true);
-            tileTypes[3] = new Tile();
-            tileTypes[3].setImage(ImageIO.read(getClass().getResourceAsStream("/tiles/earth.png")));
-            tileTypes[4] = new Tile();
-            tileTypes[4].setImage(ImageIO.read(getClass().getResourceAsStream("/tiles/tree.png")));
-            tileTypes[4].setCollision(true);
-            tileTypes[5] = new Tile();
-            tileTypes[5].setImage(ImageIO.read(getClass().getResourceAsStream("/tiles/sand.png")));
+        setUpTileType(0, "grass", false);
+        setUpTileType(1, "wall", true);
+        setUpTileType(2, "water", true);
+        setUpTileType(3, "earth", false);
+        setUpTileType(4, "tree", true);
+        setUpTileType(5, "sand", false);
+    }
 
+    private void setUpTileType(int index, String imageName, boolean collision) {
+        try {
+            tileTypes[index] = new Tile();
+            BufferedImage image = ImageIO.read(getClass().getResourceAsStream("/tiles/" + imageName + ".png"));
+            tileTypes[index].setImage(UtilityTool.scaleImage(image, tileSize, tileSize));
+            tileTypes[index].setCollision(collision);
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
     }
 
@@ -59,17 +59,17 @@ public class TileManager {
         while (worldCol < Settings.maxWorldCol && worldRow < Settings.maxWorldRow) {
             int tileNum = mapTileNum[worldCol][worldRow];
 
-            int worldX = worldCol * Settings.tileSize;
-            int worldY = worldRow * Settings.tileSize;
+            int worldX = worldCol * tileSize;
+            int worldY = worldRow * tileSize;
             // TODO: use encapsulation with player
             int screenX = worldX - gp.player.getWorldX() + gp.player.getScreenX();
             int screenY = worldY - gp.player.getWorldY() + gp.player.getScreenY();
 
-            if (worldX + Settings.tileSize > gp.player.getWorldX() - gp.player.getScreenX() &&
-                worldX - Settings.tileSize < gp.player.getWorldX() + gp.player.getScreenX() &&
-                worldY + Settings.tileSize > gp.player.getWorldY() - gp.player.getScreenY() &&
-                worldY - Settings.tileSize < gp.player.getWorldY() + gp.player.getScreenY()) { // Only draw the tiles around the player
-                g2.drawImage(tileTypes[tileNum].getImage(), screenX, screenY, Settings.tileSize, Settings.tileSize, null);
+            if (worldX + tileSize > gp.player.getWorldX() - gp.player.getScreenX() &&
+                    worldX - tileSize < gp.player.getWorldX() + gp.player.getScreenX() &&
+                    worldY + tileSize > gp.player.getWorldY() - gp.player.getScreenY() &&
+                    worldY - tileSize < gp.player.getWorldY() + gp.player.getScreenY()) { // Only draw the tiles around the player
+                g2.drawImage(tileTypes[tileNum].getImage(), screenX, screenY,null);
             }
 
             worldCol++;
@@ -109,4 +109,5 @@ public class TileManager {
             e.printStackTrace();
         }
     }
+
 }
