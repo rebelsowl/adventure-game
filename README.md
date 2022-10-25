@@ -14,3 +14,7 @@ maven
 mvn clean package
 java -jar adventure-game-1.0.jar 
 ```
+
+### Resources
+[piskel](https://www.piskelapp.com/) for pixel images \
+[beepbox](https://www.beepbox.co/) for sounds

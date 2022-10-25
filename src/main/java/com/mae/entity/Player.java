@@ -4,6 +4,7 @@ import com.mae.config.Settings;
 import com.mae.constant.Enums.Directions;
 import com.mae.handler.KeyboardInputHandler;
 import com.mae.panel.GamePanel;
+import com.mae.utility.UtilityTool;
 import lombok.Data;
 
 import javax.imageio.ImageIO;
@@ -11,11 +12,13 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 
+import static com.mae.config.Settings.tileSize;
+
 @Data
 public class Player extends Entity {
 
-    private final int screenX = (Settings.screenWidth / 2) - (Settings.tileSize / 2); // coordinates on the visible screen
-    private final int screenY = (Settings.screenHeight / 2) - (Settings.tileSize / 2); // subtracted the half tile size because frame starts at top left with 0,0
+    private final int screenX = (Settings.screenWidth / 2) - (tileSize / 2); // coordinates on the visible screen
+    private final int screenY = (Settings.screenHeight / 2) - (tileSize / 2); // subtracted the half tile size because frame starts at top left with 0,0
     GamePanel gp;
     KeyboardInputHandler keyHandler;
 
@@ -25,9 +28,9 @@ public class Player extends Entity {
         this.gp = gp;
         this.keyHandler = keyHandler;
         // setting initial values
-        setWorldX(Settings.tileSize * 23);
-        setWorldY(Settings.tileSize * 21);
-        setSpeed(12); // 4
+        setWorldX(tileSize * 23);
+        setWorldY(tileSize * 21);
+        setSpeed(4);
         direction = Directions.DOWN;
 
         solidArea = new Rectangle(8, 16, 27, 27);
@@ -40,14 +43,14 @@ public class Player extends Entity {
 
     public void initPlayerImages() {
         try {
-            setUp1(ImageIO.read(getClass().getResourceAsStream("/player/boy_up_1.png")));
-            setUp2(ImageIO.read(getClass().getResourceAsStream("/player/boy_up_2.png")));
-            setLeft1(ImageIO.read(getClass().getResourceAsStream("/player/boy_left_1.png")));
-            setLeft2(ImageIO.read(getClass().getResourceAsStream("/player/boy_left_2.png")));
-            setRight1(ImageIO.read(getClass().getResourceAsStream("/player/boy_right_1.png")));
-            setRight2(ImageIO.read(getClass().getResourceAsStream("/player/boy_right_2.png")));
-            setDown1(ImageIO.read(getClass().getResourceAsStream("/player/boy_down_1.png")));
-            setDown2(ImageIO.read(getClass().getResourceAsStream("/player/boy_down_2.png")));
+            setUp1(UtilityTool.scaleImage(ImageIO.read(getClass().getResourceAsStream("/player/boy_up_1.png")), tileSize, tileSize));
+            setUp2(UtilityTool.scaleImage(ImageIO.read(getClass().getResourceAsStream("/player/boy_up_2.png")), tileSize, tileSize));
+            setLeft1(UtilityTool.scaleImage(ImageIO.read(getClass().getResourceAsStream("/player/boy_left_1.png")), tileSize, tileSize));
+            setLeft2(UtilityTool.scaleImage(ImageIO.read(getClass().getResourceAsStream("/player/boy_left_2.png")), tileSize, tileSize));
+            setRight1(UtilityTool.scaleImage(ImageIO.read(getClass().getResourceAsStream("/player/boy_right_1.png")), tileSize, tileSize));
+            setRight2(UtilityTool.scaleImage(ImageIO.read(getClass().getResourceAsStream("/player/boy_right_2.png")), tileSize, tileSize));
+            setDown1(UtilityTool.scaleImage(ImageIO.read(getClass().getResourceAsStream("/player/boy_down_1.png")), tileSize, tileSize));
+            setDown2(UtilityTool.scaleImage(ImageIO.read(getClass().getResourceAsStream("/player/boy_down_2.png")), tileSize, tileSize));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -92,7 +95,6 @@ public class Player extends Entity {
                 }
             }
 
-
             spriteCounter++; // for movement animation
             if (spriteCounter > 12) {
                 spriteNumber = (spriteNumber + 1) % 2;
@@ -106,16 +108,31 @@ public class Player extends Entity {
         if (index > -1) {
             switch (gp.getObjects()[index].getName()) {
                 case "Key":
+                    gp.playSoundEffect(1);
                     hasKey++;
                     gp.getObjects()[index] = null; // delete the object from the map
-                    System.out.println("KEY FOUND, keyNum: " + hasKey);
+                    gp.getUi().showMessage("You found a key!");
                     break;
                 case "Door":
                     if (hasKey > 0) {
+                        gp.playSoundEffect(3);
                         gp.getObjects()[index] = null;
                         hasKey--;
-                        System.out.println("DOOR OPENED, keyNum: " + hasKey);
+                        gp.getUi().showMessage("You opened the Door!");
+                    } else {
+                        gp.getUi().showMessage("You need a key!");
                     }
+                    break;
+                case "Boots":
+                    gp.playSoundEffect(2);
+                    speed +=2;
+                    gp.getObjects()[index] = null; // delete the object from the map
+                    gp.getUi().showMessage("Speed up!");
+                    break;
+                case "Chest":
+                    gp.getUi().setGameFinished(true);
+                    gp.stopThemeSong();
+                    gp.playSoundEffect(4);
                     break;
             }
         }
@@ -143,7 +160,7 @@ public class Player extends Entity {
                 break;
         }
 
-        g2.drawImage(img, screenX, screenY, Settings.tileSize, Settings.tileSize, null); // screenX/Y -> player will be always in the middle
+        g2.drawImage(img, screenX, screenY,null); // screenX/Y -> player will be always in the middle
 
     }
 

@@ -27,7 +27,7 @@ public abstract class SuperObject {
             worldX - Settings.tileSize < gp.player.getWorldX() + gp.player.getScreenX() &&
             worldY + Settings.tileSize > gp.player.getWorldY() - gp.player.getScreenY() &&
             worldY - Settings.tileSize < gp.player.getWorldY() + gp.player.getScreenY()) { // Only draw the tiles around the player
-            g2.drawImage(image, screenX, screenY, Settings.tileSize, Settings.tileSize, null);
+            g2.drawImage(image, screenX, screenY,null);
         }
 
 
