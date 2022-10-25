@@ -5,9 +5,10 @@ import com.mae.entity.Player;
 import com.mae.handler.CollisionHandler;
 import com.mae.handler.KeyboardInputHandler;
 import com.mae.handler.ObjectHandler;
-import com.mae.object.KeyObject;
+import com.mae.handler.SoundHandler;
 import com.mae.object.SuperObject;
 import com.mae.tile.TileManager;
+import com.mae.ui.UI;
 import lombok.Data;
 
 import javax.swing.*;
@@ -15,18 +16,18 @@ import java.awt.*;
 
 @Data
 public class GamePanel extends JPanel implements Runnable {
-    Thread gameThread;
-
-
-    public CollisionHandler collisionChecker = new CollisionHandler(this);
-
-    KeyboardInputHandler keyHandler = new KeyboardInputHandler();
-    public Player player = new Player(this, keyHandler);
+    // SYSTEM
     TileManager tileManager = new TileManager(this);
-
-    SuperObject objects[] = new SuperObject[10];
-
+    KeyboardInputHandler keyHandler = new KeyboardInputHandler();
+    SoundHandler soundEffectHandler = new SoundHandler();
+    SoundHandler themeMusicHandler = new SoundHandler();
+    public CollisionHandler collisionChecker = new CollisionHandler(this);
     ObjectHandler assetSetter = new ObjectHandler(this);
+    UI ui = new UI(this);
+    Thread gameThread;
+    // ENTITY AND OBJECT
+    public Player player = new Player(this, keyHandler);
+    SuperObject[]  objects= new SuperObject[10];
 
 
 
@@ -40,9 +41,9 @@ public class GamePanel extends JPanel implements Runnable {
     }
 
 
-
     public void setupGame(){
         assetSetter.placeInitialObjectsInWorld();
+        playThemeSong(0);
     }
     public void startGameThread() {
         gameThread = new Thread(this);
@@ -91,20 +92,30 @@ public class GamePanel extends JPanel implements Runnable {
         super.paintComponent(g);
 
         Graphics2D g2 = (Graphics2D) g;
-
         tileManager.draw(g2);
-
         for (SuperObject obj : objects) {
             if (obj != null) {
                 obj.draw(g2, this);
             }
         }
-
         player.draw(g2);
-
-
+        ui.draw(g2);
         g2.dispose();
+    }
 
+    public void playThemeSong(int i){
+        themeMusicHandler.setFile(i);
+        themeMusicHandler.play();
+        themeMusicHandler.loop();
+    }
+
+    public void stopThemeSong(){
+        themeMusicHandler.stop();
+    }
+
+    public void playSoundEffect(int i){
+        soundEffectHandler.setFile(i);
+        soundEffectHandler.play();
     }
 
 }

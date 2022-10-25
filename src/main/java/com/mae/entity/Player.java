@@ -27,7 +27,7 @@ public class Player extends Entity {
         // setting initial values
         setWorldX(Settings.tileSize * 23);
         setWorldY(Settings.tileSize * 21);
-        setSpeed(12); // 4
+        setSpeed(4);
         direction = Directions.DOWN;
 
         solidArea = new Rectangle(8, 16, 27, 27);
@@ -106,16 +106,31 @@ public class Player extends Entity {
         if (index > -1) {
             switch (gp.getObjects()[index].getName()) {
                 case "Key":
+                    gp.playSoundEffect(1);
                     hasKey++;
                     gp.getObjects()[index] = null; // delete the object from the map
-                    System.out.println("KEY FOUND, keyNum: " + hasKey);
+                    gp.getUi().showMessage("You found a key!");
                     break;
                 case "Door":
                     if (hasKey > 0) {
+                        gp.playSoundEffect(3);
                         gp.getObjects()[index] = null;
                         hasKey--;
-                        System.out.println("DOOR OPENED, keyNum: " + hasKey);
+                        gp.getUi().showMessage("You opened the Door!");
+                    } else {
+                        gp.getUi().showMessage("You need a key!");
                     }
+                    break;
+                case "Boots":
+                    gp.playSoundEffect(2);
+                    speed +=2;
+                    gp.getObjects()[index] = null; // delete the object from the map
+                    gp.getUi().showMessage("Speed up!");
+                    break;
+                case "Chest":
+                    gp.getUi().setGameFinished(true);
+                    gp.stopThemeSong();
+                    gp.playSoundEffect(4);
                     break;
             }
         }

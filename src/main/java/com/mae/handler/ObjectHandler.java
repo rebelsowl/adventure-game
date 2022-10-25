@@ -1,6 +1,7 @@
 package com.mae.handler;
 
 import com.mae.config.Settings;
+import com.mae.object.BootObject;
 import com.mae.object.ChestObject;
 import com.mae.object.DoorObject;
 import com.mae.object.KeyObject;
@@ -43,6 +44,9 @@ public class ObjectHandler {
        gp.getObjects()[6].setWorldX(10 * Settings.tileSize);
        gp.getObjects()[6].setWorldY(8 * Settings.tileSize);
 
+       gp.getObjects()[7] = new BootObject();
+       gp.getObjects()[7].setWorldX(37 * Settings.tileSize);
+       gp.getObjects()[7].setWorldY(42 * Settings.tileSize);
 
    }
 
