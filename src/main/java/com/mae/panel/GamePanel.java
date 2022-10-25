@@ -16,10 +16,12 @@ import java.awt.*;
 
 @Data
 public class GamePanel extends JPanel implements Runnable {
+    public static final int playState = 1;
+    public static final int pauseState = 2;
     public CollisionHandler collisionChecker = new CollisionHandler(this);
     // SYSTEM
     TileManager tileManager = new TileManager(this);
-    KeyboardInputHandler keyHandler = new KeyboardInputHandler();
+    KeyboardInputHandler keyHandler = new KeyboardInputHandler(this);
     // ENTITY AND OBJECT
     public Player player = new Player(this, keyHandler);
     SoundHandler soundEffectHandler = new SoundHandler();
@@ -28,6 +30,8 @@ public class GamePanel extends JPanel implements Runnable {
     UI ui = new UI(this);
     Thread gameThread;
     SuperObject[] objects = new SuperObject[10];
+    // GAME STATE
+    private int gameState;
 
 
     public GamePanel() {
@@ -43,6 +47,8 @@ public class GamePanel extends JPanel implements Runnable {
     public void setupGame() {
         assetSetter.placeInitialObjectsInWorld();
         playThemeSong(0);
+        gameState = playState;
+
     }
 
     public void startGameThread() {
@@ -57,13 +63,13 @@ public class GamePanel extends JPanel implements Runnable {
         long lastTime = System.nanoTime();
         long currentTime;
 
-        long timer = 0; // for fps display
-        int drawCount = 0; // for fps display
+        // long timer = 0; // for fps display
+        // int drawCount = 0; // for fps display
 
         while (gameThread != null) {
             currentTime = System.nanoTime();
             delta += (currentTime - lastTime) / drawInterval;
-            timer += (currentTime - lastTime); // for fps display
+            // timer += (currentTime - lastTime); // for fps display
             lastTime = currentTime;
             if (delta >= 1) {
                 // update
@@ -71,21 +77,26 @@ public class GamePanel extends JPanel implements Runnable {
                 // draw
                 repaint(); // calls paintComponent() method
                 delta--; // making -- doesn't reset the missing process ex-> if it worked at %105 it hands %05 to next iter
-                drawCount += 1; // for fps display
+                // drawCount += 1; // for fps display
             }
 
+            /*
             if (timer >= 1000000000) { // for fps display
                 System.out.println("FPS: " + drawCount);
                 drawCount = 0;
                 timer = 0;
             }
-
+            */
         }
     }
 
 
     public void update() {
-        player.update();
+        if (gameState == playState) {
+            player.update();
+        } else if (gameState == pauseState) {
+            // nothing for now
+        }
     }
 
     public void paintComponent(Graphics g) { // built-in method for drawing
@@ -93,7 +104,7 @@ public class GamePanel extends JPanel implements Runnable {
         Graphics2D g2 = (Graphics2D) g;
 
         //performance test
-        long drawStartTime = System.nanoTime();
+        // long drawStartTime = System.nanoTime();
 
         tileManager.draw(g2);
         for (SuperObject obj : objects) {
@@ -105,7 +116,7 @@ public class GamePanel extends JPanel implements Runnable {
         ui.draw(g2);
 
         // performance test
-        System.out.println("draw time: " + (System.nanoTime() - drawStartTime));
+        // System.out.println("draw time: " + (System.nanoTime() - drawStartTime));
 
         g2.dispose();
     }

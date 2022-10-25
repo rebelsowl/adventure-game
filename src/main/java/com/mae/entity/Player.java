@@ -22,7 +22,6 @@ public class Player extends Entity {
     GamePanel gp;
     KeyboardInputHandler keyHandler;
 
-    int hasKey = 0;
 
     public Player(GamePanel gp, KeyboardInputHandler keyHandler) {
         this.gp = gp;
@@ -106,35 +105,7 @@ public class Player extends Entity {
 
     public void interactWithObject(int index) {
         if (index > -1) {
-            switch (gp.getObjects()[index].getName()) {
-                case "Key":
-                    gp.playSoundEffect(1);
-                    hasKey++;
-                    gp.getObjects()[index] = null; // delete the object from the map
-                    gp.getUi().showMessage("You found a key!");
-                    break;
-                case "Door":
-                    if (hasKey > 0) {
-                        gp.playSoundEffect(3);
-                        gp.getObjects()[index] = null;
-                        hasKey--;
-                        gp.getUi().showMessage("You opened the Door!");
-                    } else {
-                        gp.getUi().showMessage("You need a key!");
-                    }
-                    break;
-                case "Boots":
-                    gp.playSoundEffect(2);
-                    speed +=2;
-                    gp.getObjects()[index] = null; // delete the object from the map
-                    gp.getUi().showMessage("Speed up!");
-                    break;
-                case "Chest":
-                    gp.getUi().setGameFinished(true);
-                    gp.stopThemeSong();
-                    gp.playSoundEffect(4);
-                    break;
-            }
+            //
         }
     }
 
