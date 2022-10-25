@@ -120,14 +120,11 @@ public class CollisionHandler {
                         break;
 
                 }
-
                 entity.getSolidArea().x = entity.getSolidAreaDefaultX();
                 entity.getSolidArea().y = entity.getSolidAreaDefaultY();
 
                 obj.getSolidArea().x = obj.getSolidAreaDefaultX();
                 obj.getSolidArea().y = obj.getSolidAreaDefaultY();
-
-
             }
             i++;
         }

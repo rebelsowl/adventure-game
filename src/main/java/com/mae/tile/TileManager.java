@@ -23,21 +23,60 @@ public class TileManager {
 
     public TileManager(GamePanel gp) {
         this.gp = gp;
-        this.tileTypes = new Tile[10];
+        this.tileTypes = new Tile[50];
 
         mapTileNum = new int[Settings.maxWorldCol][Settings.maxWorldRow];
 
         initializeTileTypes();
-        loadMap("/maps/worldV1.txt");
+        loadMap("/maps/worldV2.txt");
     }
 
     private void initializeTileTypes() {
-        setUpTileType(0, "grass", false);
-        setUpTileType(1, "wall", true);
-        setUpTileType(2, "water", true);
-        setUpTileType(3, "earth", false);
-        setUpTileType(4, "tree", true);
-        setUpTileType(5, "sand", false);
+        setUpTileType(0, "grass00", false);
+        setUpTileType(1, "grass00", false);
+        setUpTileType(2, "grass00", false);
+        setUpTileType(3, "grass00", false);
+        setUpTileType(4, "grass00", false);
+        setUpTileType(5, "grass00", false);
+        setUpTileType(6, "grass00", false);
+        setUpTileType(7, "grass00", false);
+        setUpTileType(8, "grass00", false);
+        setUpTileType(9, "grass00", false); // first ten won't be used | world map txt will became readable
+
+        setUpTileType(10, "grass00", false);
+        setUpTileType(11, "grass01", false);
+        setUpTileType(12, "water00", true);
+        setUpTileType(13, "water01", true);
+        setUpTileType(14, "water02", true);
+        setUpTileType(15, "water03", true);
+        setUpTileType(16, "water04", true);
+        setUpTileType(17, "water05", true);
+        setUpTileType(18, "water06", true);
+        setUpTileType(19, "water07", true);
+        setUpTileType(20, "water08", true);
+        setUpTileType(21, "water09", true);
+        setUpTileType(22, "water10", true);
+        setUpTileType(23, "water11", true);
+        setUpTileType(24, "water12", true);
+        setUpTileType(25, "water13", true);
+        setUpTileType(26, "road00", false);
+        setUpTileType(27, "road01", false);
+        setUpTileType(28, "road02", false);
+        setUpTileType(29, "road03", false);
+        setUpTileType(30, "road04", false);
+        setUpTileType(31, "road05", false);
+        setUpTileType(32, "road06", false);
+        setUpTileType(33, "road07", false);
+        setUpTileType(34, "road08", false);
+        setUpTileType(35, "road09", false);
+        setUpTileType(36, "road10", false);
+        setUpTileType(37, "road11", false);
+        setUpTileType(38, "road12", false);
+        setUpTileType(39, "earth", false);
+        setUpTileType(40, "wall", true);
+        setUpTileType(41, "tree", true);
+
+
     }
 
     private void setUpTileType(int index, String imageName, boolean collision) {
