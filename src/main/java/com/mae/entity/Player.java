@@ -19,7 +19,6 @@ public class Player extends Entity {
 
     private final int screenX = (Settings.screenWidth / 2) - (tileSize / 2); // coordinates on the visible screen
     private final int screenY = (Settings.screenHeight / 2) - (tileSize / 2); // subtracted the half tile size because frame starts at top left with 0,0
-    GamePanel gp;
     KeyboardInputHandler keyHandler;
 
 
@@ -77,6 +76,11 @@ public class Player extends Entity {
             int objIndex = gp.getCollisionChecker().checkObject(this, true);
             interactWithObject(objIndex);
 
+            // EntityCollision
+            int entityIndex = gp.getCollisionChecker().checkEntity(this, gp.getNpcs());
+            interactWithEntity(entityIndex);
+
+
             if (!isCollision()) {
                 switch (direction) {
                     case UP:
@@ -103,8 +107,16 @@ public class Player extends Entity {
         }
     }
 
+
+
     public void interactWithObject(int index) {
         if (index > -1) {
+            //
+        }
+    }
+
+    private void interactWithEntity(int entityIndex) {
+        if (entityIndex > -1) {
             //
         }
     }
