@@ -1,6 +1,7 @@
 package com.mae.panel;
 
 import com.mae.config.Settings;
+import com.mae.entity.Entity;
 import com.mae.entity.Player;
 import com.mae.handler.CollisionHandler;
 import com.mae.handler.KeyboardInputHandler;
@@ -30,6 +31,8 @@ public class GamePanel extends JPanel implements Runnable {
     UI ui = new UI(this);
     Thread gameThread;
     SuperObject[] objects = new SuperObject[10];
+    Entity[] npcs = new Entity[10];
+
     // GAME STATE
     private int gameState;
 
@@ -46,6 +49,7 @@ public class GamePanel extends JPanel implements Runnable {
 
     public void setupGame() {
         assetSetter.placeInitialObjectsInWorld();
+        assetSetter.createNpcs();
         playThemeSong(0);
         gameState = playState;
 
@@ -94,6 +98,13 @@ public class GamePanel extends JPanel implements Runnable {
     public void update() {
         if (gameState == playState) {
             player.update();
+
+            for (Entity npc: getNpcs()) {
+                if (npc != null)
+                    npc.update();
+
+            }
+
         } else if (gameState == pauseState) {
             // nothing for now
         }
@@ -111,6 +122,12 @@ public class GamePanel extends JPanel implements Runnable {
             if (obj != null) {
                 obj.draw(g2, this);
             }
+        }
+        for (Entity entity: npcs) {
+            if (entity!= null) {
+                entity.draw(g2);
+            }
+
         }
         player.draw(g2);
         ui.draw(g2);
