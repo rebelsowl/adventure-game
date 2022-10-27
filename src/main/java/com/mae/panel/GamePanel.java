@@ -19,6 +19,7 @@ import java.awt.*;
 public class GamePanel extends JPanel implements Runnable {
     public static final int playState = 1;
     public static final int pauseState = 2;
+    public static final int dialogueState = 3;
     public CollisionHandler collisionChecker = new CollisionHandler(this);
     // SYSTEM
     TileManager tileManager = new TileManager(this);
@@ -50,7 +51,7 @@ public class GamePanel extends JPanel implements Runnable {
     public void setupGame() {
         assetSetter.placeInitialObjectsInWorld();
         assetSetter.createNpcs();
-        playThemeSong(0);
+        //playThemeSong(0); //TODO: play theme song(uncomment)
         gameState = playState;
 
     }
@@ -99,7 +100,7 @@ public class GamePanel extends JPanel implements Runnable {
         if (gameState == playState) {
             player.update();
 
-            for (Entity npc: getNpcs()) {
+            for (Entity npc : getNpcs()) {
                 if (npc != null)
                     npc.update();
 
@@ -123,8 +124,8 @@ public class GamePanel extends JPanel implements Runnable {
                 obj.draw(g2, this);
             }
         }
-        for (Entity entity: npcs) {
-            if (entity!= null) {
+        for (Entity entity : npcs) {
+            if (entity != null) {
                 entity.draw(g2);
             }
 

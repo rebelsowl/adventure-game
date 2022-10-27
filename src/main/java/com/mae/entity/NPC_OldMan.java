@@ -21,6 +21,14 @@ public class NPC_OldMan extends Entity {
 
 
         initImages();
+        initDialogues();
+    }
+
+    private void initDialogues() {
+        getDialogues()[0] = "Hello, adventurer.";
+        getDialogues()[1] = "So, you have come to this island to \nfind the treasure.";
+        getDialogues()[2] = "I used to be a great wizard but now...\nI'm a a bit too old for an adventure.";
+        getDialogues()[3] = "Well, good luck to you.";
     }
 
     public void initImages() {
