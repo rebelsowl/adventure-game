@@ -41,7 +41,7 @@ public class TileManager {
         setUpTileType(6, "grass00", false);
         setUpTileType(7, "grass00", false);
         setUpTileType(8, "grass00", false);
-        setUpTileType(9, "grass00", false); // first ten won't be used | world map txt will became readable
+        setUpTileType(9, "grass00", false); // first ten won't be used | world map txt will become readable
 
         setUpTileType(10, "grass00", false);
         setUpTileType(11, "grass01", false);

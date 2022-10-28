@@ -28,7 +28,7 @@ public abstract class Entity { // parent class for Player, NPCs, Monsters
     protected int solidAreaDefaultY;
     protected boolean collision = false;
 
-    protected int actionLockCounter = 0; // for npc ai's movement to be smooth
+    protected int actionLockCounter = 0; // for npc AI's movement to be smooth
 
     protected String[] dialogues = new String[20];
     protected int dialogueIndex = 0;

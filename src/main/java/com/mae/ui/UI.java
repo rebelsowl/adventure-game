@@ -4,14 +4,13 @@ import com.mae.config.Settings;
 import com.mae.panel.GamePanel;
 
 import java.awt.*;
-import java.text.DecimalFormat;
+import java.io.IOException;
+import java.io.InputStream;
 
 public class UI {
     private final GamePanel gp;
-    private final Font arial_40;
-    private final Font arial_80B;
-    private final double playTime = 0;
-    DecimalFormat decimalFormat = new DecimalFormat("#0.00");
+    private Font purisaBoldFont;
+
     private boolean messageOn = false;
     private String message = "";
     private int messageDisplayTime = 0;
@@ -22,14 +21,22 @@ public class UI {
 
     public UI(GamePanel gp) {
         this.gp = gp;
-        arial_40 = new Font("Arial", Font.PLAIN, 40);
-        arial_80B = new Font("Arial", Font.BOLD, 80);
+
+        try {
+            InputStream is = getClass().getResourceAsStream("/font/Purisa Bold.ttf");
+            purisaBoldFont = Font.createFont(Font.TRUETYPE_FONT, is);
+        } catch (FontFormatException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
     }
 
     public void draw(Graphics2D g2) {
-        g2.setFont(arial_40);
+        g2.setFont(purisaBoldFont);
         g2.setColor(Color.white);
+        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
         if (gp.getGameState() == GamePanel.playState) {
 
@@ -52,7 +59,7 @@ public class UI {
         int height = Settings.tileSize * 4;
         drawSubWindow(x, y, width, height, g2);
 
-        g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 32F));
+        g2.setFont(g2.getFont().deriveFont(Font.PLAIN, 25F));
         x += Settings.tileSize;
         y += Settings.tileSize;
 

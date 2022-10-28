@@ -63,7 +63,7 @@ public class GamePanel extends JPanel implements Runnable {
     }
 
     public void run() { // Game loop, core of the game // delta/accumulator method
-        double drawInterval = 1000000000 / Settings.FPS;
+        double drawInterval = 1000000000 / (double) Settings.FPS;
         double delta = 0;
         long lastTime = System.nanoTime();
         long currentTime;
