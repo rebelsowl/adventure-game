@@ -12,13 +12,13 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 
-import static com.mae.config.Settings.tileSize;
+import static com.mae.config.Settings.TILE_SIZE;
 
 @Data
 public class Player extends Entity {
 
-    private final int screenX = (Settings.screenWidth / 2) - (tileSize / 2); // coordinates on the visible screen
-    private final int screenY = (Settings.screenHeight / 2) - (tileSize / 2); // subtracted the half tile size because frame starts at top left with 0,0
+    private final int screenX = (Settings.SCREEN_WIDTH / 2) - (TILE_SIZE / 2); // coordinates on the visible screen
+    private final int screenY = (Settings.SCREEN_HEIGHT / 2) - (TILE_SIZE / 2); // subtracted the half tile size because frame starts at top left with 0,0
     KeyboardInputHandler keyHandler;
 
 
@@ -26,8 +26,8 @@ public class Player extends Entity {
         this.gp = gp;
         this.keyHandler = keyHandler;
         // setting initial values
-        setWorldX(tileSize * 23);
-        setWorldY(tileSize * 21);
+        setWorldX(TILE_SIZE * 23);
+        setWorldY(TILE_SIZE * 21);
         setSpeed(4);
         direction = Directions.DOWN;
 
@@ -41,14 +41,14 @@ public class Player extends Entity {
 
     public void initPlayerImages() {
         try {
-            setUp1(UtilityTool.scaleImage(ImageIO.read(getClass().getResourceAsStream("/player/boy_up_1.png")), tileSize, tileSize));
-            setUp2(UtilityTool.scaleImage(ImageIO.read(getClass().getResourceAsStream("/player/boy_up_2.png")), tileSize, tileSize));
-            setLeft1(UtilityTool.scaleImage(ImageIO.read(getClass().getResourceAsStream("/player/boy_left_1.png")), tileSize, tileSize));
-            setLeft2(UtilityTool.scaleImage(ImageIO.read(getClass().getResourceAsStream("/player/boy_left_2.png")), tileSize, tileSize));
-            setRight1(UtilityTool.scaleImage(ImageIO.read(getClass().getResourceAsStream("/player/boy_right_1.png")), tileSize, tileSize));
-            setRight2(UtilityTool.scaleImage(ImageIO.read(getClass().getResourceAsStream("/player/boy_right_2.png")), tileSize, tileSize));
-            setDown1(UtilityTool.scaleImage(ImageIO.read(getClass().getResourceAsStream("/player/boy_down_1.png")), tileSize, tileSize));
-            setDown2(UtilityTool.scaleImage(ImageIO.read(getClass().getResourceAsStream("/player/boy_down_2.png")), tileSize, tileSize));
+            setUp1(UtilityTool.scaleImage(ImageIO.read(getClass().getResourceAsStream("/player/boy_up_1.png")), TILE_SIZE, TILE_SIZE));
+            setUp2(UtilityTool.scaleImage(ImageIO.read(getClass().getResourceAsStream("/player/boy_up_2.png")), TILE_SIZE, TILE_SIZE));
+            setLeft1(UtilityTool.scaleImage(ImageIO.read(getClass().getResourceAsStream("/player/boy_left_1.png")), TILE_SIZE, TILE_SIZE));
+            setLeft2(UtilityTool.scaleImage(ImageIO.read(getClass().getResourceAsStream("/player/boy_left_2.png")), TILE_SIZE, TILE_SIZE));
+            setRight1(UtilityTool.scaleImage(ImageIO.read(getClass().getResourceAsStream("/player/boy_right_1.png")), TILE_SIZE, TILE_SIZE));
+            setRight2(UtilityTool.scaleImage(ImageIO.read(getClass().getResourceAsStream("/player/boy_right_2.png")), TILE_SIZE, TILE_SIZE));
+            setDown1(UtilityTool.scaleImage(ImageIO.read(getClass().getResourceAsStream("/player/boy_down_1.png")), TILE_SIZE, TILE_SIZE));
+            setDown2(UtilityTool.scaleImage(ImageIO.read(getClass().getResourceAsStream("/player/boy_down_2.png")), TILE_SIZE, TILE_SIZE));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -117,7 +117,7 @@ public class Player extends Entity {
     private void interactWithEntity(int entityIndex) {
         if (entityIndex > -1) {
             if (keyHandler.enterPressed) {
-                gp.setGameState(GamePanel.dialogueState);
+                gp.setGameState(GamePanel.DIALOGUE_STATE);
                 gp.getNpcs()[entityIndex].speak();
             }
         }

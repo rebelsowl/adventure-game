@@ -12,7 +12,7 @@ public abstract class SuperObject {
     protected int worldX, worldY;
     protected String name;
     protected BufferedImage image;
-    protected Rectangle solidArea = new Rectangle(0,0,Settings.tileSize,Settings.tileSize); // making whole object solid
+    protected Rectangle solidArea = new Rectangle(0,0,Settings.TILE_SIZE,Settings.TILE_SIZE); // making whole object solid
     protected int solidAreaDefaultX = 0;
     protected int solidAreaDefaultY = 0;
     protected boolean collision = false;
@@ -23,10 +23,10 @@ public abstract class SuperObject {
         int screenX = worldX - gp.player.getWorldX() + gp.player.getScreenX();
         int screenY = worldY - gp.player.getWorldY() + gp.player.getScreenY();
 
-        if (worldX + Settings.tileSize > gp.player.getWorldX() - gp.player.getScreenX() &&
-            worldX - Settings.tileSize < gp.player.getWorldX() + gp.player.getScreenX() &&
-            worldY + Settings.tileSize > gp.player.getWorldY() - gp.player.getScreenY() &&
-            worldY - Settings.tileSize < gp.player.getWorldY() + gp.player.getScreenY()) { // Only draw the tiles around the player
+        if (worldX + Settings.TILE_SIZE > gp.player.getWorldX() - gp.player.getScreenX() &&
+            worldX - Settings.TILE_SIZE < gp.player.getWorldX() + gp.player.getScreenX() &&
+            worldY + Settings.TILE_SIZE > gp.player.getWorldY() - gp.player.getScreenY() &&
+            worldY - Settings.TILE_SIZE < gp.player.getWorldY() + gp.player.getScreenY()) { // Only draw the tiles around the player
             g2.drawImage(image, screenX, screenY,null);
         }
 

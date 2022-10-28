@@ -13,7 +13,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
-import static com.mae.config.Settings.tileSize;
+import static com.mae.config.Settings.TILE_SIZE;
 
 @Data
 public class TileManager {
@@ -25,7 +25,7 @@ public class TileManager {
         this.gp = gp;
         this.tileTypes = new Tile[50];
 
-        mapTileNum = new int[Settings.maxWorldCol][Settings.maxWorldRow];
+        mapTileNum = new int[Settings.MAX_WORLD_COL][Settings.MAX_WORLD_ROW];
 
         initializeTileTypes();
         loadMap("/maps/worldV2.txt");
@@ -83,7 +83,7 @@ public class TileManager {
         try {
             tileTypes[index] = new Tile();
             BufferedImage image = ImageIO.read(getClass().getResourceAsStream("/tiles/" + imageName + ".png"));
-            tileTypes[index].setImage(UtilityTool.scaleImage(image, tileSize, tileSize));
+            tileTypes[index].setImage(UtilityTool.scaleImage(image, TILE_SIZE, TILE_SIZE));
             tileTypes[index].setCollision(collision);
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -95,24 +95,24 @@ public class TileManager {
         int worldRow = 0;
 
         //TODO: make for loop and make mapTileNum[row][col]
-        while (worldCol < Settings.maxWorldCol && worldRow < Settings.maxWorldRow) {
+        while (worldCol < Settings.MAX_WORLD_COL && worldRow < Settings.MAX_WORLD_ROW) {
             int tileNum = mapTileNum[worldCol][worldRow];
 
-            int worldX = worldCol * tileSize;
-            int worldY = worldRow * tileSize;
+            int worldX = worldCol * TILE_SIZE;
+            int worldY = worldRow * TILE_SIZE;
             // TODO: use encapsulation with player
             int screenX = worldX - gp.player.getWorldX() + gp.player.getScreenX();
             int screenY = worldY - gp.player.getWorldY() + gp.player.getScreenY();
 
-            if (worldX + tileSize > gp.player.getWorldX() - gp.player.getScreenX() &&
-                    worldX - tileSize < gp.player.getWorldX() + gp.player.getScreenX() &&
-                    worldY + tileSize > gp.player.getWorldY() - gp.player.getScreenY() &&
-                    worldY - tileSize < gp.player.getWorldY() + gp.player.getScreenY()) { // Only draw the tiles around the player
+            if (worldX + TILE_SIZE > gp.player.getWorldX() - gp.player.getScreenX() &&
+                    worldX - TILE_SIZE < gp.player.getWorldX() + gp.player.getScreenX() &&
+                    worldY + TILE_SIZE > gp.player.getWorldY() - gp.player.getScreenY() &&
+                    worldY - TILE_SIZE < gp.player.getWorldY() + gp.player.getScreenY()) { // Only draw the tiles around the player
                 g2.drawImage(tileTypes[tileNum].getImage(), screenX, screenY,null);
             }
 
             worldCol++;
-            if (worldCol == Settings.maxWorldCol) {
+            if (worldCol == Settings.MAX_WORLD_COL) {
                 worldCol = 0;
                 worldRow++;
             }
@@ -129,15 +129,15 @@ public class TileManager {
             int col = 0;
             int row = 0;
             // TODO: make proper for loops
-            while (col < Settings.maxWorldCol && row < Settings.maxWorldRow) {
+            while (col < Settings.MAX_WORLD_COL && row < Settings.MAX_WORLD_ROW) {
                 String line = br.readLine();
                 String[] numbers = line.split(" ");
-                while (col < Settings.maxWorldCol) {
+                while (col < Settings.MAX_WORLD_COL) {
                     int num = Integer.parseInt(numbers[col]);
                     mapTileNum[col][row] = num;
                     col++;
                 }
-                if (col == Settings.maxWorldCol) {
+                if (col == Settings.MAX_WORLD_COL) {
                     col = 0;
                     row++;
                 }

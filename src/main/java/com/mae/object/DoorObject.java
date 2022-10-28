@@ -12,7 +12,7 @@ public class DoorObject extends SuperObject {
         setName("Door");
         setCollision(true);
         try {
-            setImage(UtilityTool.scaleImage(ImageIO.read(getClass().getResourceAsStream("/objects/door.png")), Settings.tileSize, Settings.tileSize));
+            setImage(UtilityTool.scaleImage(ImageIO.read(getClass().getResourceAsStream("/objects/door.png")), Settings.TILE_SIZE, Settings.TILE_SIZE));
         } catch (IOException e) {
             e.printStackTrace();
         }
