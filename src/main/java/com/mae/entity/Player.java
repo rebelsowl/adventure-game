@@ -108,17 +108,20 @@ public class Player extends Entity {
     }
 
 
-
     public void interactWithObject(int index) {
         if (index > -1) {
-            //
+
         }
     }
 
     private void interactWithEntity(int entityIndex) {
         if (entityIndex > -1) {
-            //
+            if (keyHandler.enterPressed) {
+                gp.setGameState(GamePanel.dialogueState);
+                gp.getNpcs()[entityIndex].speak();
+            }
         }
+        keyHandler.enterPressed = false;
     }
 
     public void draw(Graphics2D g2) {
@@ -143,7 +146,7 @@ public class Player extends Entity {
                 break;
         }
 
-        g2.drawImage(img, screenX, screenY,null); // screenX/Y -> player will be always in the middle
+        g2.drawImage(img, screenX, screenY, null); // screenX/Y -> player will be always in the middle
 
     }
 

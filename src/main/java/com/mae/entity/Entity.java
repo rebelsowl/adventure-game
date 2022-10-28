@@ -2,6 +2,7 @@ package com.mae.entity;
 
 import com.mae.config.Settings;
 import com.mae.constant.Enums;
+import com.mae.constant.Enums.Directions;
 import com.mae.panel.GamePanel;
 import lombok.Data;
 
@@ -27,8 +28,10 @@ public abstract class Entity { // parent class for Player, NPCs, Monsters
     protected int solidAreaDefaultY;
     protected boolean collision = false;
 
-    protected int actionLockCounter = 0; // for npc ai's movement to be smooth
+    protected int actionLockCounter = 0; // for npc AI's movement to be smooth
 
+    protected String[] dialogues = new String[20];
+    protected int dialogueIndex = 0;
 
     public void draw(Graphics2D g2) {
         BufferedImage img = null;
@@ -64,9 +67,10 @@ public abstract class Entity { // parent class for Player, NPCs, Monsters
 
     }
 
-    public void setAction(){}
+    public void setAction() {
+    }
 
-    public void update(){
+    public void update() {
         setAction();
 
         setCollision(false);
@@ -97,8 +101,28 @@ public abstract class Entity { // parent class for Player, NPCs, Monsters
             spriteCounter = 0;
         }
 
+    }
 
+    public void speak() {
+        if (dialogues[dialogueIndex] == null)
+            dialogueIndex = 0;
+        gp.getUi().setCurrentDialogue(dialogues[dialogueIndex]);
+        dialogueIndex++;
 
+        switch (gp.getPlayer().getDirection()) {
+            case UP:
+                setDirection(Directions.DOWN);
+                break;
+            case RIGHT:
+                setDirection(Directions.LEFT);
+                break;
+            case LEFT:
+                setDirection(Directions.RIGHT);
+                break;
+            case DOWN:
+                setDirection(Directions.UP);
+                break;
+        }
     }
 
 }
