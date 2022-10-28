@@ -9,7 +9,7 @@ import javax.imageio.ImageIO;
 import java.io.IOException;
 import java.util.Random;
 
-import static com.mae.config.Settings.tileSize;
+import static com.mae.config.Settings.TILE_SIZE;
 
 public class NPC_OldMan extends Entity {
 
@@ -33,14 +33,14 @@ public class NPC_OldMan extends Entity {
 
     public void initImages() {
         try {
-            setUp1(UtilityTool.scaleImage(ImageIO.read(getClass().getResourceAsStream("/npc/oldman_up_1.png")), tileSize, tileSize));
-            setUp2(UtilityTool.scaleImage(ImageIO.read(getClass().getResourceAsStream("/npc/oldman_up_2.png")), tileSize, tileSize));
-            setLeft1(UtilityTool.scaleImage(ImageIO.read(getClass().getResourceAsStream("/npc/oldman_left_1.png")), tileSize, tileSize));
-            setLeft2(UtilityTool.scaleImage(ImageIO.read(getClass().getResourceAsStream("/npc/oldman_left_2.png")), tileSize, tileSize));
-            setRight1(UtilityTool.scaleImage(ImageIO.read(getClass().getResourceAsStream("/npc/oldman_right_1.png")), tileSize, tileSize));
-            setRight2(UtilityTool.scaleImage(ImageIO.read(getClass().getResourceAsStream("/npc/oldman_right_2.png")), tileSize, tileSize));
-            setDown1(UtilityTool.scaleImage(ImageIO.read(getClass().getResourceAsStream("/npc/oldman_down_1.png")), tileSize, tileSize));
-            setDown2(UtilityTool.scaleImage(ImageIO.read(getClass().getResourceAsStream("/npc/oldman_down_2.png")), tileSize, tileSize));
+            setUp1(UtilityTool.scaleImage(ImageIO.read(getClass().getResourceAsStream("/npc/oldman_up_1.png")), TILE_SIZE, TILE_SIZE));
+            setUp2(UtilityTool.scaleImage(ImageIO.read(getClass().getResourceAsStream("/npc/oldman_up_2.png")), TILE_SIZE, TILE_SIZE));
+            setLeft1(UtilityTool.scaleImage(ImageIO.read(getClass().getResourceAsStream("/npc/oldman_left_1.png")), TILE_SIZE, TILE_SIZE));
+            setLeft2(UtilityTool.scaleImage(ImageIO.read(getClass().getResourceAsStream("/npc/oldman_left_2.png")), TILE_SIZE, TILE_SIZE));
+            setRight1(UtilityTool.scaleImage(ImageIO.read(getClass().getResourceAsStream("/npc/oldman_right_1.png")), TILE_SIZE, TILE_SIZE));
+            setRight2(UtilityTool.scaleImage(ImageIO.read(getClass().getResourceAsStream("/npc/oldman_right_2.png")), TILE_SIZE, TILE_SIZE));
+            setDown1(UtilityTool.scaleImage(ImageIO.read(getClass().getResourceAsStream("/npc/oldman_down_1.png")), TILE_SIZE, TILE_SIZE));
+            setDown2(UtilityTool.scaleImage(ImageIO.read(getClass().getResourceAsStream("/npc/oldman_down_2.png")), TILE_SIZE, TILE_SIZE));
         } catch (IOException e) {
             e.printStackTrace();
         }

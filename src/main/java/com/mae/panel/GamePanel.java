@@ -17,9 +17,12 @@ import java.awt.*;
 
 @Data
 public class GamePanel extends JPanel implements Runnable {
-    public static final int playState = 1;
-    public static final int pauseState = 2;
-    public static final int dialogueState = 3;
+
+    public static final int TITLE_STATE = 0;
+    public static final int PLAY_STATE = 1;
+    public static final int PAUSE_STATE = 2;
+    public static final int DIALOGUE_STATE = 3;
+
     public CollisionHandler collisionChecker = new CollisionHandler(this);
     // SYSTEM
     TileManager tileManager = new TileManager(this);
@@ -39,7 +42,7 @@ public class GamePanel extends JPanel implements Runnable {
 
 
     public GamePanel() {
-        this.setPreferredSize(new Dimension(Settings.screenWidth, Settings.screenHeight));
+        this.setPreferredSize(new Dimension(Settings.SCREEN_WIDTH, Settings.SCREEN_HEIGHT));
         this.setBackground(Color.BLACK);
         this.setDoubleBuffered(true); // double buffering increases the rendering performance
         this.addKeyListener(keyHandler);
@@ -51,8 +54,8 @@ public class GamePanel extends JPanel implements Runnable {
     public void setupGame() {
         assetSetter.placeInitialObjectsInWorld();
         assetSetter.createNpcs();
-        //playThemeSong(0); //TODO: play theme song(uncomment)
-        gameState = playState;
+//        playThemeSong(0); //TODO: play theme song(uncomment)
+        gameState = TITLE_STATE;
 
     }
 
@@ -97,7 +100,7 @@ public class GamePanel extends JPanel implements Runnable {
 
 
     public void update() {
-        if (gameState == playState) {
+        if (gameState == PLAY_STATE) {
             player.update();
 
             for (Entity npc : getNpcs()) {
@@ -106,7 +109,7 @@ public class GamePanel extends JPanel implements Runnable {
 
             }
 
-        } else if (gameState == pauseState) {
+        } else if (gameState == PAUSE_STATE) {
             // nothing for now
         }
     }
@@ -115,26 +118,32 @@ public class GamePanel extends JPanel implements Runnable {
         super.paintComponent(g);
         Graphics2D g2 = (Graphics2D) g;
 
-        //performance test
-        // long drawStartTime = System.nanoTime();
+        if (gameState == TITLE_STATE) {
+            ui.draw(g2);
+        } else {
 
-        tileManager.draw(g2);
-        for (SuperObject obj : objects) {
-            if (obj != null) {
-                obj.draw(g2, this);
+            //performance test
+            // long drawStartTime = System.nanoTime();
+
+            tileManager.draw(g2);
+            for (SuperObject obj : objects) {
+                if (obj != null) {
+                    obj.draw(g2, this);
+                }
             }
-        }
-        for (Entity entity : npcs) {
-            if (entity != null) {
-                entity.draw(g2);
+            for (Entity entity : npcs) {
+                if (entity != null) {
+                    entity.draw(g2);
+                }
+
             }
+            player.draw(g2);
+            ui.draw(g2);
+
+            // performance test
+            // System.out.println("draw time: " + (System.nanoTime() - drawStartTime));
 
         }
-        player.draw(g2);
-        ui.draw(g2);
-
-        // performance test
-        // System.out.println("draw time: " + (System.nanoTime() - drawStartTime));
 
         g2.dispose();
     }

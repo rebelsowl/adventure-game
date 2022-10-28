@@ -9,7 +9,7 @@ import lombok.Data;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
-import static com.mae.config.Settings.tileSize;
+import static com.mae.config.Settings.TILE_SIZE;
 
 @Data
 public abstract class Entity { // parent class for Player, NPCs, Monsters
@@ -23,7 +23,7 @@ public abstract class Entity { // parent class for Player, NPCs, Monsters
     protected int spriteNumber = 0;
     protected Enums.Directions direction;
 
-    protected Rectangle solidArea = new Rectangle(0, 0, tileSize, tileSize);
+    protected Rectangle solidArea = new Rectangle(0, 0, TILE_SIZE, TILE_SIZE);
     protected int solidAreaDefaultX;
     protected int solidAreaDefaultY;
     protected boolean collision = false;
@@ -39,10 +39,10 @@ public abstract class Entity { // parent class for Player, NPCs, Monsters
         int screenX = worldX - gp.player.getWorldX() + gp.player.getScreenX();
         int screenY = worldY - gp.player.getWorldY() + gp.player.getScreenY();
 
-        if (worldX + Settings.tileSize > gp.player.getWorldX() - gp.player.getScreenX() &&
-                worldX - Settings.tileSize < gp.player.getWorldX() + gp.player.getScreenX() &&
-                worldY + Settings.tileSize > gp.player.getWorldY() - gp.player.getScreenY() &&
-                worldY - Settings.tileSize < gp.player.getWorldY() + gp.player.getScreenY()) { // Only draw the tiles around the player
+        if (worldX + Settings.TILE_SIZE > gp.player.getWorldX() - gp.player.getScreenX() &&
+                worldX - Settings.TILE_SIZE < gp.player.getWorldX() + gp.player.getScreenX() &&
+                worldY + Settings.TILE_SIZE > gp.player.getWorldY() - gp.player.getScreenY() &&
+                worldY - Settings.TILE_SIZE < gp.player.getWorldY() + gp.player.getScreenY()) { // Only draw the tiles around the player
 
             switch (direction) {
                 case UP:

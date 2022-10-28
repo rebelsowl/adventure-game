@@ -11,7 +11,7 @@ public class KeyObject extends SuperObject {
     public KeyObject() {
         setName("Key");
         try {
-            setImage(UtilityTool.scaleImage(ImageIO.read(getClass().getResourceAsStream("/objects/key.png")), Settings.tileSize, Settings.tileSize));
+            setImage(UtilityTool.scaleImage(ImageIO.read(getClass().getResourceAsStream("/objects/key.png")), Settings.TILE_SIZE, Settings.TILE_SIZE));
         } catch (IOException e) {
             e.printStackTrace();
         }

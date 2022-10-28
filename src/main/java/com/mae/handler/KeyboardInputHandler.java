@@ -1,6 +1,7 @@
 package com.mae.handler;
 
 import com.mae.panel.GamePanel;
+import com.mae.ui.UI;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -18,7 +19,33 @@ public class KeyboardInputHandler implements KeyListener {
     }
 
     public void keyPressed(KeyEvent e) {
-        if (gp.getGameState() == GamePanel.playState) {
+
+        if (gp.getGameState() == GamePanel.TITLE_STATE) {// TITLE_STATE
+            if (e.getKeyCode() == KeyEvent.VK_W) {
+                UI.titleScreenCommandNumber--;
+                if (UI.titleScreenCommandNumber < 0)
+                    UI.titleScreenCommandNumber = 2;
+            } else if (e.getKeyCode() == KeyEvent.VK_S) {
+                UI.titleScreenCommandNumber++;
+                if (UI.titleScreenCommandNumber > 2) {
+                    UI.titleScreenCommandNumber = 0;
+                }
+            } else if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+                switch (UI.titleScreenCommandNumber) {
+                    case 0:
+                        gp.setGameState(GamePanel.PLAY_STATE);
+                        gp.playThemeSong(0);
+                        break;
+                    case 1:
+                        break;
+                    case 2:
+                        System.exit(0);
+
+                }
+            }
+
+
+        } else if (gp.getGameState() == GamePanel.PLAY_STATE) { // PLAY_STATE
             if (e.getKeyCode() == KeyEvent.VK_W)
                 upPressed = true;
             else if (e.getKeyCode() == KeyEvent.VK_A)
@@ -32,16 +59,16 @@ public class KeyboardInputHandler implements KeyListener {
                 enterPressed = true;
 
             if (e.getKeyCode() == KeyEvent.VK_P)
-                gp.setGameState(GamePanel.pauseState);
+                gp.setGameState(GamePanel.PAUSE_STATE);
 
 
-        } else if (gp.getGameState() == GamePanel.pauseState) {
+        } else if (gp.getGameState() == GamePanel.PAUSE_STATE) { // PAUSE_STATE
             if (e.getKeyCode() == KeyEvent.VK_P)
-                gp.setGameState(GamePanel.playState);
+                gp.setGameState(GamePanel.PLAY_STATE);
 
-        } else if (gp.getGameState() == GamePanel.dialogueState) {
+        } else if (gp.getGameState() == GamePanel.DIALOGUE_STATE) { // DIALOGUE_STATE
             if (e.getKeyCode() == KeyEvent.VK_ENTER || e.getKeyCode() == KeyEvent.VK_ESCAPE)
-                gp.setGameState(GamePanel.playState);
+                gp.setGameState(GamePanel.PLAY_STATE);
 
         }
     }
