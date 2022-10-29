@@ -6,9 +6,9 @@ import com.mae.utility.UtilityTool;
 import javax.imageio.ImageIO;
 import java.io.IOException;
 
-public class ChestObject extends SuperObject {
+public class OBJ_Chest extends SuperObject {
 
-    public  ChestObject() {
+    public OBJ_Chest() {
         setName("Chest");
         try {
             setImage(UtilityTool.scaleImage(ImageIO.read(getClass().getResourceAsStream("/objects/chest.png")), Settings.TILE_SIZE, Settings.TILE_SIZE));

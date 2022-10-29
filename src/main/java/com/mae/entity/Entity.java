@@ -33,6 +33,10 @@ public abstract class Entity { // parent class for Player, NPCs, Monsters
     protected String[] dialogues = new String[20];
     protected int dialogueIndex = 0;
 
+    // CHARACTER STATUS
+    protected int maxLife;
+    protected int life;
+
     public void draw(Graphics2D g2) {
         BufferedImage img = null;
 

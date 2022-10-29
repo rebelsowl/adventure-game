@@ -11,7 +11,7 @@ import java.awt.image.BufferedImage;
 public abstract class SuperObject {
     protected int worldX, worldY;
     protected String name;
-    protected BufferedImage image;
+    protected BufferedImage image, image2, image3;
     protected Rectangle solidArea = new Rectangle(0,0,Settings.TILE_SIZE,Settings.TILE_SIZE); // making whole object solid
     protected int solidAreaDefaultX = 0;
     protected int solidAreaDefaultY = 0;
