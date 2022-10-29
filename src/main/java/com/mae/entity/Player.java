@@ -31,6 +31,9 @@ public class Player extends Entity {
         setSpeed(4);
         direction = Directions.DOWN;
 
+        setMaxLife(6);
+        setLife(maxLife);
+
         solidArea = new Rectangle(8, 16, 27, 27);
         setSolidAreaDefaultX(solidArea.x);
         setSolidAreaDefaultY(solidArea.y);

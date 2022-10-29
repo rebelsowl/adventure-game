@@ -54,7 +54,6 @@ public class GamePanel extends JPanel implements Runnable {
     public void setupGame() {
         assetSetter.placeInitialObjectsInWorld();
         assetSetter.createNpcs();
-//        playThemeSong(0); //TODO: play theme song(uncomment)
         gameState = TITLE_STATE;
 
     }

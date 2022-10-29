@@ -1,15 +1,19 @@
 package com.mae.ui;
 
 import com.mae.config.Settings;
+import com.mae.object.OBJ_Heart;
+import com.mae.object.SuperObject;
 import com.mae.panel.GamePanel;
 
 import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
 
 public class UI {
     public static int titleScreenCommandNumber = 0;
     private final GamePanel gp;
+    BufferedImage heartFull, heartHalf, heartBlank;
     private Font purisaBoldFont;
     private boolean messageOn = false;
     private String message = "";
@@ -29,6 +33,11 @@ public class UI {
             e.printStackTrace();
         }
 
+        SuperObject heart = new OBJ_Heart();
+        heartFull = heart.getImage();
+        heartHalf = heart.getImage2();
+        heartBlank = heart.getImage3();
+
     }
 
     public void draw(Graphics2D g2) {
@@ -39,14 +48,38 @@ public class UI {
         if (gp.getGameState() == GamePanel.TITLE_STATE) {
             drawTitleScreen(g2);
         } else if (gp.getGameState() == GamePanel.PLAY_STATE) {
-
+            drawPlayersLife(g2);
         } else if (gp.getGameState() == GamePanel.PAUSE_STATE) {
+            drawPlayersLife(g2);
             drawPauseScreen(g2);
         } else if (gp.getGameState() == GamePanel.DIALOGUE_STATE) {
+            drawPlayersLife(g2);
             drawDialogueScreen(g2);
-
         }
 
+
+    }
+
+    private void drawPlayersLife(Graphics2D g2) {
+        int x = Settings.TILE_SIZE / 2;
+        int y = Settings.TILE_SIZE / 2;
+
+        for (int i = 0; i < gp.getPlayer().getMaxLife() / 2; i++) { // max life
+            g2.drawImage(heartBlank, x, y, null);
+            x += Settings.TILE_SIZE;
+        }
+
+        x = Settings.TILE_SIZE / 2;
+        int i = 0;
+        while (i < gp.getPlayer().getLife()) {
+            g2.drawImage(heartHalf, x, y, null);
+            i++;
+            if (i < gp.getPlayer().getLife()) {
+                g2.drawImage(heartFull, x, y, null);
+            }
+            i++;
+            x += Settings.TILE_SIZE;
+        }
 
     }
 

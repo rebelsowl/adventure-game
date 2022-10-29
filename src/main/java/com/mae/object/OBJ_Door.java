@@ -6,9 +6,9 @@ import com.mae.utility.UtilityTool;
 import javax.imageio.ImageIO;
 import java.io.IOException;
 
-public class DoorObject extends SuperObject {
+public class OBJ_Door extends SuperObject {
 
-    public DoorObject() {
+    public OBJ_Door() {
         setName("Door");
         setCollision(true);
         try {

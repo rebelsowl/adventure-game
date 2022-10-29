@@ -6,12 +6,12 @@ import com.mae.utility.UtilityTool;
 import javax.imageio.ImageIO;
 import java.io.IOException;
 
-public class BootObject extends  SuperObject {
+public class OBJ_Key extends SuperObject {
 
-    public BootObject() {
-        setName("Boots");
+    public OBJ_Key() {
+        setName("Key");
         try {
-            setImage(UtilityTool.scaleImage(ImageIO.read(getClass().getResourceAsStream("/objects/boots.png")), Settings.TILE_SIZE, Settings.TILE_SIZE));
+            setImage(UtilityTool.scaleImage(ImageIO.read(getClass().getResourceAsStream("/objects/key.png")), Settings.TILE_SIZE, Settings.TILE_SIZE));
         } catch (IOException e) {
             e.printStackTrace();
         }
