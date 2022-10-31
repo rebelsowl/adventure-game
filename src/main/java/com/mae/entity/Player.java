@@ -83,6 +83,9 @@ public class Player extends Entity {
             int entityIndex = gp.getCollisionChecker().checkEntity(this, gp.getNpcs());
             interactWithEntity(entityIndex);
 
+            // Check event
+            gp.getEventHandler().checkEvent();
+
 
             if (!isCollision()) {
                 switch (direction) {
