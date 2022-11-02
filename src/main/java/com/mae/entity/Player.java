@@ -87,6 +87,8 @@ public class Player extends Entity {
             gp.getEventHandler().checkEvent();
 
 
+            keyHandler.enterPressed = false;
+
             if (!isCollision()) {
                 switch (direction) {
                     case UP:
@@ -127,7 +129,7 @@ public class Player extends Entity {
                 gp.getNpcs()[entityIndex].speak();
             }
         }
-        keyHandler.enterPressed = false;
+
     }
 
     public void draw(Graphics2D g2) {

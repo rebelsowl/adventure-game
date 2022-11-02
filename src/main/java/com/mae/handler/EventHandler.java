@@ -28,10 +28,13 @@ public class EventHandler {
 
 
     public void checkEvent() {
-        if (hit(27, 16, Enums.Directions.RIGHT)) {
-            System.out.println("HIT HIT HIT HIT HIT");
+        if (hit(27, 16, Enums.Directions.RIGHT))
             pitFallEvent(GamePanel.DIALOGUE_STATE);
-        }
+
+        if (hit(23, 12, Enums.Directions.UP))
+            poolHealingEvent(GamePanel.DIALOGUE_STATE);
+
+
 
     }
 
@@ -55,7 +58,6 @@ public class EventHandler {
             if (gp.getPlayer().getDirection().equals(requiredDirection) || requiredDirection.equals(Enums.Directions.ANY))
                 return true;
         }
-        //// !!!!!!!!!!!!!!!!!!!!!!!!!!! 11.57
 
         gp.getPlayer().getSolidArea().x = gp.getPlayer().getSolidAreaDefaultX();
         gp.getPlayer().getSolidArea().y = gp.getPlayer().getSolidAreaDefaultY();
@@ -65,4 +67,14 @@ public class EventHandler {
 
         return false;
     }
+
+    public void poolHealingEvent(int gameState){
+        if (gp.getKeyHandler().enterPressed){
+            gp.setGameState(gameState);
+            gp.getUi().setCurrentDialogue("You drink the water. \nYour life has been recovered.");
+            gp.getPlayer().setLife(gp.getPlayer().getMaxLife());
+        }
+
+    }
+
 }
