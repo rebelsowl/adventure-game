@@ -83,6 +83,11 @@ public class Player extends Entity {
             int entityIndex = gp.getCollisionChecker().checkEntity(this, gp.getNpcs());
             interactWithEntity(entityIndex);
 
+            // Check event
+            gp.getEventHandler().checkEvent();
+
+
+            keyHandler.enterPressed = false;
 
             if (!isCollision()) {
                 switch (direction) {
@@ -124,7 +129,7 @@ public class Player extends Entity {
                 gp.getNpcs()[entityIndex].speak();
             }
         }
-        keyHandler.enterPressed = false;
+
     }
 
     public void draw(Graphics2D g2) {

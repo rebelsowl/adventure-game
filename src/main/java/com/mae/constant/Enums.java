@@ -7,7 +7,8 @@ public class Enums {
         UP,
         DOWN,
         LEFT,
-        RIGHT
+        RIGHT,
+        ANY
     }
 
 }
