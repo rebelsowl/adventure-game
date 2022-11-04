@@ -33,7 +33,7 @@ public class UI {
             e.printStackTrace();
         }
 
-        SuperObject heart = new OBJ_Heart();
+        SuperObject heart = new OBJ_Heart(gp);
         heartFull = heart.getImage();
         heartHalf = heart.getImage2();
         heartBlank = heart.getImage3();
