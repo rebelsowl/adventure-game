@@ -32,13 +32,17 @@ public abstract class Entity implements Drawable { // parent class for Player, N
     protected boolean collision = false;
 
     protected int actionLockCounter = 0; // for npc AI's movement to be smooth
-
+    protected boolean invincible = false;
+    protected int invincibleCounter = 0;
     protected String[] dialogues = new String[20];
     protected int dialogueIndex = 0;
+    protected  int type; // 0 -> player 1 -> npc 2 -> monster
 
     // CHARACTER STATUS
     protected int maxLife;
     protected int life;
+
+
 
     public Entity(GamePanel gp){
         this.gp = gp;
@@ -89,7 +93,13 @@ public abstract class Entity implements Drawable { // parent class for Player, N
         gp.getCollisionChecker().checkObject(this, false);
         gp.getCollisionChecker().checkEntity(this, gp.getNpcs());
         gp.getCollisionChecker().checkEntity(this, gp.getMonsters());
-        gp.getCollisionChecker().checkPlayer(this);
+        boolean playerContact = gp.getCollisionChecker().checkPlayer(this);
+        if (this.type == 2 && playerContact){
+            if (!gp.getPlayer().isInvincible()){
+                gp.getPlayer().life -=1;
+                gp.getPlayer().setInvincible(true);
+            }
+        }
 
         if (!isCollision()) {
             switch (direction) {

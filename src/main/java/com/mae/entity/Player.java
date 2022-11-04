@@ -61,7 +61,6 @@ public class Player extends Entity {
 
     public void update() {
         if (movementKeyPressed()) {
-
             if (keyHandler.upPressed) {
                 setDirection(Directions.UP);
             } else if (keyHandler.downPressed) {
@@ -118,11 +117,23 @@ public class Player extends Entity {
             }
 
         }
+        // invincible time
+        if (invincible) {
+            invincibleCounter++;
+            if (invincibleCounter > 60){
+                invincible = false;
+                invincibleCounter = 0;
+            }
+        }
+
     }
 
     private void interactWithMonster(int index) {
         if (index > -1) {
-            life -= 1; //TODO: detailed calculations with stats
+            if (!invincible) {
+                life -= 1; //TODO: detailed calculations with stats
+                invincible = true;
+            }
         }
 
     }
@@ -167,6 +178,11 @@ public class Player extends Entity {
         }
 
         g2.drawImage(img, screenX, screenY, null); // screenX/Y -> player will be always in the middle
+
+        // debug
+        g2.setFont(new Font("Arial", Font.PLAIN, 20));
+        g2.setColor(Color.white);
+        g2.drawString("invincible Counter: " + invincibleCounter, 10, 400);
 
     }
 

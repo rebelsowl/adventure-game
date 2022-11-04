@@ -171,8 +171,8 @@ public class CollisionHandler {
      *
      * @param entity moving entity
      */
-    public void checkPlayer(Entity entity) {
-
+    public boolean checkPlayer(Entity entity) {
+        boolean contactPlayer = false;
         entity.getSolidArea().x = entity.getWorldX() + entity.getSolidArea().x;
         entity.getSolidArea().y = entity.getWorldY() + entity.getSolidArea().y;
 
@@ -195,6 +195,7 @@ public class CollisionHandler {
         }
         if (entity.getSolidArea().intersects(gp.getPlayer().getSolidArea())) {
             entity.setCollision(true);
+            contactPlayer = true;
         }
         entity.getSolidArea().x = entity.getSolidAreaDefaultX();
         entity.getSolidArea().y = entity.getSolidAreaDefaultY();
@@ -202,7 +203,7 @@ public class CollisionHandler {
         gp.getPlayer().getSolidArea().x = gp.getPlayer().getSolidAreaDefaultX();
         gp.getPlayer().getSolidArea().y = gp.getPlayer().getSolidAreaDefaultY();
 
-
+        return contactPlayer;
     }
 
 }
