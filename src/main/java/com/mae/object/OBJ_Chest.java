@@ -1,6 +1,7 @@
 package com.mae.object;
 
 import com.mae.config.Settings;
+import com.mae.panel.GamePanel;
 import com.mae.utility.UtilityTool;
 
 import javax.imageio.ImageIO;
@@ -8,7 +9,8 @@ import java.io.IOException;
 
 public class OBJ_Chest extends SuperObject {
 
-    public OBJ_Chest() {
+    public OBJ_Chest(GamePanel gp) {
+        super(gp);
         setName("Chest");
         try {
             setImage(UtilityTool.scaleImage(ImageIO.read(getClass().getResourceAsStream("/objects/chest.png")), Settings.TILE_SIZE, Settings.TILE_SIZE));

@@ -3,6 +3,7 @@ package com.mae.entity;
 import com.mae.config.Settings;
 import com.mae.constant.Enums;
 import com.mae.constant.Enums.Directions;
+import com.mae.interfaces.Drawable;
 import com.mae.panel.GamePanel;
 import lombok.Data;
 
@@ -12,7 +13,7 @@ import java.awt.image.BufferedImage;
 import static com.mae.config.Settings.TILE_SIZE;
 
 @Data
-public abstract class Entity { // parent class for Player, NPCs, Monsters
+public abstract class Entity implements Drawable { // parent class for Player, NPCs, Monsters
     protected GamePanel gp;
 
     protected int worldX, worldY; // coordinates

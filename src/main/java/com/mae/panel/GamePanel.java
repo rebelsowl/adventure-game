@@ -4,6 +4,7 @@ import com.mae.config.Settings;
 import com.mae.entity.Entity;
 import com.mae.entity.Player;
 import com.mae.handler.*;
+import com.mae.interfaces.Drawable;
 import com.mae.object.SuperObject;
 import com.mae.tile.TileManager;
 import com.mae.ui.UI;
@@ -11,6 +12,7 @@ import lombok.Data;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.ArrayList;
 
 @Data
 public class GamePanel extends JPanel implements Runnable {
@@ -28,12 +30,14 @@ public class GamePanel extends JPanel implements Runnable {
     public Player player = new Player(this, keyHandler);
     SoundHandler soundEffectHandler = new SoundHandler();
     SoundHandler themeMusicHandler = new SoundHandler();
-    ObjectHandler assetSetter = new ObjectHandler(this);
+    AssetHandler assetSetter = new AssetHandler(this);
     EventHandler eventHandler = new EventHandler(this);
     UI ui = new UI(this);
     Thread gameThread;
     SuperObject[] objects = new SuperObject[10];
     Entity[] npcs = new Entity[10];
+    ArrayList<Drawable> drawables = new ArrayList<>();
+
 
     // GAME STATE
     private int gameState;
@@ -118,23 +122,31 @@ public class GamePanel extends JPanel implements Runnable {
         if (gameState == TITLE_STATE) {
             ui.draw(g2);
         } else {
-
-            //performance test
-            // long drawStartTime = System.nanoTime();
-
             tileManager.draw(g2);
+
+            drawables.add(player);
             for (SuperObject obj : objects) {
                 if (obj != null) {
-                    obj.draw(g2, this);
+                    drawables.add(obj);
                 }
             }
             for (Entity entity : npcs) {
                 if (entity != null) {
-                    entity.draw(g2);
+                    drawables.add(entity);
                 }
-
             }
-            player.draw(g2);
+
+            drawables.sort((o1, o2) -> Integer.compare(o1.getWorldY(), o2.getWorldY()));
+
+            for (Drawable drawable: drawables) {
+                drawable.draw(g2);
+            }
+
+            drawables.clear();
+
+
+
+
             ui.draw(g2);
 
             // performance test
