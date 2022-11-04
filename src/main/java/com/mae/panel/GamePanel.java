@@ -36,6 +36,7 @@ public class GamePanel extends JPanel implements Runnable {
     Thread gameThread;
     SuperObject[] objects = new SuperObject[10];
     Entity[] npcs = new Entity[10];
+    Entity[] monsters = new Entity[20];
     ArrayList<Drawable> drawables = new ArrayList<>();
 
 
@@ -56,6 +57,7 @@ public class GamePanel extends JPanel implements Runnable {
     public void setupGame() {
         assetSetter.placeInitialObjectsInWorld();
         assetSetter.createNpcs();
+        assetSetter.createMonsters();
         gameState = TITLE_STATE;
 
     }
@@ -107,7 +109,11 @@ public class GamePanel extends JPanel implements Runnable {
             for (Entity npc : getNpcs()) {
                 if (npc != null)
                     npc.update();
+            }
 
+            for (Entity monster: getMonsters()) {
+                if (monster != null)
+                    monster.update();
             }
 
         } else if (gameState == PAUSE_STATE) {
@@ -134,6 +140,12 @@ public class GamePanel extends JPanel implements Runnable {
                 if (entity != null) {
                     drawables.add(entity);
                 }
+            }
+
+            for (Entity monster: monsters) {
+                if (monster != null)
+                    drawables.add(monster);
+
             }
 
             drawables.sort((o1, o2) -> Integer.compare(o1.getWorldY(), o2.getWorldY()));

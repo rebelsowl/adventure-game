@@ -84,41 +84,22 @@ public class CollisionHandler {
                 switch (entity.getDirection()) {
                     case UP:
                         entity.getSolidArea().y -= entity.getSpeed();
-                        if (entity.getSolidArea().intersects(obj.getSolidArea())) {
-                            if (obj.isCollision())
-                                entity.setCollision(true);
-                            if (player)
-                                index = i;
-                        }
                         break;
                     case DOWN:
                         entity.getSolidArea().y += entity.getSpeed();
-                        if (entity.getSolidArea().intersects(obj.getSolidArea())) {
-                            if (obj.isCollision())
-                                entity.setCollision(true);
-                            if (player)
-                                index = i;
-                        }
                         break;
                     case LEFT:
                         entity.getSolidArea().x -= entity.getSpeed();
-                        if (entity.getSolidArea().intersects(obj.getSolidArea())) {
-                            if (obj.isCollision())
-                                entity.setCollision(true);
-                            if (player)
-                                index = i;
-                        }
                         break;
                     case RIGHT:
                         entity.getSolidArea().x += entity.getSpeed();
-                        if (entity.getSolidArea().intersects(obj.getSolidArea())) {
-                            if (obj.isCollision())
-                                entity.setCollision(true);
-                            if (player)
-                                index = i;
-                        }
                         break;
-
+                }
+                if (entity.getSolidArea().intersects(obj.getSolidArea())) {
+                    if (obj.isCollision())
+                        entity.setCollision(true);
+                    if (player)
+                        index = i;
                 }
                 entity.getSolidArea().x = entity.getSolidAreaDefaultX();
                 entity.getSolidArea().y = entity.getSolidAreaDefaultY();
@@ -154,34 +135,25 @@ public class CollisionHandler {
                 switch (entity.getDirection()) {
                     case UP:
                         entity.getSolidArea().y -= entity.getSpeed();
-                        if (entity.getSolidArea().intersects(targetEnt.getSolidArea())) {
-                            entity.setCollision(true);
-                            index = i;
-                        }
                         break;
                     case DOWN:
                         entity.getSolidArea().y += entity.getSpeed();
-                        if (entity.getSolidArea().intersects(targetEnt.getSolidArea())) {
-                            entity.setCollision(true);
-                            index = i;
-                        }
                         break;
                     case LEFT:
                         entity.getSolidArea().x -= entity.getSpeed();
-                        if (entity.getSolidArea().intersects(targetEnt.getSolidArea())) {
-                            entity.setCollision(true);
-                            index = i;
-                        }
                         break;
                     case RIGHT:
                         entity.getSolidArea().x += entity.getSpeed();
-                        if (entity.getSolidArea().intersects(targetEnt.getSolidArea())) {
-                            entity.setCollision(true);
-                            index = i;
-                        }
                         break;
-
                 }
+
+                if (entity.getSolidArea().intersects(targetEnt.getSolidArea())) {
+                    if (targetEnt != entity) { // not to block itself
+                        entity.setCollision(true);
+                        index = i;
+                    }
+                }
+
                 entity.getSolidArea().x = entity.getSolidAreaDefaultX();
                 entity.getSolidArea().y = entity.getSolidAreaDefaultY();
 
@@ -196,9 +168,10 @@ public class CollisionHandler {
 
     /**
      * checks if entity is colliding with player
+     *
      * @param entity moving entity
      */
-    public void checkPlayer(Entity entity){
+    public void checkPlayer(Entity entity) {
 
         entity.getSolidArea().x = entity.getWorldX() + entity.getSolidArea().x;
         entity.getSolidArea().y = entity.getWorldY() + entity.getSolidArea().y;
@@ -209,30 +182,19 @@ public class CollisionHandler {
         switch (entity.getDirection()) {
             case UP:
                 entity.getSolidArea().y -= entity.getSpeed();
-                if (entity.getSolidArea().intersects(gp.getPlayer().getSolidArea())) {
-                    entity.setCollision(true);
-                }
                 break;
             case DOWN:
                 entity.getSolidArea().y += entity.getSpeed();
-                if (entity.getSolidArea().intersects(gp.getPlayer().getSolidArea())) {
-                    entity.setCollision(true);
-                }
                 break;
             case LEFT:
                 entity.getSolidArea().x -= entity.getSpeed();
-                if (entity.getSolidArea().intersects(gp.getPlayer().getSolidArea())) {
-                    entity.setCollision(true);
-
-                }
                 break;
             case RIGHT:
                 entity.getSolidArea().x += entity.getSpeed();
-                if (entity.getSolidArea().intersects(gp.getPlayer().getSolidArea())) {
-                    entity.setCollision(true);
-                }
                 break;
-
+        }
+        if (entity.getSolidArea().intersects(gp.getPlayer().getSolidArea())) {
+            entity.setCollision(true);
         }
         entity.getSolidArea().x = entity.getSolidAreaDefaultX();
         entity.getSolidArea().y = entity.getSolidAreaDefaultY();

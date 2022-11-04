@@ -23,7 +23,8 @@ public class Player extends Entity {
 
 
     public Player(GamePanel gp, KeyboardInputHandler keyHandler) {
-        this.gp = gp;
+        super(gp);
+
         this.keyHandler = keyHandler;
         // setting initial values
         setWorldX(TILE_SIZE * 23);
@@ -79,9 +80,13 @@ public class Player extends Entity {
             int objIndex = gp.getCollisionChecker().checkObject(this, true);
             interactWithObject(objIndex);
 
-            // EntityCollision
+            // Entity Collision
             int entityIndex = gp.getCollisionChecker().checkEntity(this, gp.getNpcs());
             interactWithEntity(entityIndex);
+
+            // Monster Collision
+            int monsterIndex = gp.getCollisionChecker().checkEntity(this, gp.getMonsters());
+            interactWithMonster(monsterIndex);
 
             // Check event
             gp.getEventHandler().checkEvent();
@@ -113,6 +118,13 @@ public class Player extends Entity {
             }
 
         }
+    }
+
+    private void interactWithMonster(int index) {
+        if (index > -1) {
+            life -= 1; //TODO: detailed calculations with stats
+        }
+
     }
 
 
