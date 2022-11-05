@@ -6,12 +6,14 @@ import com.mae.constant.Enums.Directions;
 import com.mae.interfaces.Drawable;
 import com.mae.panel.GamePanel;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
 import static com.mae.config.Settings.TILE_SIZE;
 
+@NoArgsConstructor
 @Data
 public abstract class Entity implements Drawable { // parent class for Player, NPCs, Monsters
     protected GamePanel gp;
@@ -22,7 +24,7 @@ public abstract class Entity implements Drawable { // parent class for Player, N
     protected BufferedImage up1, up2, down1, down2, left1, left2, right1, right2;
     protected int spriteCounter = 0;
     protected int spriteNumber = 0;
-    protected Enums.Directions direction;
+    protected Enums.Directions direction = Directions.DOWN;
 
     protected Rectangle solidArea = new Rectangle(0, 0, TILE_SIZE, TILE_SIZE);
     protected int solidAreaDefaultX;
@@ -30,13 +32,21 @@ public abstract class Entity implements Drawable { // parent class for Player, N
     protected boolean collision = false;
 
     protected int actionLockCounter = 0; // for npc AI's movement to be smooth
-
+    protected boolean invincible = false;
+    protected int invincibleCounter = 0;
     protected String[] dialogues = new String[20];
     protected int dialogueIndex = 0;
+    protected  int type; // 0 -> player 1 -> npc 2 -> monster
 
     // CHARACTER STATUS
     protected int maxLife;
     protected int life;
+
+
+
+    public Entity(GamePanel gp){
+        this.gp = gp;
+    }
 
     public void draw(Graphics2D g2) {
         BufferedImage img = null;
@@ -81,7 +91,15 @@ public abstract class Entity implements Drawable { // parent class for Player, N
         setCollision(false);
         gp.getCollisionChecker().checkTile(this);
         gp.getCollisionChecker().checkObject(this, false);
-        gp.getCollisionChecker().checkPlayer(this);
+        gp.getCollisionChecker().checkEntity(this, gp.getNpcs());
+        gp.getCollisionChecker().checkEntity(this, gp.getMonsters());
+        boolean playerContact = gp.getCollisionChecker().checkPlayer(this);
+        if (this.type == 2 && playerContact){
+            if (!gp.getPlayer().isInvincible()){
+                gp.getPlayer().life -=1;
+                gp.getPlayer().setInvincible(true);
+            }
+        }
 
         if (!isCollision()) {
             switch (direction) {

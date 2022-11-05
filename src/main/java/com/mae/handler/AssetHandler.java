@@ -3,6 +3,7 @@ package com.mae.handler;
 import com.mae.config.Settings;
 import com.mae.entity.Entity;
 import com.mae.entity.NPC_OldMan;
+import com.mae.entity.monster.MON_GreenSlime;
 import com.mae.object.OBJ_Door;
 import com.mae.panel.GamePanel;
 
@@ -42,4 +43,17 @@ public class AssetHandler {
         gp.setNpcs(arr);
     }
 
+    public void createMonsters(){
+        Entity slime1 = new MON_GreenSlime(gp);
+        slime1.setWorldX(TILE_SIZE * 23);
+        slime1.setWorldY(TILE_SIZE * 36);
+
+        gp.getMonsters()[0] = slime1;
+
+        Entity slime2 = new MON_GreenSlime(gp);
+        slime2.setWorldX(TILE_SIZE * 23);
+        slime2.setWorldY(TILE_SIZE * 37);
+
+        gp.getMonsters()[1] = slime2;
+    }
 }

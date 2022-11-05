@@ -14,7 +14,7 @@ import static com.mae.config.Settings.TILE_SIZE;
 public class NPC_OldMan extends Entity {
 
     public NPC_OldMan(GamePanel gp) {
-        this.gp = gp;
+        super(gp);
 
         setDirection(Directions.DOWN);
         setSpeed(1);
