@@ -177,12 +177,17 @@ public class Player extends Entity {
                 break;
         }
 
+        if (invincible)
+            g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.3f)); // make %70 transparent
+
         g2.drawImage(img, screenX, screenY, null); // screenX/Y -> player will be always in the middle
 
+        g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f)); // reset transparency
+
         // debug
-        g2.setFont(new Font("Arial", Font.PLAIN, 20));
-        g2.setColor(Color.white);
-        g2.drawString("invincible Counter: " + invincibleCounter, 10, 400);
+//        g2.setFont(new Font("Arial", Font.PLAIN, 20));
+//        g2.setColor(Color.white);
+//        g2.drawString("invincible Counter: " + invincibleCounter, 10, 400);
 
     }
 
