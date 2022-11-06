@@ -5,11 +5,14 @@ import com.mae.constant.Enums;
 import com.mae.constant.Enums.Directions;
 import com.mae.interfaces.Drawable;
 import com.mae.panel.GamePanel;
+import com.mae.utility.UtilityTool;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.io.IOException;
 
 import static com.mae.config.Settings.TILE_SIZE;
 
@@ -20,11 +23,12 @@ public abstract class Entity implements Drawable { // parent class for Player, N
 
     protected int worldX, worldY; // coordinates
     protected int speed;
+    protected Enums.Directions direction = Directions.DOWN;
 
     protected BufferedImage up1, up2, down1, down2, left1, left2, right1, right2;
     protected int spriteCounter = 0;
     protected int spriteNumber = 0;
-    protected Enums.Directions direction = Directions.DOWN;
+
 
     protected Rectangle solidArea = new Rectangle(0, 0, TILE_SIZE, TILE_SIZE);
     protected int solidAreaDefaultX;
@@ -148,4 +152,13 @@ public abstract class Entity implements Drawable { // parent class for Player, N
         }
     }
 
+    protected BufferedImage setImage(String imagePath, int width, int height) {
+        BufferedImage image = null;
+        try {
+            image = UtilityTool.scaleImage(ImageIO.read(getClass().getResourceAsStream(imagePath + ".png")), width, height);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return image;
+    }
 }

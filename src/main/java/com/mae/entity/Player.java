@@ -4,23 +4,24 @@ import com.mae.config.Settings;
 import com.mae.constant.Enums.Directions;
 import com.mae.handler.KeyboardInputHandler;
 import com.mae.panel.GamePanel;
-import com.mae.utility.UtilityTool;
 import lombok.Data;
 
-import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.IOException;
 
 import static com.mae.config.Settings.TILE_SIZE;
 
 @Data
 public class Player extends Entity {
 
+
     private final int screenX = (Settings.SCREEN_WIDTH / 2) - (TILE_SIZE / 2); // coordinates on the visible screen
     private final int screenY = (Settings.SCREEN_HEIGHT / 2) - (TILE_SIZE / 2); // subtracted the half tile size because frame starts at top left with 0,0
     KeyboardInputHandler keyHandler;
+    private BufferedImage attackUp1, attackUp2, attackRight1, attackRight2, attackLeft1, attackLeft2, attackDown1, attackDown2;
 
+
+    private boolean attacking = false;
 
     public Player(GamePanel gp, KeyboardInputHandler keyHandler) {
         super(gp);
@@ -44,23 +45,33 @@ public class Player extends Entity {
 
 
     public void initPlayerImages() {
-        try {
-            setUp1(UtilityTool.scaleImage(ImageIO.read(getClass().getResourceAsStream("/player/boy_up_1.png")), TILE_SIZE, TILE_SIZE));
-            setUp2(UtilityTool.scaleImage(ImageIO.read(getClass().getResourceAsStream("/player/boy_up_2.png")), TILE_SIZE, TILE_SIZE));
-            setLeft1(UtilityTool.scaleImage(ImageIO.read(getClass().getResourceAsStream("/player/boy_left_1.png")), TILE_SIZE, TILE_SIZE));
-            setLeft2(UtilityTool.scaleImage(ImageIO.read(getClass().getResourceAsStream("/player/boy_left_2.png")), TILE_SIZE, TILE_SIZE));
-            setRight1(UtilityTool.scaleImage(ImageIO.read(getClass().getResourceAsStream("/player/boy_right_1.png")), TILE_SIZE, TILE_SIZE));
-            setRight2(UtilityTool.scaleImage(ImageIO.read(getClass().getResourceAsStream("/player/boy_right_2.png")), TILE_SIZE, TILE_SIZE));
-            setDown1(UtilityTool.scaleImage(ImageIO.read(getClass().getResourceAsStream("/player/boy_down_1.png")), TILE_SIZE, TILE_SIZE));
-            setDown2(UtilityTool.scaleImage(ImageIO.read(getClass().getResourceAsStream("/player/boy_down_2.png")), TILE_SIZE, TILE_SIZE));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        setUp1(setImage("/player/boy_up_1", TILE_SIZE, TILE_SIZE));
+        setUp2(setImage("/player/boy_up_2", TILE_SIZE, TILE_SIZE));
+        setLeft1(setImage("/player/boy_left_1", TILE_SIZE, TILE_SIZE));
+        setLeft2(setImage("/player/boy_left_2", TILE_SIZE, TILE_SIZE));
+        setRight1(setImage("/player/boy_right_1", TILE_SIZE, TILE_SIZE));
+        setRight2(setImage("/player/boy_right_2", TILE_SIZE, TILE_SIZE));
+        setDown1(setImage("/player/boy_down_1", TILE_SIZE, TILE_SIZE));
+        setDown2(setImage("/player/boy_down_2", TILE_SIZE, TILE_SIZE));
+
+        setAttackUp1(setImage("/player/boy_attack_up_1", TILE_SIZE, TILE_SIZE * 2));
+        setAttackUp2(setImage("/player/boy_attack_up_2", TILE_SIZE, TILE_SIZE * 2));
+        setAttackLeft1(setImage("/player/boy_attack_left_1", TILE_SIZE * 2, TILE_SIZE));
+        setAttackLeft2(setImage("/player/boy_attack_left_2", TILE_SIZE * 2, TILE_SIZE));
+        setAttackRight1(setImage("/player/boy_attack_right_1", TILE_SIZE * 2, TILE_SIZE));
+        setAttackRight2(setImage("/player/boy_attack_right_2", TILE_SIZE * 2, TILE_SIZE));
+        setAttackDown1(setImage("/player/boy_attack_down_1", TILE_SIZE, TILE_SIZE * 2));
+        setAttackDown2(setImage("/player/boy_attack_down_2", TILE_SIZE, TILE_SIZE * 2));
     }
 
 
     public void update() {
-        if (movementKeyPressed() || interactKeyPressed()) {
+
+        if (keyHandler.spacePressed) {
+            setAttacking(true);
+            attack();
+
+        } else if (movementKeyPressed() || interactKeyPressed()) {
             if (keyHandler.upPressed) {
                 setDirection(Directions.UP);
             } else if (keyHandler.downPressed) {
@@ -90,10 +101,7 @@ public class Player extends Entity {
             // Check event
             gp.getEventHandler().checkEvent();
 
-
-            keyHandler.enterPressed = false;
-
-            if (!isCollision()) {
+            if (!isCollision() && !interactKeyPressed()) {
                 switch (direction) {
                     case UP:
                         setWorldY(getWorldY() - getSpeed());
@@ -110,6 +118,9 @@ public class Player extends Entity {
                 }
             }
 
+            keyHandler.enterPressed = false;
+
+
             spriteCounter++; // for movement animation
             if (spriteCounter > 12) {
                 spriteNumber = (spriteNumber + 1) % 2;
@@ -120,11 +131,28 @@ public class Player extends Entity {
         // invincible time
         if (invincible) {
             invincibleCounter++;
-            if (invincibleCounter > 60){
+            if (invincibleCounter > 60) {
                 invincible = false;
                 invincibleCounter = 0;
             }
         }
+
+    }
+
+    private void attack() {
+        System.out.println("attacking");
+        spriteCounter++;
+        if (spriteCounter <= 5) {
+            spriteNumber = 1;
+        } else if (spriteCounter < 25) {
+            spriteNumber = 2;
+        } else {
+            spriteNumber = 1;
+            spriteCounter = 0;
+            attacking = false;
+            keyHandler.spacePressed = false;
+        }
+
 
     }
 
@@ -160,20 +188,47 @@ public class Player extends Entity {
 
         switch (direction) {
             case UP:
-                if (spriteNumber == 1) img = up1;
-                else img = up2;
+                if (attacking) {
+                    if (spriteNumber == 1)
+                        img = attackUp1;
+                    else img = attackUp2;
+                } else {
+                    if (spriteNumber == 1) img = up1;
+                    else img = up2;
+                }
                 break;
             case DOWN:
-                if (spriteNumber == 1) img = down1;
-                else img = down2;
+                if (attacking) {
+                    if (spriteNumber == 1)
+                        img = attackDown1;
+                    else
+                        img = attackDown2;
+                } else {
+                    if (spriteNumber == 1) img = down1;
+                    else img = down2;
+                }
                 break;
             case LEFT:
-                if (spriteNumber == 1) img = left1;
-                else img = left2;
+                if (attacking) {
+                    if (spriteNumber == 1)
+                        img = attackLeft1;
+                    else
+                        img = attackLeft2;
+                } else {
+                    if (spriteNumber == 1) img = left1;
+                    else img = left2;
+                }
                 break;
             case RIGHT:
-                if (spriteNumber == 1) img = right1;
-                else img = right2;
+                if (attacking) {
+                    if (spriteNumber == 1)
+                        img = attackRight1;
+                    else
+                        img = attackRight2;
+                } else {
+                    if (spriteNumber == 1) img = right1;
+                    else img = right2;
+                }
                 break;
         }
 
@@ -195,7 +250,7 @@ public class Player extends Entity {
         return keyHandler.upPressed || keyHandler.downPressed || keyHandler.leftPressed || keyHandler.rightPressed;
     }
 
-    private boolean interactKeyPressed(){
+    private boolean interactKeyPressed() {
         return keyHandler.enterPressed;
     }
 
