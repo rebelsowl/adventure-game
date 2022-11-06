@@ -60,7 +60,7 @@ public class Player extends Entity {
 
 
     public void update() {
-        if (movementKeyPressed()) {
+        if (movementKeyPressed() || interactKeyPressed()) {
             if (keyHandler.upPressed) {
                 setDirection(Directions.UP);
             } else if (keyHandler.downPressed) {
@@ -194,6 +194,11 @@ public class Player extends Entity {
     private boolean movementKeyPressed() {
         return keyHandler.upPressed || keyHandler.downPressed || keyHandler.leftPressed || keyHandler.rightPressed;
     }
+
+    private boolean interactKeyPressed(){
+        return keyHandler.enterPressed;
+    }
+
 
     //TODO: add focus lost halt  other vids - Episode #07 dk 17
 }
