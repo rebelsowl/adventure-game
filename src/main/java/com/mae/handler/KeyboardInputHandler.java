@@ -9,7 +9,7 @@ import java.awt.event.KeyListener;
 public class KeyboardInputHandler implements KeyListener {
 
     private final GamePanel gp;
-    public boolean upPressed, downPressed, leftPressed, rightPressed, enterPressed;
+    public boolean upPressed, downPressed, leftPressed, rightPressed, enterPressed, spacePressed;
 
     public KeyboardInputHandler(GamePanel gp) {
         this.gp = gp;
@@ -58,9 +58,11 @@ public class KeyboardInputHandler implements KeyListener {
             if (e.getKeyCode() == KeyEvent.VK_ENTER || e.getKeyCode() == KeyEvent.VK_E)
                 enterPressed = true;
 
+            if (e.getKeyCode() == KeyEvent.VK_SPACE)
+                spacePressed = true;
+
             if (e.getKeyCode() == KeyEvent.VK_P)
                 gp.setGameState(GamePanel.PAUSE_STATE);
-
 
         } else if (gp.getGameState() == GamePanel.PAUSE_STATE) { // PAUSE_STATE
             if (e.getKeyCode() == KeyEvent.VK_P)

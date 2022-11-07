@@ -4,23 +4,25 @@ import com.mae.config.Settings;
 import com.mae.constant.Enums.Directions;
 import com.mae.handler.KeyboardInputHandler;
 import com.mae.panel.GamePanel;
-import com.mae.utility.UtilityTool;
 import lombok.Data;
 
-import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.IOException;
 
 import static com.mae.config.Settings.TILE_SIZE;
 
 @Data
 public class Player extends Entity {
 
+
     private final int screenX = (Settings.SCREEN_WIDTH / 2) - (TILE_SIZE / 2); // coordinates on the visible screen
     private final int screenY = (Settings.SCREEN_HEIGHT / 2) - (TILE_SIZE / 2); // subtracted the half tile size because frame starts at top left with 0,0
     KeyboardInputHandler keyHandler;
+    private BufferedImage attackUp1, attackUp2, attackRight1, attackRight2, attackLeft1, attackLeft2, attackDown1, attackDown2;
 
+
+    private boolean attacking = false;
+    private boolean hitSoundEffectPlaying = false;
 
     public Player(GamePanel gp, KeyboardInputHandler keyHandler) {
         super(gp);
@@ -39,28 +41,42 @@ public class Player extends Entity {
         setSolidAreaDefaultX(solidArea.x);
         setSolidAreaDefaultY(solidArea.y);
 
+        attackArea.width = 36;
+        attackArea.height = 36;
+
         initPlayerImages();
     }
 
 
     public void initPlayerImages() {
-        try {
-            setUp1(UtilityTool.scaleImage(ImageIO.read(getClass().getResourceAsStream("/player/boy_up_1.png")), TILE_SIZE, TILE_SIZE));
-            setUp2(UtilityTool.scaleImage(ImageIO.read(getClass().getResourceAsStream("/player/boy_up_2.png")), TILE_SIZE, TILE_SIZE));
-            setLeft1(UtilityTool.scaleImage(ImageIO.read(getClass().getResourceAsStream("/player/boy_left_1.png")), TILE_SIZE, TILE_SIZE));
-            setLeft2(UtilityTool.scaleImage(ImageIO.read(getClass().getResourceAsStream("/player/boy_left_2.png")), TILE_SIZE, TILE_SIZE));
-            setRight1(UtilityTool.scaleImage(ImageIO.read(getClass().getResourceAsStream("/player/boy_right_1.png")), TILE_SIZE, TILE_SIZE));
-            setRight2(UtilityTool.scaleImage(ImageIO.read(getClass().getResourceAsStream("/player/boy_right_2.png")), TILE_SIZE, TILE_SIZE));
-            setDown1(UtilityTool.scaleImage(ImageIO.read(getClass().getResourceAsStream("/player/boy_down_1.png")), TILE_SIZE, TILE_SIZE));
-            setDown2(UtilityTool.scaleImage(ImageIO.read(getClass().getResourceAsStream("/player/boy_down_2.png")), TILE_SIZE, TILE_SIZE));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        setUp1(setImage("/player/boy_up_1", TILE_SIZE, TILE_SIZE));
+        setUp2(setImage("/player/boy_up_2", TILE_SIZE, TILE_SIZE));
+        setLeft1(setImage("/player/boy_left_1", TILE_SIZE, TILE_SIZE));
+        setLeft2(setImage("/player/boy_left_2", TILE_SIZE, TILE_SIZE));
+        setRight1(setImage("/player/boy_right_1", TILE_SIZE, TILE_SIZE));
+        setRight2(setImage("/player/boy_right_2", TILE_SIZE, TILE_SIZE));
+        setDown1(setImage("/player/boy_down_1", TILE_SIZE, TILE_SIZE));
+        setDown2(setImage("/player/boy_down_2", TILE_SIZE, TILE_SIZE));
+
+        setAttackUp1(setImage("/player/boy_attack_up_1", TILE_SIZE, TILE_SIZE * 2));
+        setAttackUp2(setImage("/player/boy_attack_up_2", TILE_SIZE, TILE_SIZE * 2));
+        setAttackLeft1(setImage("/player/boy_attack_left_1", TILE_SIZE * 2, TILE_SIZE));
+        setAttackLeft2(setImage("/player/boy_attack_left_2", TILE_SIZE * 2, TILE_SIZE));
+        setAttackRight1(setImage("/player/boy_attack_right_1", TILE_SIZE * 2, TILE_SIZE));
+        setAttackRight2(setImage("/player/boy_attack_right_2", TILE_SIZE * 2, TILE_SIZE));
+        setAttackDown1(setImage("/player/boy_attack_down_1", TILE_SIZE, TILE_SIZE * 2));
+        setAttackDown2(setImage("/player/boy_attack_down_2", TILE_SIZE, TILE_SIZE * 2));
     }
 
 
     public void update() {
-        if (movementKeyPressed()) {
+
+        if (keyHandler.spacePressed) {
+            setAttacking(true);
+            attack();
+
+
+        } else if (movementKeyPressed() || interactKeyPressed()) {
             if (keyHandler.upPressed) {
                 setDirection(Directions.UP);
             } else if (keyHandler.downPressed) {
@@ -90,10 +106,7 @@ public class Player extends Entity {
             // Check event
             gp.getEventHandler().checkEvent();
 
-
-            keyHandler.enterPressed = false;
-
-            if (!isCollision()) {
+            if (!isCollision() && !interactKeyPressed()) {
                 switch (direction) {
                     case UP:
                         setWorldY(getWorldY() - getSpeed());
@@ -110,6 +123,9 @@ public class Player extends Entity {
                 }
             }
 
+            keyHandler.enterPressed = false;
+
+
             spriteCounter++; // for movement animation
             if (spriteCounter > 12) {
                 spriteNumber = (spriteNumber + 1) % 2;
@@ -120,9 +136,79 @@ public class Player extends Entity {
         // invincible time
         if (invincible) {
             invincibleCounter++;
-            if (invincibleCounter > 60){
+            if (invincibleCounter > 60) {
                 invincible = false;
                 invincibleCounter = 0;
+            }
+        }
+
+    }
+
+    private void attack() {
+
+        if (! hitSoundEffectPlaying) {
+            gp.playSoundEffect(7);
+            hitSoundEffectPlaying = true;
+        }
+
+        spriteCounter++;
+        if (spriteCounter <= 5) {
+            spriteNumber = 1;
+        } else if (spriteCounter < 25) {
+            spriteNumber = 2;
+
+            // save current positions
+            int currentWorldX = worldX;
+            int currentWorldY = worldY;
+            int solidAreaWidth = solidArea.width;
+            int solidAreaHeight = solidArea.height;
+
+            // adjust for the attack
+            switch (direction) {
+                case UP:
+                    worldY -= attackArea.height;
+                    break;
+                case LEFT:
+                    worldX -= attackArea.width;
+                    break;
+                case RIGHT:
+                    worldX += attackArea.width;
+                    break;
+                case DOWN:
+                    worldY += attackArea.height;
+                    break;
+            }
+
+            // attack area becomes solid area for collision checker to check
+            solidArea.width = attackArea.width;
+            solidArea.height = attackArea.height;
+
+            int monsterIndex = gp.getCollisionChecker().checkEntity(this, gp.getMonsters());
+            hitMonster(monsterIndex);
+
+            worldX = currentWorldX;
+            worldY = currentWorldY;
+            solidArea.width = solidAreaWidth;
+            solidArea.height = solidAreaHeight;
+        } else {
+            spriteNumber = 1;
+            spriteCounter = 0;
+            attacking = false;
+            keyHandler.spacePressed = false;
+            hitSoundEffectPlaying = false;
+        }
+
+    }
+
+    private void hitMonster(int index) {
+        if (index > -1) {
+            if (!gp.getMonsters()[index].isInvincible()) {
+                gp.playSoundEffect(6);
+                gp.getMonsters()[index].life -= 1;
+                gp.getMonsters()[index].setInvincible(true);
+                gp.getMonsters()[index].damageReaction();
+                if (gp.getMonsters()[index].getLife() <= 0)
+                    gp.getMonsters()[index].setDying(true);
             }
         }
 
@@ -131,6 +217,7 @@ public class Player extends Entity {
     private void interactWithMonster(int index) {
         if (index > -1) {
             if (!invincible) {
+                gp.playSoundEffect(5);
                 life -= 1; //TODO: detailed calculations with stats
                 invincible = true;
             }
@@ -158,29 +245,61 @@ public class Player extends Entity {
     public void draw(Graphics2D g2) {
         BufferedImage img = null;
 
+        int tempScreenX = screenX;
+        int tempScreenY = screenY;
+
         switch (direction) {
             case UP:
-                if (spriteNumber == 1) img = up1;
-                else img = up2;
+                if (attacking) {
+                    tempScreenY = screenY - TILE_SIZE;
+                    if (spriteNumber == 1)
+                        img = attackUp1;
+                    else img = attackUp2;
+                } else {
+                    if (spriteNumber == 1) img = up1;
+                    else img = up2;
+                }
                 break;
             case DOWN:
-                if (spriteNumber == 1) img = down1;
-                else img = down2;
+                if (attacking) {
+                    if (spriteNumber == 1)
+                        img = attackDown1;
+                    else
+                        img = attackDown2;
+                } else {
+                    if (spriteNumber == 1) img = down1;
+                    else img = down2;
+                }
                 break;
             case LEFT:
-                if (spriteNumber == 1) img = left1;
-                else img = left2;
+                if (attacking) {
+                    tempScreenX = screenX - TILE_SIZE;
+                    if (spriteNumber == 1)
+                        img = attackLeft1;
+                    else
+                        img = attackLeft2;
+                } else {
+                    if (spriteNumber == 1) img = left1;
+                    else img = left2;
+                }
                 break;
             case RIGHT:
-                if (spriteNumber == 1) img = right1;
-                else img = right2;
+                if (attacking) {
+                    if (spriteNumber == 1)
+                        img = attackRight1;
+                    else
+                        img = attackRight2;
+                } else {
+                    if (spriteNumber == 1) img = right1;
+                    else img = right2;
+                }
                 break;
         }
 
         if (invincible)
             g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.3f)); // make %70 transparent
 
-        g2.drawImage(img, screenX, screenY, null); // screenX/Y -> player will be always in the middle
+        g2.drawImage(img, tempScreenX, tempScreenY, null); // screenX/Y -> player will be always in the middle
 
         g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f)); // reset transparency
 
@@ -194,6 +313,11 @@ public class Player extends Entity {
     private boolean movementKeyPressed() {
         return keyHandler.upPressed || keyHandler.downPressed || keyHandler.leftPressed || keyHandler.rightPressed;
     }
+
+    private boolean interactKeyPressed() {
+        return keyHandler.enterPressed;
+    }
+
 
     //TODO: add focus lost halt  other vids - Episode #07 dk 17
 }

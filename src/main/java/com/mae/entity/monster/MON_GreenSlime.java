@@ -68,4 +68,9 @@ public class MON_GreenSlime extends Entity {
         }
     }
 
+    public void damageReaction(){
+        actionLockCounter = 0;
+        direction = gp.getPlayer().getDirection(); // move away from the player
+    }
+
 }
