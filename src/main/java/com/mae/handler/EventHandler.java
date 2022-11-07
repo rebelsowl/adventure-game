@@ -59,7 +59,7 @@ public class EventHandler {
             gp.setGameState(gameState);
             gp.getUi().setCurrentDialogue("You fall into a pit!");
             gp.getPlayer().setLife(gp.getPlayer().getLife() - 1);
-
+            gp.playSoundEffect(6);
 //            eventRectangle[col][row].setEventDone(true); // one time event
             canTriggerEvent = false;
         }
@@ -92,6 +92,7 @@ public class EventHandler {
     public void poolHealingEvent(int gameState) {
         if (gp.getKeyHandler().enterPressed) {
             gp.setGameState(gameState);
+            gp.playSoundEffect(2);
             gp.getUi().setCurrentDialogue("You drink the water. \nYour life has been recovered.");
             gp.getPlayer().setLife(gp.getPlayer().getMaxLife());
         }
