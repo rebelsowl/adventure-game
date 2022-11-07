@@ -35,20 +35,21 @@ public abstract class Entity implements Drawable { // parent class for Player, N
     protected int solidAreaDefaultY;
     protected boolean collision = false;
 
+    protected Rectangle attackArea = new Rectangle(0, 0, 0, 0);
+
     protected int actionLockCounter = 0; // for npc AI's movement to be smooth
     protected boolean invincible = false;
     protected int invincibleCounter = 0;
     protected String[] dialogues = new String[20];
     protected int dialogueIndex = 0;
-    protected  int type; // 0 -> player 1 -> npc 2 -> monster
+    protected int type; // 0 -> player 1 -> npc 2 -> monster
 
     // CHARACTER STATUS
     protected int maxLife;
     protected int life;
 
 
-
-    public Entity(GamePanel gp){
+    public Entity(GamePanel gp) {
         this.gp = gp;
     }
 
@@ -81,7 +82,13 @@ public abstract class Entity implements Drawable { // parent class for Player, N
                     else img = right2;
                     break;
             }
+
+            if (invincible)
+                g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.4f)); // make %40 transparent
+
             g2.drawImage(img, screenX, screenY, null);
+
+            g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f)); // reset transparency
         }
 
     }
@@ -98,9 +105,9 @@ public abstract class Entity implements Drawable { // parent class for Player, N
         gp.getCollisionChecker().checkEntity(this, gp.getNpcs());
         gp.getCollisionChecker().checkEntity(this, gp.getMonsters());
         boolean playerContact = gp.getCollisionChecker().checkPlayer(this);
-        if (this.type == 2 && playerContact){
-            if (!gp.getPlayer().isInvincible()){
-                gp.getPlayer().life -=1;
+        if (this.type == 2 && playerContact) {
+            if (!gp.getPlayer().isInvincible()) {
+                gp.getPlayer().life -= 1;
                 gp.getPlayer().setInvincible(true);
             }
         }
@@ -126,6 +133,15 @@ public abstract class Entity implements Drawable { // parent class for Player, N
         if (spriteCounter > 12) {
             spriteNumber = (spriteNumber + 1) % 2;
             spriteCounter = 0;
+        }
+
+        // invincible time
+        if (invincible) {
+            invincibleCounter++;
+            if (invincibleCounter > 40) {
+                invincible = false;
+                invincibleCounter = 0;
+            }
         }
 
     }

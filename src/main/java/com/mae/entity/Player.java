@@ -40,6 +40,9 @@ public class Player extends Entity {
         setSolidAreaDefaultX(solidArea.x);
         setSolidAreaDefaultY(solidArea.y);
 
+        attackArea.width = 36;
+        attackArea.height = 36;
+
         initPlayerImages();
     }
 
@@ -140,12 +143,45 @@ public class Player extends Entity {
     }
 
     private void attack() {
-        System.out.println("attacking");
         spriteCounter++;
         if (spriteCounter <= 5) {
             spriteNumber = 1;
         } else if (spriteCounter < 25) {
             spriteNumber = 2;
+
+            // save current positions
+            int currentWorldX = worldX;
+            int currentWorldY = worldY;
+            int solidAreaWidth = solidArea.width;
+            int solidAreaHeight = solidArea.height;
+
+            // adjust for the attack
+            switch (direction) {
+                case UP:
+                    worldY -= attackArea.height;
+                    break;
+                case LEFT:
+                    worldX -= attackArea.width;
+                    break;
+                case RIGHT:
+                    worldX += attackArea.width;
+                    break;
+                case DOWN:
+                    worldY += attackArea.height;
+                    break;
+            }
+
+            // attack area becomes solid area for collision checker to check
+            solidArea.width = attackArea.width;
+            solidArea.height = attackArea.height;
+
+            int monsterIndex = gp.getCollisionChecker().checkEntity(this, gp.getMonsters());
+            hitMonster(monsterIndex);
+
+            worldX = currentWorldX;
+            worldY = currentWorldY;
+            solidArea.width = solidAreaWidth;
+            solidArea.height = solidAreaHeight;
         } else {
             spriteNumber = 1;
             spriteCounter = 0;
@@ -153,6 +189,17 @@ public class Player extends Entity {
             keyHandler.spacePressed = false;
         }
 
+    }
+
+    private void hitMonster(int index) {
+        if (index > -1) {
+            if (!gp.getMonsters()[index].isInvincible()) {
+                gp.getMonsters()[index].life -= 1;
+                gp.getMonsters()[index].setInvincible(true);
+                if (gp.getMonsters()[index].getLife() <= 0)
+                    gp.getMonsters()[index] = null;
+            }
+        }
 
     }
 
@@ -186,9 +233,13 @@ public class Player extends Entity {
     public void draw(Graphics2D g2) {
         BufferedImage img = null;
 
+        int tempScreenX = screenX;
+        int tempScreenY = screenY;
+
         switch (direction) {
             case UP:
                 if (attacking) {
+                    tempScreenY = screenY - TILE_SIZE;
                     if (spriteNumber == 1)
                         img = attackUp1;
                     else img = attackUp2;
@@ -210,6 +261,7 @@ public class Player extends Entity {
                 break;
             case LEFT:
                 if (attacking) {
+                    tempScreenX = screenX - TILE_SIZE;
                     if (spriteNumber == 1)
                         img = attackLeft1;
                     else
@@ -235,7 +287,7 @@ public class Player extends Entity {
         if (invincible)
             g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.3f)); // make %70 transparent
 
-        g2.drawImage(img, screenX, screenY, null); // screenX/Y -> player will be always in the middle
+        g2.drawImage(img, tempScreenX, tempScreenY, null); // screenX/Y -> player will be always in the middle
 
         g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f)); // reset transparency
 
