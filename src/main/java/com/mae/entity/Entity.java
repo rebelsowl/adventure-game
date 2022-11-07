@@ -48,10 +48,13 @@ public abstract class Entity implements Drawable { // parent class for Player, N
     protected int maxLife;
     protected int life;
 
+    //TODO: abstract to monster parent class
     protected boolean alive = true;
     protected boolean dying = false;
     protected int dyingCounter = 0;
 
+    protected boolean hpBarOn = false;
+    protected int hpBarCounter = 0;
 
     public Entity(GamePanel gp) {
         this.gp = gp;
@@ -87,8 +90,32 @@ public abstract class Entity implements Drawable { // parent class for Player, N
                     break;
             }
 
-            if (invincible)
+            // Monster HP Bar
+            if (type == 2 && hpBarOn) {
+                double oneScale = (double) TILE_SIZE / maxLife;
+                double hpBarValue = oneScale * life;
+
+
+                g2.setColor(new Color(35, 35, 35));
+                g2.fillRect(screenX - 1, screenY - 16, TILE_SIZE + 2, 12);
+
+                g2.setColor(new Color(255, 0, 30));
+                g2.fillRect(screenX, screenY - 15, (int) hpBarValue, 10);
+
+                hpBarCounter++;
+
+                if (hpBarCounter > 600) {
+                    hpBarCounter = 0;
+                    hpBarOn = false;
+                }
+            }
+
+            if (invincible) {
+                hpBarOn = true;
+                hpBarCounter = 0;
                 changeAlpha(g2, 0.4f); // make %40 transparent
+
+            }
 
             if (dying) {
                 dyingAnimation(g2);
@@ -129,8 +156,8 @@ public abstract class Entity implements Drawable { // parent class for Player, N
         g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha));
     }
 
-    public void setAction() {
-    }
+    public void setAction() {}
+    public void damageReaction(){}
 
     public void update() {
         setAction();

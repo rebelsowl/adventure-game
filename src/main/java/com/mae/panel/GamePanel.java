@@ -115,10 +115,11 @@ public class GamePanel extends JPanel implements Runnable {
             for (int i = 0; i < monsters.length; i++) {
 
                 if (monsters[i] != null) {
-                    if (monsters[i].isAlive() && ! monsters[i].isDying())
+                    if (monsters[i].isAlive() && !monsters[i].isDying())
                         monsters[i].update();
-                    else
+                    if (!monsters[i].isAlive())
                         monsters[i] = null;
+
                 }
             }
 
@@ -148,7 +149,7 @@ public class GamePanel extends JPanel implements Runnable {
                 }
             }
 
-            for (Entity monster: monsters) {
+            for (Entity monster : monsters) {
                 if (monster != null)
                     drawables.add(monster);
 
@@ -156,13 +157,11 @@ public class GamePanel extends JPanel implements Runnable {
 
             drawables.sort((o1, o2) -> Integer.compare(o1.getWorldY(), o2.getWorldY()));
 
-            for (Drawable drawable: drawables) {
+            for (Drawable drawable : drawables) {
                 drawable.draw(g2);
             }
 
             drawables.clear();
-
-
 
 
             ui.draw(g2);
