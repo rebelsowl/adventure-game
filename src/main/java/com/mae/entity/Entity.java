@@ -48,6 +48,10 @@ public abstract class Entity implements Drawable { // parent class for Player, N
     protected int maxLife;
     protected int life;
 
+    protected boolean alive = true;
+    protected boolean dying = false;
+    protected int dyingCounter = 0;
+
 
     public Entity(GamePanel gp) {
         this.gp = gp;
@@ -84,13 +88,45 @@ public abstract class Entity implements Drawable { // parent class for Player, N
             }
 
             if (invincible)
-                g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.4f)); // make %40 transparent
+                changeAlpha(g2, 0.4f); // make %40 transparent
+
+            if (dying) {
+                dyingAnimation(g2);
+            }
 
             g2.drawImage(img, screenX, screenY, null);
 
-            g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f)); // reset transparency
+            changeAlpha(g2, 1f); // reset transparency
         }
 
+    }
+
+    private void dyingAnimation(Graphics2D g2) {
+        dyingCounter++;
+        int interval = 5; //frames
+        if (dyingCounter <= interval)
+            changeAlpha(g2, 0f); // make %100 transparent
+        else if (dyingCounter <= interval * 2)
+            changeAlpha(g2, 1f);
+        else if (dyingCounter <= interval * 3)
+            changeAlpha(g2, 0f);
+        else if (dyingCounter <= interval * 4)
+            changeAlpha(g2, 1f);
+        else if (dyingCounter <= interval * 5)
+            changeAlpha(g2, 0f);
+        else if (dyingCounter <= interval * 6)
+            changeAlpha(g2, 1f);
+        else if (dyingCounter <= interval * 7)
+            changeAlpha(g2, 0f);
+        else {
+            dying = false;
+            alive = false;
+        }
+
+    }
+
+    private void changeAlpha(Graphics2D g2, float alpha) {
+        g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha));
     }
 
     public void setAction() {

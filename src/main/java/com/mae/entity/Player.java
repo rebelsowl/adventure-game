@@ -197,7 +197,7 @@ public class Player extends Entity {
                 gp.getMonsters()[index].life -= 1;
                 gp.getMonsters()[index].setInvincible(true);
                 if (gp.getMonsters()[index].getLife() <= 0)
-                    gp.getMonsters()[index] = null;
+                    gp.getMonsters()[index].setDying(true);
             }
         }
 
