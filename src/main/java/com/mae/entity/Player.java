@@ -22,6 +22,7 @@ public class Player extends Entity {
 
 
     private boolean attacking = false;
+    private boolean hitSoundEffectPlaying = false;
 
     public Player(GamePanel gp, KeyboardInputHandler keyHandler) {
         super(gp);
@@ -73,6 +74,7 @@ public class Player extends Entity {
         if (keyHandler.spacePressed) {
             setAttacking(true);
             attack();
+
 
         } else if (movementKeyPressed() || interactKeyPressed()) {
             if (keyHandler.upPressed) {
@@ -143,6 +145,12 @@ public class Player extends Entity {
     }
 
     private void attack() {
+
+        if (! hitSoundEffectPlaying) {
+            gp.playSoundEffect(7);
+            hitSoundEffectPlaying = true;
+        }
+
         spriteCounter++;
         if (spriteCounter <= 5) {
             spriteNumber = 1;
@@ -187,6 +195,7 @@ public class Player extends Entity {
             spriteCounter = 0;
             attacking = false;
             keyHandler.spacePressed = false;
+            hitSoundEffectPlaying = false;
         }
 
     }
@@ -194,6 +203,7 @@ public class Player extends Entity {
     private void hitMonster(int index) {
         if (index > -1) {
             if (!gp.getMonsters()[index].isInvincible()) {
+                gp.playSoundEffect(6);
                 gp.getMonsters()[index].life -= 1;
                 gp.getMonsters()[index].setInvincible(true);
                 if (gp.getMonsters()[index].getLife() <= 0)
@@ -206,6 +216,7 @@ public class Player extends Entity {
     private void interactWithMonster(int index) {
         if (index > -1) {
             if (!invincible) {
+                gp.playSoundEffect(5);
                 life -= 1; //TODO: detailed calculations with stats
                 invincible = true;
             }

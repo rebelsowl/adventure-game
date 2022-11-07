@@ -143,6 +143,7 @@ public abstract class Entity implements Drawable { // parent class for Player, N
         boolean playerContact = gp.getCollisionChecker().checkPlayer(this);
         if (this.type == 2 && playerContact) {
             if (!gp.getPlayer().isInvincible()) {
+                gp.playSoundEffect(6);
                 gp.getPlayer().life -= 1;
                 gp.getPlayer().setInvincible(true);
             }
