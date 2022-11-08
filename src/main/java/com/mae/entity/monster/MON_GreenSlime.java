@@ -17,10 +17,13 @@ public class MON_GreenSlime extends Entity {
 
     public MON_GreenSlime(GamePanel gp) {
         super(gp);
+        setName("Green Slime");
         setSpeed(1);
         setMaxLife(4);
         setLife(getMaxLife());
         setType(2);
+
+        setExp(2);
 
         solidArea.x = 3;
         solidArea.y = 18;
@@ -28,6 +31,9 @@ public class MON_GreenSlime extends Entity {
         solidArea.height = 30;
         setSolidAreaDefaultX(solidArea.x);
         setSolidAreaDefaultY(solidArea.y);
+
+        attack = 5;
+        defence = 0;
 
         initImages();
     }

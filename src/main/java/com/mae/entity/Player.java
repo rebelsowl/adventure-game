@@ -26,9 +26,7 @@ public class Player extends Entity {
     private int level;
     private int strength;
     private int dexterity;
-    private int attack;
-    private int defence;
-    private int exp;
+
     private int nextLvlExp;
     private int coin;
 
@@ -238,26 +236,43 @@ public class Player extends Entity {
         if (index > -1) {
             if (!gp.getMonsters()[index].isInvincible()) {
                 gp.playSoundEffect(6);
-                gp.getMonsters()[index].life -= 1;
+
+                int damage = getFinalAttackValue()  - gp.getMonsters()[index].getDefence();
+                damage = damage < 0 ? 0 : damage;
+                gp.getUi().addMessage(damage + " damage!");
+                gp.getMonsters()[index].life -= damage;
                 gp.getMonsters()[index].setInvincible(true);
                 gp.getMonsters()[index].damageReaction();
-                if (gp.getMonsters()[index].getLife() <= 0)
+                if (gp.getMonsters()[index].getLife() <= 0) {
                     gp.getMonsters()[index].setDying(true);
+                    gp.getUi().addMessage("Killed the " + gp.getMonsters()[index].getName() + "!");
+                    gp.getUi().addMessage("Exp + " + gp.getMonsters()[index].getExp());
+
+                    exp += gp.getMonsters()[index].getExp(); // TODO: status abstraction --> exp handler
+                    checkLevelUp();
+                }
             }
         }
 
     }
+
+
 
     private void interactWithMonster(int index) {
         if (index > -1) {
             if (!invincible) {
                 gp.playSoundEffect(5);
-                life -= 1; //TODO: detailed calculations with stats
+
+                int damage = gp.getMonsters()[index].getAttack()  - getDefence();
+                damage = damage < 0 ? 0 : damage;
+                life -= damage;
                 invincible = true;
             }
         }
 
     }
+
+
 
 
     public void interactWithObject(int index) {
@@ -341,6 +356,27 @@ public class Player extends Entity {
 //        g2.setFont(new Font("Arial", Font.PLAIN, 20));
 //        g2.setColor(Color.white);
 //        g2.drawString("invincible Counter: " + invincibleCounter, 10, 400);
+
+    }
+
+    private void checkLevelUp() {
+        if (exp >= nextLvlExp) {
+            level +=1;
+            nextLvlExp *= 2;
+
+            maxLife += 2;
+            setLife(maxLife);
+            strength ++;
+            dexterity ++;
+
+            attack = getFinalAttackValue();
+            defence = getFinalDefenceValue();
+
+            gp.playSoundEffect(8);
+            gp.setGameState(GamePanel.DIALOGUE_STATE);
+            gp.getUi().setCurrentDialogue("You are level " + level + " now!\n" + "You feel stronger!");
+
+        }
 
     }
 

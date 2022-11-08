@@ -21,6 +21,7 @@ import static com.mae.config.Settings.TILE_SIZE;
 public abstract class Entity implements Drawable { // parent class for Player, NPCs, Monsters
     protected GamePanel gp;
 
+    protected String name;
     protected int worldX, worldY; // coordinates
     protected int speed;
     protected Enums.Directions direction = Directions.DOWN;
@@ -45,8 +46,11 @@ public abstract class Entity implements Drawable { // parent class for Player, N
     protected int type; // 0 -> player 1 -> npc 2 -> monster
 
     // CHARACTER STATUS
+    protected int attack;
+    protected int defence;
     protected int maxLife;
     protected int life;
+    protected int exp;
 
     //TODO: abstract to monster parent class
     protected boolean alive = true;
@@ -171,7 +175,11 @@ public abstract class Entity implements Drawable { // parent class for Player, N
         if (this.type == 2 && playerContact) {
             if (!gp.getPlayer().isInvincible()) {
                 gp.playSoundEffect(6);
-                gp.getPlayer().life -= 1;
+
+                int damage = attack  - gp.getPlayer().getDefence();
+                damage = damage < 0 ? 0 : damage;
+
+                gp.getPlayer().life -= damage;
                 gp.getPlayer().setInvincible(true);
             }
         }

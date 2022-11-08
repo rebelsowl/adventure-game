@@ -7,8 +7,8 @@ import com.mae.panel.GamePanel;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 
 import static com.mae.config.Settings.TILE_SIZE;
 
@@ -17,11 +17,11 @@ public class UI {
     private final GamePanel gp;
     BufferedImage heartFull, heartHalf, heartBlank;
     private Font purisaBoldFont;
-    private boolean messageOn = false;
-    private String message = "";
-    private int messageDisplayTime = 0;
-    private boolean gameFinished = false;
+
     private String currentDialogue = "";
+
+    private ArrayList<String> messages = new ArrayList<>();
+    private ArrayList<Integer> messageCounter = new ArrayList<>();
 
     public UI(GamePanel gp) {
         this.gp = gp;
@@ -29,9 +29,7 @@ public class UI {
         try {
             InputStream is = getClass().getResourceAsStream("/font/Purisa Bold.ttf");
             purisaBoldFont = Font.createFont(Font.TRUETYPE_FONT, is);
-        } catch (FontFormatException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
@@ -51,6 +49,7 @@ public class UI {
             drawTitleScreen(g2);
         } else if (gp.getGameState() == GamePanel.PLAY_STATE) {
             drawPlayersLife(g2);
+            drawMessages(g2);
         } else if (gp.getGameState() == GamePanel.PAUSE_STATE) {
             drawPlayersLife(g2);
             drawPauseScreen(g2);
@@ -59,11 +58,9 @@ public class UI {
             drawDialogueScreen(g2);
         } else if (gp.getGameState() == GamePanel.CHARACTER_STATUS_STATE) {
             drawCharacterStatusScreen(g2);
-
         }
-
-
     }
+
 
     private void drawPlayersLife(Graphics2D g2) {
         int x = TILE_SIZE / 2;
@@ -86,6 +83,35 @@ public class UI {
             x += TILE_SIZE;
         }
 
+    }
+
+    private void drawMessages(Graphics2D g2) {
+        int messageX = TILE_SIZE / 2;
+        int messageY = TILE_SIZE * 5;
+
+        g2.setFont(g2.getFont().deriveFont(Font.BOLD, 20));
+
+        for (int i = 0; i < messages.size(); i++){
+
+            if (messages.get(i) != null){
+
+                g2.setColor(Color.black);
+                g2.drawString(messages.get(i), messageX + 2, messageY + 2);
+
+                g2.setColor(Color.white);
+                g2.drawString(messages.get(i), messageX, messageY);
+
+                int counter = messageCounter.get(i) + 1;
+                messageCounter.set(i, counter);
+                messageY += 50;
+
+                if (messageCounter.get(i) > 180){
+                    messages.remove(i);
+                    messageCounter.remove(i);
+                }
+
+            }
+        }
     }
 
     private void drawTitleScreen(Graphics2D g2) {
@@ -158,17 +184,6 @@ public class UI {
         }
 
 
-    }
-
-
-    public void showMessage(String text) {
-        message = text;
-        messageOn = true;
-        messageDisplayTime = 120;
-    }
-
-    public void setGameFinished(boolean gameFinished) {
-        this.gameFinished = gameFinished;
     }
 
     private void drawPauseScreen(Graphics2D g2) {
@@ -296,19 +311,18 @@ public class UI {
         return Settings.SCREEN_WIDTH / 2 - length / 2;
     }
 
-
     private int getXForAlignToRightTextDisplay(String text, int tailX, Graphics2D g2) {
         int length = (int) g2.getFontMetrics().getStringBounds(text, g2).getWidth();
         return tailX - length;
     }
 
-
-    public String getCurrentDialogue() {
-        return currentDialogue;
-    }
-
     public void setCurrentDialogue(String currentDialogue) {
         this.currentDialogue = currentDialogue;
+    }
+
+    public void addMessage(String message){
+        messages.add(message);
+        messageCounter.add(0);
     }
 
 }
