@@ -98,6 +98,7 @@ public abstract class Entity implements Drawable { // parent class for Player, N
             if (type == 2 && hpBarOn) {
                 double oneScale = (double) TILE_SIZE / maxLife;
                 double hpBarValue = oneScale * life;
+                hpBarValue = hpBarValue < 0 ? 0 : hpBarValue;
 
 
                 g2.setColor(new Color(35, 35, 35));
