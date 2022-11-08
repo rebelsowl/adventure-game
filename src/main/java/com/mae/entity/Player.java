@@ -3,6 +3,8 @@ package com.mae.entity;
 import com.mae.config.Settings;
 import com.mae.constant.Enums.Directions;
 import com.mae.handler.KeyboardInputHandler;
+import com.mae.object.OBJ_Shield;
+import com.mae.object.OBJ_Sword;
 import com.mae.panel.GamePanel;
 import lombok.Data;
 
@@ -21,6 +23,18 @@ public class Player extends Entity {
     private BufferedImage attackUp1, attackUp2, attackRight1, attackRight2, attackLeft1, attackLeft2, attackDown1, attackDown2;
 
 
+    private int level;
+    private int strength;
+    private int dexterity;
+    private int attack;
+    private int defence;
+    private int exp;
+    private int nextLvlExp;
+    private int coin;
+
+    private OBJ_Sword currentWeapon;
+    private OBJ_Shield currentShield;
+
     private boolean attacking = false;
     private boolean hitSoundEffectPlaying = false;
 
@@ -34,9 +48,6 @@ public class Player extends Entity {
         setSpeed(4);
         direction = Directions.DOWN;
 
-        setMaxLife(6);
-        setLife(maxLife);
-
         solidArea = new Rectangle(8, 16, 27, 27);
         setSolidAreaDefaultX(solidArea.x);
         setSolidAreaDefaultY(solidArea.y);
@@ -44,7 +55,30 @@ public class Player extends Entity {
         attackArea.width = 36;
         attackArea.height = 36;
 
+        // player status
+        level = 1;
+        setMaxLife(6);
+        setLife(maxLife);
+        strength = 1; // increases attack
+        dexterity = 1; // increases defence
+        exp = 0;
+        nextLvlExp = 5;
+        coin = 0;
+        currentWeapon = new OBJ_Sword(gp);
+        currentShield = new OBJ_Shield(gp);
+        attack = getFinalAttackValue();
+        defence = getFinalDefenceValue();
+
+
         initPlayerImages();
+    }
+
+    private int getFinalDefenceValue() {
+        return defence = dexterity * currentShield.getDefenceValue();
+    }
+
+    private int getFinalAttackValue() {
+        return attack = strength * currentWeapon.getAttackValue();
     }
 
 
@@ -146,7 +180,7 @@ public class Player extends Entity {
 
     private void attack() {
 
-        if (! hitSoundEffectPlaying) {
+        if (!hitSoundEffectPlaying) {
             gp.playSoundEffect(7);
             hitSoundEffectPlaying = true;
         }

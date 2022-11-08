@@ -7,15 +7,16 @@ import com.mae.utility.UtilityTool;
 import javax.imageio.ImageIO;
 import java.io.IOException;
 
-public class OBJ_Boots extends SuperObject {
+public class OBJ_Sword extends SuperObject {
 
-    public OBJ_Boots(GamePanel gp) {
+    public OBJ_Sword(GamePanel gp) {
         super(gp);
-        setName("Boots");
+        setName("Normal Sword");
         try {
-            setImage(UtilityTool.scaleImage(ImageIO.read(getClass().getResourceAsStream("/objects/boots.png")), Settings.TILE_SIZE, Settings.TILE_SIZE));
+            setImage(UtilityTool.scaleImage(ImageIO.read(getClass().getResourceAsStream("/objects/sword_normal.png")), Settings.TILE_SIZE, Settings.TILE_SIZE));
         } catch (IOException e) {
             e.printStackTrace();
         }
+        setAttackValue(1);
     }
 }

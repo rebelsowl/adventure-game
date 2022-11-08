@@ -21,6 +21,7 @@ public class GamePanel extends JPanel implements Runnable {
     public static final int PLAY_STATE = 1;
     public static final int PAUSE_STATE = 2;
     public static final int DIALOGUE_STATE = 3;
+    public static final int CHARACTER_STATUS_STATE = 4;
 
     public CollisionHandler collisionChecker = new CollisionHandler(this);
     // SYSTEM
