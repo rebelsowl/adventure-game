@@ -3,6 +3,8 @@ package com.mae.entity;
 import com.mae.config.Settings;
 import com.mae.constant.Enums.Directions;
 import com.mae.handler.KeyboardInputHandler;
+import com.mae.object.OBJ_Shield;
+import com.mae.object.OBJ_Sword;
 import com.mae.panel.GamePanel;
 import lombok.Data;
 
@@ -21,6 +23,16 @@ public class Player extends Entity {
     private BufferedImage attackUp1, attackUp2, attackRight1, attackRight2, attackLeft1, attackLeft2, attackDown1, attackDown2;
 
 
+    private int level;
+    private int strength;
+    private int dexterity;
+
+    private int nextLvlExp;
+    private int coin;
+
+    private OBJ_Sword currentWeapon;
+    private OBJ_Shield currentShield;
+
     private boolean attacking = false;
     private boolean hitSoundEffectPlaying = false;
 
@@ -34,9 +46,6 @@ public class Player extends Entity {
         setSpeed(4);
         direction = Directions.DOWN;
 
-        setMaxLife(6);
-        setLife(maxLife);
-
         solidArea = new Rectangle(8, 16, 27, 27);
         setSolidAreaDefaultX(solidArea.x);
         setSolidAreaDefaultY(solidArea.y);
@@ -44,7 +53,30 @@ public class Player extends Entity {
         attackArea.width = 36;
         attackArea.height = 36;
 
+        // player status
+        level = 1;
+        setMaxLife(6);
+        setLife(maxLife);
+        strength = 1; // increases attack
+        dexterity = 1; // increases defence
+        exp = 0;
+        nextLvlExp = 5;
+        coin = 0;
+        currentWeapon = new OBJ_Sword(gp);
+        currentShield = new OBJ_Shield(gp);
+        attack = getFinalAttackValue();
+        defence = getFinalDefenceValue();
+
+
         initPlayerImages();
+    }
+
+    private int getFinalDefenceValue() {
+        return defence = dexterity * currentShield.getDefenceValue();
+    }
+
+    private int getFinalAttackValue() {
+        return attack = strength * currentWeapon.getAttackValue();
     }
 
 
@@ -146,7 +178,7 @@ public class Player extends Entity {
 
     private void attack() {
 
-        if (! hitSoundEffectPlaying) {
+        if (!hitSoundEffectPlaying) {
             gp.playSoundEffect(7);
             hitSoundEffectPlaying = true;
         }
@@ -204,26 +236,43 @@ public class Player extends Entity {
         if (index > -1) {
             if (!gp.getMonsters()[index].isInvincible()) {
                 gp.playSoundEffect(6);
-                gp.getMonsters()[index].life -= 1;
+
+                int damage = getFinalAttackValue()  - gp.getMonsters()[index].getDefence();
+                damage = damage < 0 ? 0 : damage;
+                gp.getUi().addMessage(damage + " damage!");
+                gp.getMonsters()[index].life -= damage;
                 gp.getMonsters()[index].setInvincible(true);
                 gp.getMonsters()[index].damageReaction();
-                if (gp.getMonsters()[index].getLife() <= 0)
+                if (gp.getMonsters()[index].getLife() <= 0) {
                     gp.getMonsters()[index].setDying(true);
+                    gp.getUi().addMessage("Killed the " + gp.getMonsters()[index].getName() + "!");
+                    gp.getUi().addMessage("Exp + " + gp.getMonsters()[index].getExp());
+
+                    exp += gp.getMonsters()[index].getExp(); // TODO: status abstraction --> exp handler
+                    checkLevelUp();
+                }
             }
         }
 
     }
+
+
 
     private void interactWithMonster(int index) {
         if (index > -1) {
             if (!invincible) {
                 gp.playSoundEffect(5);
-                life -= 1; //TODO: detailed calculations with stats
+
+                int damage = gp.getMonsters()[index].getAttack()  - getDefence();
+                damage = damage < 0 ? 0 : damage;
+                life -= damage;
                 invincible = true;
             }
         }
 
     }
+
+
 
 
     public void interactWithObject(int index) {
@@ -307,6 +356,27 @@ public class Player extends Entity {
 //        g2.setFont(new Font("Arial", Font.PLAIN, 20));
 //        g2.setColor(Color.white);
 //        g2.drawString("invincible Counter: " + invincibleCounter, 10, 400);
+
+    }
+
+    private void checkLevelUp() {
+        if (exp >= nextLvlExp) {
+            level +=1;
+            nextLvlExp *= 2;
+
+            maxLife += 2;
+            setLife(maxLife);
+            strength ++;
+            dexterity ++;
+
+            attack = getFinalAttackValue();
+            defence = getFinalDefenceValue();
+
+            gp.playSoundEffect(8);
+            gp.setGameState(GamePanel.DIALOGUE_STATE);
+            gp.getUi().setCurrentDialogue("You are level " + level + " now!\n" + "You feel stronger!");
+
+        }
 
     }
 

@@ -44,16 +44,40 @@ public class AssetHandler {
     }
 
     public void createMonsters(){
+        Entity slime0 = new MON_GreenSlime(gp);
+        slime0.setWorldX(TILE_SIZE * 23);
+        slime0.setWorldY(TILE_SIZE * 36);
+
+        gp.getMonsters()[0] = slime0;
+
         Entity slime1 = new MON_GreenSlime(gp);
         slime1.setWorldX(TILE_SIZE * 23);
-        slime1.setWorldY(TILE_SIZE * 36);
+        slime1.setWorldY(TILE_SIZE * 37);
 
-        gp.getMonsters()[0] = slime1;
+        gp.getMonsters()[1] = slime1;
 
         Entity slime2 = new MON_GreenSlime(gp);
-        slime2.setWorldX(TILE_SIZE * 23);
+        slime2.setWorldX(TILE_SIZE * 24);
         slime2.setWorldY(TILE_SIZE * 37);
 
-        gp.getMonsters()[1] = slime2;
+        gp.getMonsters()[2] = slime2;
+
+
+        Entity slime3 = new MON_GreenSlime(gp);
+        slime3.setWorldX(TILE_SIZE * 34);
+        slime3.setWorldY(TILE_SIZE * 42);
+
+        gp.getMonsters()[3] = slime3;
+
+
+        Entity slime4 = new MON_GreenSlime(gp);
+        slime4.setWorldX(TILE_SIZE * 38);
+        slime4.setWorldY(TILE_SIZE * 42);
+
+        gp.getMonsters()[4] = slime4;
+
+
+
+
     }
 }

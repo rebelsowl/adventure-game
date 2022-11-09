@@ -20,6 +20,10 @@ public abstract class SuperObject implements Drawable {
 
     protected  GamePanel gp;
 
+    // Status
+    protected int attackValue;
+    protected int defenceValue;
+
     public SuperObject(GamePanel gp){
         this.gp = gp;
     }

@@ -20,59 +20,17 @@ public class KeyboardInputHandler implements KeyListener {
 
     public void keyPressed(KeyEvent e) {
 
-        if (gp.getGameState() == GamePanel.TITLE_STATE) {// TITLE_STATE
-            if (e.getKeyCode() == KeyEvent.VK_W) {
-                UI.titleScreenCommandNumber--;
-                if (UI.titleScreenCommandNumber < 0)
-                    UI.titleScreenCommandNumber = 2;
-            } else if (e.getKeyCode() == KeyEvent.VK_S) {
-                UI.titleScreenCommandNumber++;
-                if (UI.titleScreenCommandNumber > 2) {
-                    UI.titleScreenCommandNumber = 0;
-                }
-            } else if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-                switch (UI.titleScreenCommandNumber) {
-                    case 0:
-                        gp.setGameState(GamePanel.PLAY_STATE);
-                        gp.playThemeSong(0);
-                        break;
-                    case 1:
-                        break;
-                    case 2:
-                        System.exit(0);
+        if (gp.getGameState() == GamePanel.TITLE_STATE)// TITLE_STATE
+            handleTitleState(e);
+        else if (gp.getGameState() == GamePanel.PLAY_STATE) // PLAY_STATE
+            handlePlayState(e);
+        else if (gp.getGameState() == GamePanel.PAUSE_STATE) // PAUSE_STATE
+            handlePauseState(e);
+        else if (gp.getGameState() == GamePanel.DIALOGUE_STATE) // DIALOGUE_STATE
+            handleDialogueState(e);
+        else if (gp.getGameState() == GamePanel.CHARACTER_STATUS_STATE) // CHARACTER_STATUS_STATE
+            handleCharacterStatusState(e);
 
-                }
-            }
-
-
-        } else if (gp.getGameState() == GamePanel.PLAY_STATE) { // PLAY_STATE
-            if (e.getKeyCode() == KeyEvent.VK_W)
-                upPressed = true;
-            else if (e.getKeyCode() == KeyEvent.VK_A)
-                leftPressed = true;
-            else if (e.getKeyCode() == KeyEvent.VK_D)
-                rightPressed = true;
-            else if (e.getKeyCode() == KeyEvent.VK_S)
-                downPressed = true;
-
-            if (e.getKeyCode() == KeyEvent.VK_ENTER || e.getKeyCode() == KeyEvent.VK_E)
-                enterPressed = true;
-
-            if (e.getKeyCode() == KeyEvent.VK_SPACE)
-                spacePressed = true;
-
-            if (e.getKeyCode() == KeyEvent.VK_P)
-                gp.setGameState(GamePanel.PAUSE_STATE);
-
-        } else if (gp.getGameState() == GamePanel.PAUSE_STATE) { // PAUSE_STATE
-            if (e.getKeyCode() == KeyEvent.VK_P)
-                gp.setGameState(GamePanel.PLAY_STATE);
-
-        } else if (gp.getGameState() == GamePanel.DIALOGUE_STATE) { // DIALOGUE_STATE
-            if (e.getKeyCode() == KeyEvent.VK_ENTER || e.getKeyCode() == KeyEvent.VK_ESCAPE)
-                gp.setGameState(GamePanel.PLAY_STATE);
-
-        }
     }
 
     public void keyReleased(KeyEvent e) {
@@ -84,6 +42,69 @@ public class KeyboardInputHandler implements KeyListener {
             rightPressed = false;
         if (e.getKeyCode() == KeyEvent.VK_S)
             downPressed = false;
+    }
+
+    private void handleTitleState(KeyEvent e) {
+        if (e.getKeyCode() == KeyEvent.VK_W) {
+            UI.titleScreenCommandNumber--;
+            if (UI.titleScreenCommandNumber < 0)
+                UI.titleScreenCommandNumber = 2;
+        } else if (e.getKeyCode() == KeyEvent.VK_S) {
+            UI.titleScreenCommandNumber++;
+            if (UI.titleScreenCommandNumber > 2) {
+                UI.titleScreenCommandNumber = 0;
+            }
+        } else if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+            switch (UI.titleScreenCommandNumber) {
+                case 0:
+                    gp.setGameState(GamePanel.PLAY_STATE);
+                    gp.playThemeSong(0);
+                    break;
+                case 1:
+                    break;
+                case 2:
+                    System.exit(0);
+
+            }
+        }
+    }
+
+    private void handlePlayState(KeyEvent e) {
+        if (e.getKeyCode() == KeyEvent.VK_W)
+            upPressed = true;
+        else if (e.getKeyCode() == KeyEvent.VK_A)
+            leftPressed = true;
+        else if (e.getKeyCode() == KeyEvent.VK_D)
+            rightPressed = true;
+        else if (e.getKeyCode() == KeyEvent.VK_S)
+            downPressed = true;
+
+        if (e.getKeyCode() == KeyEvent.VK_ENTER || e.getKeyCode() == KeyEvent.VK_E)
+            enterPressed = true;
+
+        if (e.getKeyCode() == KeyEvent.VK_SPACE)
+            spacePressed = true;
+
+        if (e.getKeyCode() == KeyEvent.VK_C)
+            gp.setGameState(GamePanel.CHARACTER_STATUS_STATE);
+
+        if (e.getKeyCode() == KeyEvent.VK_P)
+            gp.setGameState(GamePanel.PAUSE_STATE);
+    }
+
+    private void handlePauseState(KeyEvent e) {
+        if (e.getKeyCode() == KeyEvent.VK_P)
+            gp.setGameState(GamePanel.PLAY_STATE);
+    }
+
+    private void handleDialogueState(KeyEvent e) {
+        if (e.getKeyCode() == KeyEvent.VK_ENTER || e.getKeyCode() == KeyEvent.VK_ESCAPE)
+            gp.setGameState(GamePanel.PLAY_STATE);
+    }
+
+    private void handleCharacterStatusState(KeyEvent e) {
+        if (e.getKeyCode() == KeyEvent.VK_C)
+            gp.setGameState(GamePanel.PLAY_STATE);
     }
 
 }

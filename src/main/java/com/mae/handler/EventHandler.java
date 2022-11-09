@@ -95,6 +95,9 @@ public class EventHandler {
             gp.playSoundEffect(2);
             gp.getUi().setCurrentDialogue("You drink the water. \nYour life has been recovered.");
             gp.getPlayer().setLife(gp.getPlayer().getMaxLife());
+
+            gp.getAssetSetter().createMonsters(); // resets monsters
+
         }
 
     }
