@@ -12,6 +12,7 @@ public class OBJ_Sword extends SuperObject {
     public OBJ_Sword(GamePanel gp) {
         super(gp);
         setName("Normal Sword");
+        setDescription("[" + getName() + "]\nAn old sword.");
         try {
             setImage(UtilityTool.scaleImage(ImageIO.read(getClass().getResourceAsStream("/objects/sword_normal.png")), Settings.TILE_SIZE, Settings.TILE_SIZE));
         } catch (IOException e) {

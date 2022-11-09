@@ -3,13 +3,16 @@ package com.mae.entity;
 import com.mae.config.Settings;
 import com.mae.constant.Enums.Directions;
 import com.mae.handler.KeyboardInputHandler;
+import com.mae.object.OBJ_Key;
 import com.mae.object.OBJ_Shield;
 import com.mae.object.OBJ_Sword;
+import com.mae.object.SuperObject;
 import com.mae.panel.GamePanel;
 import lombok.Data;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
 
 import static com.mae.config.Settings.TILE_SIZE;
 
@@ -35,6 +38,9 @@ public class Player extends Entity {
 
     private boolean attacking = false;
     private boolean hitSoundEffectPlaying = false;
+
+    private ArrayList<SuperObject> inventory = new ArrayList<>();
+    private final int maxInventorySize = 20;
 
     public Player(GamePanel gp, KeyboardInputHandler keyHandler) {
         super(gp);
@@ -69,6 +75,7 @@ public class Player extends Entity {
 
 
         initPlayerImages();
+        addInitialItemsToInventory();
     }
 
     private int getFinalDefenceValue() {
@@ -176,6 +183,24 @@ public class Player extends Entity {
 
     }
 
+    public void addInitialItemsToInventory(){
+        inventory.add(currentWeapon);
+        inventory.add(currentShield);
+        inventory.add(new OBJ_Key(gp));
+        inventory.add(new OBJ_Key(gp));
+
+        inventory.add(new OBJ_Key(gp));
+        inventory.add(new OBJ_Key(gp));
+        inventory.add(new OBJ_Key(gp));
+        inventory.add(new OBJ_Key(gp));
+        inventory.add(new OBJ_Key(gp));
+        inventory.add(new OBJ_Key(gp));
+        inventory.add(new OBJ_Key(gp));
+        inventory.add(new OBJ_Key(gp));
+        inventory.add(new OBJ_Key(gp));
+        inventory.add(new OBJ_Key(gp));
+    }
+
     private void attack() {
 
         if (!hitSoundEffectPlaying) {
@@ -238,7 +263,7 @@ public class Player extends Entity {
                 gp.playSoundEffect(6);
 
                 int damage = getFinalAttackValue()  - gp.getMonsters()[index].getDefence();
-                damage = damage < 0 ? 0 : damage;
+                damage = Math.max(damage, 0);
                 gp.getUi().addMessage(damage + " damage!");
                 gp.getMonsters()[index].life -= damage;
                 gp.getMonsters()[index].setInvincible(true);
@@ -257,21 +282,18 @@ public class Player extends Entity {
     }
 
 
-
     private void interactWithMonster(int index) {
         if (index > -1) {
             if (!invincible) {
                 gp.playSoundEffect(5);
 
                 int damage = gp.getMonsters()[index].getAttack()  - getDefence();
-                damage = damage < 0 ? 0 : damage;
+                damage = Math.max(damage, 0);
                 life -= damage;
                 invincible = true;
             }
         }
-
     }
-
 
 
 

@@ -12,6 +12,7 @@ public class OBJ_Key extends SuperObject {
     public OBJ_Key(GamePanel gp) {
         super(gp);
         setName("Key");
+        setDescription("[" + getName() + "]\nOpens a door.");
         try {
             setImage(UtilityTool.scaleImage(ImageIO.read(getClass().getResourceAsStream("/objects/key.png")), Settings.TILE_SIZE, Settings.TILE_SIZE));
         } catch (IOException e) {

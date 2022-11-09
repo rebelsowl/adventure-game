@@ -105,6 +105,30 @@ public class KeyboardInputHandler implements KeyListener {
     private void handleCharacterStatusState(KeyEvent e) {
         if (e.getKeyCode() == KeyEvent.VK_C)
             gp.setGameState(GamePanel.PLAY_STATE);
+        else if (e.getKeyCode() == KeyEvent.VK_W) {
+            if (gp.getUi().getInventorySlotRow() != 0 ) {
+                gp.getUi().setInventorySlotRow(gp.getUi().getInventorySlotRow() - 1);
+                gp.playSoundEffect(9);
+            }
+        } else if (e.getKeyCode() == KeyEvent.VK_A) {
+            if (gp.getUi().getInventorySlotCol() != 0) {
+                gp.getUi().setInventorySlotCol(gp.getUi().getInventorySlotCol() - 1);
+                gp.playSoundEffect(9);
+            }
+        } else if (e.getKeyCode() == KeyEvent.VK_S) {
+            if (gp.getUi().getInventorySlotRow() != 3) {
+                gp.getUi().setInventorySlotRow(gp.getUi().getInventorySlotRow() + 1);
+                gp.playSoundEffect(9);
+            }
+        } else if (e.getKeyCode() == KeyEvent.VK_D) {
+            if (gp.getUi().getInventorySlotCol() != 4) {
+                gp.getUi().setInventorySlotCol(gp.getUi().getInventorySlotCol() + 1);
+                gp.playSoundEffect(9);
+            }
+
+        }
+
+
     }
 
 }
