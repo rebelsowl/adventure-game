@@ -5,6 +5,7 @@ import com.mae.constant.Enums.Directions;
 import com.mae.handler.KeyboardInputHandler;
 import com.mae.object.OBJ_Shield;
 import com.mae.object.OBJ_Sword;
+import com.mae.object.parent.Consumable;
 import com.mae.object.parent.Shield;
 import com.mae.object.parent.SuperObject;
 import com.mae.object.parent.Weapon;
@@ -209,6 +210,10 @@ public class Player extends Entity {
                 setCurrentShield((Shield) selectedItem);
                 defence = getFinalDefenceValue();
                 System.out.println("instance of weapon");
+            } else if (selectedItem instanceof Consumable) {
+                Consumable item = (Consumable) selectedItem;
+                item.use(this);
+                inventory.remove(itemIndex);
             }
         }
     }

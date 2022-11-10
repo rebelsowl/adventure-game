@@ -1,10 +1,12 @@
 package com.mae.object.parent;
 
 import com.mae.panel.GamePanel;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
-@Data
-public class Shield extends  SuperObject{
+@Getter
+@Setter
+public abstract class Shield extends SuperObject {
 
     protected int defenceValue;
 

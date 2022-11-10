@@ -1,12 +1,11 @@
 package com.mae.handler;
 
-import com.mae.config.Settings;
 import com.mae.entity.Entity;
 import com.mae.entity.NPC_OldMan;
 import com.mae.entity.monster.MON_GreenSlime;
 import com.mae.object.OBJ_Axe;
-import com.mae.object.OBJ_Door;
 import com.mae.object.OBJ_Key;
+import com.mae.object.OBJ_Potion;
 import com.mae.object.OBJ_Shield_Blue;
 import com.mae.panel.GamePanel;
 
@@ -27,19 +26,19 @@ public class AssetHandler {
         key1.setWorldY(23 * TILE_SIZE);
         gp.getObjects()[i] = key1;
 
-        i ++;
+        i++;
         OBJ_Key key2 = new OBJ_Key(gp);
         key2.setWorldX(21 * TILE_SIZE);
         key2.setWorldY(19 * TILE_SIZE);
         gp.getObjects()[i] = key2;
 
-        i ++;
+        i++;
         OBJ_Key key3 = new OBJ_Key(gp);
         key3.setWorldX(25 * TILE_SIZE);
         key3.setWorldY(19 * TILE_SIZE);
         gp.getObjects()[i] = key3;
 
-        i ++;
+        i++;
         OBJ_Axe axe = new OBJ_Axe(gp);
         axe.setWorldX(33 * TILE_SIZE);
         axe.setWorldY(21 * TILE_SIZE);
@@ -50,6 +49,12 @@ public class AssetHandler {
         blueShield.setWorldX(35 * TILE_SIZE);
         blueShield.setWorldY(21 * TILE_SIZE);
         gp.getObjects()[i] = blueShield;
+
+        i++;
+        OBJ_Potion redPotion = new OBJ_Potion(gp);
+        redPotion.setWorldX(22 * TILE_SIZE);
+        redPotion.setWorldY(27 * TILE_SIZE);
+        gp.getObjects()[i] = redPotion;
 
 
     }
@@ -66,7 +71,7 @@ public class AssetHandler {
         gp.setNpcs(arr);
     }
 
-    public void createMonsters(){
+    public void createMonsters() {
         Entity slime0 = new MON_GreenSlime(gp);
         slime0.setWorldX(TILE_SIZE * 23);
         slime0.setWorldY(TILE_SIZE * 36);
