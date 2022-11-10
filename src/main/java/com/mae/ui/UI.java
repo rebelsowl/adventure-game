@@ -2,7 +2,7 @@ package com.mae.ui;
 
 import com.mae.config.Settings;
 import com.mae.object.OBJ_Heart;
-import com.mae.object.SuperObject;
+import com.mae.object.parent.SuperObject;
 import com.mae.panel.GamePanel;
 
 import java.awt.*;
@@ -20,8 +20,13 @@ public class UI {
 
     private String currentDialogue = "";
 
-    private ArrayList<String> messages = new ArrayList<>();
-    private ArrayList<Integer> messageCounter = new ArrayList<>();
+    private final ArrayList<String> messages = new ArrayList<>();
+    private final ArrayList<Integer> messageCounter = new ArrayList<>();
+
+    // inventory
+    private int inventorySlotCol = 0;
+    private int inventorySlotRow = 0;
+
 
     public UI(GamePanel gp) {
         this.gp = gp;
@@ -33,7 +38,7 @@ public class UI {
             e.printStackTrace();
         }
 
-        SuperObject heart = new OBJ_Heart(gp);
+        OBJ_Heart heart = new OBJ_Heart(gp);
         heartFull = heart.getImage();
         heartHalf = heart.getImage2();
         heartBlank = heart.getImage3();
@@ -58,6 +63,7 @@ public class UI {
             drawDialogueScreen(g2);
         } else if (gp.getGameState() == GamePanel.CHARACTER_STATUS_STATE) {
             drawCharacterStatusScreen(g2);
+            drawInventory(g2);
         }
     }
 
@@ -91,9 +97,9 @@ public class UI {
 
         g2.setFont(g2.getFont().deriveFont(Font.BOLD, 20));
 
-        for (int i = 0; i < messages.size(); i++){
+        for (int i = 0; i < messages.size(); i++) {
 
-            if (messages.get(i) != null){
+            if (messages.get(i) != null) {
 
                 g2.setColor(Color.black);
                 g2.drawString(messages.get(i), messageX + 2, messageY + 2);
@@ -105,7 +111,7 @@ public class UI {
                 messageCounter.set(i, counter);
                 messageY += 50;
 
-                if (messageCounter.get(i) > 180){
+                if (messageCounter.get(i) > 180) {
                     messages.remove(i);
                     messageCounter.remove(i);
                 }
@@ -294,6 +300,78 @@ public class UI {
 
     }
 
+    private void drawInventory(Graphics2D g2) {
+        // create a frame
+        final int frameX = TILE_SIZE * 9;
+        final int frameY = TILE_SIZE;
+        final int frameWidth = TILE_SIZE * 6;
+        final int frameHeight = TILE_SIZE * 5;
+
+        drawSubWindow(frameX, frameY, frameWidth, frameHeight, g2);
+
+        // slot
+        final int slotXStart = frameX + 20;
+        final int slotYStart = frameY + 20;
+        final int slotSize = TILE_SIZE + 3;
+
+        int slotX = slotXStart;
+        int slotY = slotYStart;
+
+        // draw items
+        int index = 0;
+        for (SuperObject item : gp.getPlayer().getInventory()) {
+
+            // highlight equipped items
+            if (item.equals(gp.getPlayer().getCurrentShield()) || item.equals(gp.getPlayer().getCurrentWeapon())){
+                g2.setColor(new Color(240, 190, 90));
+                g2.fillRoundRect(slotX, slotY, TILE_SIZE, TILE_SIZE, 10, 10);
+            }
+
+
+            g2.drawImage(item.getImage(), slotX, slotY, null);
+
+            slotX += slotSize;
+
+            if (index == 4 || index == 9 || index == 14) {
+                slotX = slotXStart;
+                slotY += slotSize;
+            }
+            index++;
+        }
+
+        // Cursor
+        int cursorX = slotXStart + (slotSize * inventorySlotCol);
+        int cursorY = slotYStart + (slotSize * inventorySlotRow);
+        int cursorWidth = TILE_SIZE;
+        int cursorHeight = TILE_SIZE;
+
+        // draw cursor
+        g2.setColor(Color.white);
+        g2.setStroke(new BasicStroke(3)); // thickness of the line
+        g2.drawRoundRect(cursorX, cursorY, cursorWidth, cursorHeight, 10, 10);
+
+        // description
+        int dFrameX = frameX;
+        int dFrameY = frameY + frameHeight;
+        int dFrameWidth = frameWidth;
+        int dFrameHeight = TILE_SIZE * 3;
+
+        int textX = dFrameX + 20;
+        int textY = dFrameY + TILE_SIZE;
+        g2.setFont(new Font("Arial", Font.PLAIN, 25));
+
+        int itemIndex = getInventoryItemIndexFromColAndRow();
+
+        if (itemIndex < gp.getPlayer().getInventory().size()) {
+            drawSubWindow(dFrameX, dFrameY, dFrameWidth, dFrameHeight, g2);
+            for (String line : gp.getPlayer().getInventory().get(itemIndex).getDescription().split("\n")) {
+                g2.drawString(line, textX, textY);
+                textY += 32;
+            }
+        }
+
+    }
+
     private void drawSubWindow(int x, int y, int width, int height, Graphics2D g2) {
         Color color = new Color(0, 0, 0, 200);
         g2.setColor(color);
@@ -320,9 +398,28 @@ public class UI {
         this.currentDialogue = currentDialogue;
     }
 
-    public void addMessage(String message){
+    public void addMessage(String message) {
         messages.add(message);
         messageCounter.add(0);
     }
 
+    public int getInventorySlotCol() {
+        return inventorySlotCol;
+    }
+
+    public void setInventorySlotCol(int inventorySlotCol) {
+        this.inventorySlotCol = inventorySlotCol;
+    }
+
+    public int getInventorySlotRow() {
+        return inventorySlotRow;
+    }
+
+    public void setInventorySlotRow(int inventorySlotRow) {
+        this.inventorySlotRow = inventorySlotRow;
+    }
+
+    public int getInventoryItemIndexFromColAndRow() {
+        return inventorySlotCol + (inventorySlotRow * 5);
+    }
 }

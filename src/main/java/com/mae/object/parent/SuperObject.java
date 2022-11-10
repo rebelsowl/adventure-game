@@ -1,4 +1,4 @@
-package com.mae.object;
+package com.mae.object.parent;
 
 import com.mae.config.Settings;
 import com.mae.interfaces.Drawable;
@@ -12,17 +12,14 @@ import java.awt.image.BufferedImage;
 public abstract class SuperObject implements Drawable {
     protected int worldX, worldY;
     protected String name;
-    protected BufferedImage image, image2, image3;
+    protected String description = "";
+    protected BufferedImage image;
     protected Rectangle solidArea = new Rectangle(0,0,Settings.TILE_SIZE,Settings.TILE_SIZE); // making whole object solid
     protected int solidAreaDefaultX = 0;
     protected int solidAreaDefaultY = 0;
     protected boolean collision = false;
 
     protected  GamePanel gp;
-
-    // Status
-    protected int attackValue;
-    protected int defenceValue;
 
     public SuperObject(GamePanel gp){
         this.gp = gp;

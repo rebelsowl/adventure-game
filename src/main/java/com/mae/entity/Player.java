@@ -5,11 +5,16 @@ import com.mae.constant.Enums.Directions;
 import com.mae.handler.KeyboardInputHandler;
 import com.mae.object.OBJ_Shield;
 import com.mae.object.OBJ_Sword;
+import com.mae.object.parent.Consumable;
+import com.mae.object.parent.Shield;
+import com.mae.object.parent.SuperObject;
+import com.mae.object.parent.Weapon;
 import com.mae.panel.GamePanel;
 import lombok.Data;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
 
 import static com.mae.config.Settings.TILE_SIZE;
 
@@ -19,22 +24,19 @@ public class Player extends Entity {
 
     private final int screenX = (Settings.SCREEN_WIDTH / 2) - (TILE_SIZE / 2); // coordinates on the visible screen
     private final int screenY = (Settings.SCREEN_HEIGHT / 2) - (TILE_SIZE / 2); // subtracted the half tile size because frame starts at top left with 0,0
+    private final int maxInventorySize = 20;
     KeyboardInputHandler keyHandler;
     private BufferedImage attackUp1, attackUp2, attackRight1, attackRight2, attackLeft1, attackLeft2, attackDown1, attackDown2;
-
-
     private int level;
     private int strength;
     private int dexterity;
-
     private int nextLvlExp;
     private int coin;
-
-    private OBJ_Sword currentWeapon;
-    private OBJ_Shield currentShield;
-
+    private Weapon currentWeapon;
+    private Shield currentShield;
     private boolean attacking = false;
     private boolean hitSoundEffectPlaying = false;
+    private ArrayList<SuperObject> inventory = new ArrayList<>();
 
     public Player(GamePanel gp, KeyboardInputHandler keyHandler) {
         super(gp);
@@ -69,6 +71,8 @@ public class Player extends Entity {
 
 
         initPlayerImages();
+        setPlayerAttackImages();
+        addInitialItemsToInventory();
     }
 
     private int getFinalDefenceValue() {
@@ -76,6 +80,7 @@ public class Player extends Entity {
     }
 
     private int getFinalAttackValue() {
+        attackArea = currentWeapon.getAttackArea();
         return attack = strength * currentWeapon.getAttackValue();
     }
 
@@ -90,14 +95,29 @@ public class Player extends Entity {
         setDown1(setImage("/player/boy_down_1", TILE_SIZE, TILE_SIZE));
         setDown2(setImage("/player/boy_down_2", TILE_SIZE, TILE_SIZE));
 
-        setAttackUp1(setImage("/player/boy_attack_up_1", TILE_SIZE, TILE_SIZE * 2));
-        setAttackUp2(setImage("/player/boy_attack_up_2", TILE_SIZE, TILE_SIZE * 2));
-        setAttackLeft1(setImage("/player/boy_attack_left_1", TILE_SIZE * 2, TILE_SIZE));
-        setAttackLeft2(setImage("/player/boy_attack_left_2", TILE_SIZE * 2, TILE_SIZE));
-        setAttackRight1(setImage("/player/boy_attack_right_1", TILE_SIZE * 2, TILE_SIZE));
-        setAttackRight2(setImage("/player/boy_attack_right_2", TILE_SIZE * 2, TILE_SIZE));
-        setAttackDown1(setImage("/player/boy_attack_down_1", TILE_SIZE, TILE_SIZE * 2));
-        setAttackDown2(setImage("/player/boy_attack_down_2", TILE_SIZE, TILE_SIZE * 2));
+
+    }
+
+    public void setPlayerAttackImages() {
+        if (currentWeapon.getType().equals(Weapon.WeaponType.SWORD)) {
+            setAttackUp1(setImage("/player/boy_attack_up_1", TILE_SIZE, TILE_SIZE * 2));
+            setAttackUp2(setImage("/player/boy_attack_up_2", TILE_SIZE, TILE_SIZE * 2));
+            setAttackLeft1(setImage("/player/boy_attack_left_1", TILE_SIZE * 2, TILE_SIZE));
+            setAttackLeft2(setImage("/player/boy_attack_left_2", TILE_SIZE * 2, TILE_SIZE));
+            setAttackRight1(setImage("/player/boy_attack_right_1", TILE_SIZE * 2, TILE_SIZE));
+            setAttackRight2(setImage("/player/boy_attack_right_2", TILE_SIZE * 2, TILE_SIZE));
+            setAttackDown1(setImage("/player/boy_attack_down_1", TILE_SIZE, TILE_SIZE * 2));
+            setAttackDown2(setImage("/player/boy_attack_down_2", TILE_SIZE, TILE_SIZE * 2));
+        } else if (currentWeapon.getType().equals(Weapon.WeaponType.AXE)) {
+            setAttackUp1(setImage("/player/boy_axe_up_1", TILE_SIZE, TILE_SIZE * 2));
+            setAttackUp2(setImage("/player/boy_axe_up_2", TILE_SIZE, TILE_SIZE * 2));
+            setAttackLeft1(setImage("/player/boy_axe_left_1", TILE_SIZE * 2, TILE_SIZE));
+            setAttackLeft2(setImage("/player/boy_axe_left_2", TILE_SIZE * 2, TILE_SIZE));
+            setAttackRight1(setImage("/player/boy_axe_right_1", TILE_SIZE * 2, TILE_SIZE));
+            setAttackRight2(setImage("/player/boy_axe_right_2", TILE_SIZE * 2, TILE_SIZE));
+            setAttackDown1(setImage("/player/boy_axe_down_1", TILE_SIZE, TILE_SIZE * 2));
+            setAttackDown2(setImage("/player/boy_axe_down_2", TILE_SIZE, TILE_SIZE * 2));
+        }
     }
 
 
@@ -176,6 +196,34 @@ public class Player extends Entity {
 
     }
 
+    public void selectItem() {
+        int itemIndex = gp.getUi().getInventoryItemIndexFromColAndRow();
+
+        if (itemIndex < inventory.size()) {
+            SuperObject selectedItem = inventory.get(itemIndex);
+            if (selectedItem instanceof Weapon) {
+                setCurrentWeapon((Weapon) selectedItem);
+                attack = getFinalAttackValue();
+                setPlayerAttackImages();
+                System.out.println("instance of weapon");
+            } else if (selectedItem instanceof Shield) {
+                setCurrentShield((Shield) selectedItem);
+                defence = getFinalDefenceValue();
+                System.out.println("instance of weapon");
+            } else if (selectedItem instanceof Consumable) {
+                Consumable item = (Consumable) selectedItem;
+                item.use(this);
+                inventory.remove(itemIndex);
+            }
+        }
+    }
+
+    public void addInitialItemsToInventory() {
+        inventory.add(currentWeapon);
+        inventory.add(currentShield);
+
+    }
+
     private void attack() {
 
         if (!hitSoundEffectPlaying) {
@@ -237,8 +285,8 @@ public class Player extends Entity {
             if (!gp.getMonsters()[index].isInvincible()) {
                 gp.playSoundEffect(6);
 
-                int damage = getFinalAttackValue()  - gp.getMonsters()[index].getDefence();
-                damage = damage < 0 ? 0 : damage;
+                int damage = getFinalAttackValue() - gp.getMonsters()[index].getDefence();
+                damage = Math.max(damage, 0);
                 gp.getUi().addMessage(damage + " damage!");
                 gp.getMonsters()[index].life -= damage;
                 gp.getMonsters()[index].setInvincible(true);
@@ -253,30 +301,34 @@ public class Player extends Entity {
                 }
             }
         }
-
     }
-
-
 
     private void interactWithMonster(int index) {
         if (index > -1) {
             if (!invincible) {
                 gp.playSoundEffect(5);
 
-                int damage = gp.getMonsters()[index].getAttack()  - getDefence();
-                damage = damage < 0 ? 0 : damage;
+                int damage = gp.getMonsters()[index].getAttack() - getDefence();
+                damage = Math.max(damage, 0);
                 life -= damage;
                 invincible = true;
             }
         }
-
     }
-
-
-
 
     public void interactWithObject(int index) {
         if (index > -1) {
+            String text;
+            if (inventory.size() < maxInventorySize) {
+                inventory.add(gp.getObjects()[index]);
+                gp.playSoundEffect(1);
+                text = "Obtained a " + gp.getObjects()[index].getName() + "!";
+                gp.getObjects()[index] = null;
+            } else {
+                text = "You cannot carry anymore!";
+            }
+            gp.getUi().addMessage(text);
+
 
         }
     }
@@ -361,13 +413,13 @@ public class Player extends Entity {
 
     private void checkLevelUp() {
         if (exp >= nextLvlExp) {
-            level +=1;
+            level += 1;
             nextLvlExp *= 2;
 
             maxLife += 2;
             setLife(maxLife);
-            strength ++;
-            dexterity ++;
+            strength++;
+            dexterity++;
 
             attack = getFinalAttackValue();
             defence = getFinalDefenceValue();

@@ -1,6 +1,7 @@
 package com.mae.object;
 
 import com.mae.config.Settings;
+import com.mae.object.parent.SuperObject;
 import com.mae.panel.GamePanel;
 import com.mae.utility.UtilityTool;
 

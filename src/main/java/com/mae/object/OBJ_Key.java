@@ -1,6 +1,7 @@
 package com.mae.object;
 
 import com.mae.config.Settings;
+import com.mae.object.parent.SuperObject;
 import com.mae.panel.GamePanel;
 import com.mae.utility.UtilityTool;
 
@@ -12,6 +13,7 @@ public class OBJ_Key extends SuperObject {
     public OBJ_Key(GamePanel gp) {
         super(gp);
         setName("Key");
+        setDescription("[" + getName() + "]\nOpens a door.");
         try {
             setImage(UtilityTool.scaleImage(ImageIO.read(getClass().getResourceAsStream("/objects/key.png")), Settings.TILE_SIZE, Settings.TILE_SIZE));
         } catch (IOException e) {
