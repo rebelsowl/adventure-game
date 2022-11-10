@@ -5,7 +5,7 @@ import com.mae.entity.Entity;
 import com.mae.entity.Player;
 import com.mae.handler.*;
 import com.mae.interfaces.Drawable;
-import com.mae.object.SuperObject;
+import com.mae.object.parent.SuperObject;
 import com.mae.tile.TileManager;
 import com.mae.ui.UI;
 import lombok.Data;

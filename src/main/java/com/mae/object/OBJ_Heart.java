@@ -1,14 +1,19 @@
 package com.mae.object;
 
 import com.mae.config.Settings;
+import com.mae.object.parent.SuperObject;
 import com.mae.panel.GamePanel;
 import com.mae.utility.UtilityTool;
+import lombok.Getter;
+import lombok.Setter;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 
-public class OBJ_Heart extends SuperObject{
+@Getter
+@Setter
+public class OBJ_Heart extends SuperObject {
     private BufferedImage image2, image3;
 
     public OBJ_Heart(GamePanel gp) {

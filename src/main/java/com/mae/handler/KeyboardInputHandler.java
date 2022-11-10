@@ -125,7 +125,9 @@ public class KeyboardInputHandler implements KeyListener {
                 gp.getUi().setInventorySlotCol(gp.getUi().getInventorySlotCol() + 1);
                 gp.playSoundEffect(9);
             }
-
+        } else if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+            gp.getPlayer().selectItem();
+            
         }
 
 

@@ -2,7 +2,7 @@ package com.mae.handler;
 
 import com.mae.config.Settings;
 import com.mae.entity.Entity;
-import com.mae.object.SuperObject;
+import com.mae.object.parent.SuperObject;
 import com.mae.panel.GamePanel;
 
 public class CollisionHandler {

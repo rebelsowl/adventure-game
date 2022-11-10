@@ -2,7 +2,7 @@ package com.mae.ui;
 
 import com.mae.config.Settings;
 import com.mae.object.OBJ_Heart;
-import com.mae.object.SuperObject;
+import com.mae.object.parent.SuperObject;
 import com.mae.panel.GamePanel;
 
 import java.awt.*;
@@ -38,7 +38,7 @@ public class UI {
             e.printStackTrace();
         }
 
-        SuperObject heart = new OBJ_Heart(gp);
+        OBJ_Heart heart = new OBJ_Heart(gp);
         heartFull = heart.getImage();
         heartHalf = heart.getImage2();
         heartBlank = heart.getImage3();
@@ -320,6 +320,14 @@ public class UI {
         // draw items
         int index = 0;
         for (SuperObject item : gp.getPlayer().getInventory()) {
+
+            // highlight equipped items
+            if (item.equals(gp.getPlayer().getCurrentShield()) || item.equals(gp.getPlayer().getCurrentWeapon())){
+                g2.setColor(new Color(240, 190, 90));
+                g2.fillRoundRect(slotX, slotY, TILE_SIZE, TILE_SIZE, 10, 10);
+            }
+
+
             g2.drawImage(item.getImage(), slotX, slotY, null);
 
             slotX += slotSize;
@@ -411,7 +419,7 @@ public class UI {
         this.inventorySlotRow = inventorySlotRow;
     }
 
-    private int getInventoryItemIndexFromColAndRow() {
+    public int getInventoryItemIndexFromColAndRow() {
         return inventorySlotCol + (inventorySlotRow * 5);
     }
 }

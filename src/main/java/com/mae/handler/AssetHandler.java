@@ -4,7 +4,10 @@ import com.mae.config.Settings;
 import com.mae.entity.Entity;
 import com.mae.entity.NPC_OldMan;
 import com.mae.entity.monster.MON_GreenSlime;
+import com.mae.object.OBJ_Axe;
 import com.mae.object.OBJ_Door;
+import com.mae.object.OBJ_Key;
+import com.mae.object.OBJ_Shield_Blue;
 import com.mae.panel.GamePanel;
 
 import static com.mae.config.Settings.TILE_SIZE;
@@ -18,16 +21,36 @@ public class AssetHandler {
 
 
     public void placeInitialObjectsInWorld() {
-        OBJ_Door door1 = new OBJ_Door(gp);
-        door1.setWorldX(24 * TILE_SIZE);
-        door1.setWorldY(22 * TILE_SIZE);
+        int i = 0;
+        OBJ_Key key1 = new OBJ_Key(gp);
+        key1.setWorldX(25 * TILE_SIZE);
+        key1.setWorldY(23 * TILE_SIZE);
+        gp.getObjects()[i] = key1;
 
-        door1.getSolidArea().x = 0;
-        door1.getSolidArea().y = 16;
-        door1.getSolidArea().width = Settings.TILE_SIZE;
-        door1.getSolidArea().height = 32;
+        i ++;
+        OBJ_Key key2 = new OBJ_Key(gp);
+        key2.setWorldX(21 * TILE_SIZE);
+        key2.setWorldY(19 * TILE_SIZE);
+        gp.getObjects()[i] = key2;
 
-        gp.getObjects()[0] = door1;
+        i ++;
+        OBJ_Key key3 = new OBJ_Key(gp);
+        key3.setWorldX(25 * TILE_SIZE);
+        key3.setWorldY(19 * TILE_SIZE);
+        gp.getObjects()[i] = key3;
+
+        i ++;
+        OBJ_Axe axe = new OBJ_Axe(gp);
+        axe.setWorldX(33 * TILE_SIZE);
+        axe.setWorldY(21 * TILE_SIZE);
+        gp.getObjects()[i] = axe;
+
+        i++;
+        OBJ_Shield_Blue blueShield = new OBJ_Shield_Blue(gp);
+        blueShield.setWorldX(35 * TILE_SIZE);
+        blueShield.setWorldY(21 * TILE_SIZE);
+        gp.getObjects()[i] = blueShield;
+
 
     }
 
@@ -62,22 +85,17 @@ public class AssetHandler {
 
         gp.getMonsters()[2] = slime2;
 
-
         Entity slime3 = new MON_GreenSlime(gp);
         slime3.setWorldX(TILE_SIZE * 34);
         slime3.setWorldY(TILE_SIZE * 42);
 
         gp.getMonsters()[3] = slime3;
 
-
         Entity slime4 = new MON_GreenSlime(gp);
         slime4.setWorldX(TILE_SIZE * 38);
         slime4.setWorldY(TILE_SIZE * 42);
 
         gp.getMonsters()[4] = slime4;
-
-
-
 
     }
 }

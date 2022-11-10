@@ -1,13 +1,14 @@
 package com.mae.object;
 
 import com.mae.config.Settings;
+import com.mae.object.parent.Shield;
 import com.mae.panel.GamePanel;
 import com.mae.utility.UtilityTool;
 
 import javax.imageio.ImageIO;
 import java.io.IOException;
 
-public class OBJ_Shield extends  SuperObject{
+public class OBJ_Shield extends Shield {
 
     public OBJ_Shield(GamePanel gp) {
         super(gp);
