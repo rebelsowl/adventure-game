@@ -5,6 +5,7 @@ import com.mae.entity.Entity;
 import com.mae.entity.Player;
 import com.mae.handler.*;
 import com.mae.interfaces.Drawable;
+import com.mae.entity.Projectile;
 import com.mae.object.parent.SuperObject;
 import com.mae.tile.TileManager;
 import com.mae.ui.UI;
@@ -13,6 +14,8 @@ import lombok.Data;
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.Iterator;
 
 @Data
 public class GamePanel extends JPanel implements Runnable {
@@ -39,7 +42,7 @@ public class GamePanel extends JPanel implements Runnable {
     Entity[] npcs = new Entity[10];
     Entity[] monsters = new Entity[20];
     ArrayList<Drawable> drawables = new ArrayList<>();
-
+    ArrayList<Projectile> projectiles = new ArrayList<>();
 
     // GAME STATE
     private int gameState;
@@ -112,16 +115,23 @@ public class GamePanel extends JPanel implements Runnable {
                     npc.update();
             }
 
-
             for (int i = 0; i < monsters.length; i++) {
-
                 if (monsters[i] != null) {
                     if (monsters[i].isAlive() && !monsters[i].isDying())
                         monsters[i].update();
                     if (!monsters[i].isAlive())
                         monsters[i] = null;
-
                 }
+            }
+
+
+            Iterator<Projectile> iterator = projectiles.iterator();
+            while (iterator.hasNext()){
+                Projectile currentProjectile = iterator.next();
+                if (currentProjectile.isAlive())
+                    currentProjectile.update();
+                else
+                    iterator.remove();
             }
 
         } else if (gameState == PAUSE_STATE) {
@@ -153,10 +163,11 @@ public class GamePanel extends JPanel implements Runnable {
             for (Entity monster : monsters) {
                 if (monster != null)
                     drawables.add(monster);
-
             }
 
-            drawables.sort((o1, o2) -> Integer.compare(o1.getWorldY(), o2.getWorldY()));
+            drawables.addAll(projectiles);
+
+            drawables.sort(Comparator.comparingInt(Drawable::getWorldY));
 
             for (Drawable drawable : drawables) {
                 drawable.draw(g2);

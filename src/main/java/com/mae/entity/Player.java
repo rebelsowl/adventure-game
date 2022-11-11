@@ -5,10 +5,7 @@ import com.mae.constant.Enums.Directions;
 import com.mae.handler.KeyboardInputHandler;
 import com.mae.object.OBJ_Shield;
 import com.mae.object.OBJ_Sword;
-import com.mae.object.parent.Consumable;
-import com.mae.object.parent.Shield;
-import com.mae.object.parent.SuperObject;
-import com.mae.object.parent.Weapon;
+import com.mae.object.parent.*;
 import com.mae.panel.GamePanel;
 import lombok.Data;
 
@@ -37,6 +34,9 @@ public class Player extends Entity {
     private boolean attacking = false;
     private boolean hitSoundEffectPlaying = false;
     private ArrayList<SuperObject> inventory = new ArrayList<>();
+    private Projectile projectileSkill;
+    private int shotAvailableCounter = 1;
+
 
     public Player(GamePanel gp, KeyboardInputHandler keyHandler) {
         super(gp);
@@ -69,6 +69,7 @@ public class Player extends Entity {
         attack = getFinalAttackValue();
         defence = getFinalDefenceValue();
 
+        projectileSkill = new Fireball(gp);
 
         initPlayerImages();
         setPlayerAttackImages();
@@ -126,8 +127,11 @@ public class Player extends Entity {
         if (keyHandler.spacePressed) {
             setAttacking(true);
             attack();
-
-
+        } else if (keyHandler.shotKeyPressed && ! projectileSkill.isAlive() && shotAvailableCounter == 30) {
+            projectileSkill.set(worldX, worldY, direction, true, this);
+            gp.getProjectiles().add(projectileSkill);
+            shotAvailableCounter = 0;
+            gp.playSoundEffect(10);
         } else if (movementKeyPressed() || interactKeyPressed()) {
             if (keyHandler.upPressed) {
                 setDirection(Directions.UP);
@@ -174,9 +178,7 @@ public class Player extends Entity {
                         break;
                 }
             }
-
             keyHandler.enterPressed = false;
-
 
             spriteCounter++; // for movement animation
             if (spriteCounter > 12) {
@@ -185,6 +187,9 @@ public class Player extends Entity {
             }
 
         }
+
+        
+
         // invincible time
         if (invincible) {
             invincibleCounter++;
@@ -192,6 +197,11 @@ public class Player extends Entity {
                 invincible = false;
                 invincibleCounter = 0;
             }
+        }
+
+        // projectile skill cooldown
+        if (shotAvailableCounter < 30) {
+            shotAvailableCounter++;
         }
 
     }
@@ -264,7 +274,7 @@ public class Player extends Entity {
             solidArea.height = attackArea.height;
 
             int monsterIndex = gp.getCollisionChecker().checkEntity(this, gp.getMonsters());
-            hitMonster(monsterIndex);
+            hitMonster(monsterIndex, attack);
 
             worldX = currentWorldX;
             worldY = currentWorldY;
@@ -280,12 +290,12 @@ public class Player extends Entity {
 
     }
 
-    private void hitMonster(int index) {
+    public void hitMonster(int index, int attack) {
         if (index > -1) {
             if (!gp.getMonsters()[index].isInvincible()) {
                 gp.playSoundEffect(6);
 
-                int damage = getFinalAttackValue() - gp.getMonsters()[index].getDefence();
+                int damage = attack - gp.getMonsters()[index].getDefence();
                 damage = Math.max(damage, 0);
                 gp.getUi().addMessage(damage + " damage!");
                 gp.getMonsters()[index].life -= damage;
