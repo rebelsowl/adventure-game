@@ -151,7 +151,6 @@ public abstract class Entity implements Drawable { // parent class for Player, N
         else if (dyingCounter <= interval * 7)
             changeAlpha(g2, 0f);
         else {
-            dying = false;
             alive = false;
         }
 
@@ -178,7 +177,7 @@ public abstract class Entity implements Drawable { // parent class for Player, N
                 gp.playSoundEffect(6);
 
                 int damage = attack  - gp.getPlayer().getDefence();
-                damage = damage < 0 ? 0 : damage;
+                damage = Math.max(damage, 0);
 
                 gp.getPlayer().life -= damage;
                 gp.getPlayer().setInvincible(true);

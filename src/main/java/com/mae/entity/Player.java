@@ -305,7 +305,7 @@ public class Player extends Entity {
 
     private void interactWithMonster(int index) {
         if (index > -1) {
-            if (!invincible) {
+            if (!invincible && !gp.getMonsters()[index].isDying()) {
                 gp.playSoundEffect(5);
 
                 int damage = gp.getMonsters()[index].getAttack() - getDefence();
