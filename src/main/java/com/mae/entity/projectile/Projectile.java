@@ -1,7 +1,8 @@
-package com.mae.entity;
+package com.mae.entity.projectile;
 
 import com.mae.config.Settings;
 import com.mae.constant.Enums;
+import com.mae.entity.Entity;
 import com.mae.panel.GamePanel;
 import lombok.Getter;
 import lombok.Setter;
@@ -39,7 +40,11 @@ public abstract class Projectile extends Entity {
                 alive = false;
             }
         } else {
-
+            boolean contactPlayer = gp.getCollisionChecker().checkPlayer(this);
+            if (contactPlayer && ! gp.getPlayer().isInvincible()) {
+                damagePlayer(attack);
+                alive = false;
+            }
         }
 
 
@@ -107,6 +112,15 @@ public abstract class Projectile extends Entity {
             g2.drawImage(img, screenX, screenY, null);
         }
 
+    }
+
+    public boolean hasEnoughMana(Entity user){
+        return user.getMana() >= getUseCost();
+    }
+
+    //TODO: should we do this via user's class?
+    public void useMana(Entity user){
+        user.setMana(user.getMana() - useCost);
     }
 
 

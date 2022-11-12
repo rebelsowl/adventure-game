@@ -3,6 +3,7 @@ package com.mae.entity;
 import com.mae.config.Settings;
 import com.mae.constant.Enums;
 import com.mae.constant.Enums.Directions;
+import com.mae.entity.projectile.Projectile;
 import com.mae.interfaces.Drawable;
 import com.mae.panel.GamePanel;
 import com.mae.utility.UtilityTool;
@@ -47,10 +48,16 @@ public abstract class Entity implements Drawable { // parent class for Player, N
 
     // CHARACTER STATUS
     protected int attack;
+
     protected int defence;
     protected int maxLife;
     protected int life;
     protected int exp;
+
+    protected int maxMana;
+    protected int mana;
+    protected Projectile projectileSkill;
+    protected int shotAvailableCounter = 1;
 
     //TODO: abstract to monster parent class
     protected boolean alive = true;
@@ -163,6 +170,7 @@ public abstract class Entity implements Drawable { // parent class for Player, N
     public void setAction() {}
     public void damageReaction(){}
 
+
     public void update() {
         setAction();
 
@@ -173,15 +181,7 @@ public abstract class Entity implements Drawable { // parent class for Player, N
         gp.getCollisionChecker().checkEntity(this, gp.getMonsters());
         boolean playerContact = gp.getCollisionChecker().checkPlayer(this);
         if (this.type == 2 && playerContact) {
-            if (!gp.getPlayer().isInvincible()) {
-                gp.playSoundEffect(6);
-
-                int damage = attack  - gp.getPlayer().getDefence();
-                damage = Math.max(damage, 0);
-
-                gp.getPlayer().life -= damage;
-                gp.getPlayer().setInvincible(true);
-            }
+            damagePlayer(attack);
         }
 
         if (!isCollision()) {
@@ -216,6 +216,23 @@ public abstract class Entity implements Drawable { // parent class for Player, N
             }
         }
 
+        // projectile skill cooldown
+        if (shotAvailableCounter < 30) {
+            shotAvailableCounter++;
+        }
+
+    }
+
+    public void damagePlayer(int attack){
+        if (!gp.getPlayer().isInvincible()) {
+            gp.playSoundEffect(6);
+
+            int damage = attack  - gp.getPlayer().getDefence();
+            damage = Math.max(damage, 0);
+
+            gp.getPlayer().life -= damage;
+            gp.getPlayer().setInvincible(true);
+        }
     }
 
     public void speak() {

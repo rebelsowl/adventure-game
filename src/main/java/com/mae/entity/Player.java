@@ -2,10 +2,14 @@ package com.mae.entity;
 
 import com.mae.config.Settings;
 import com.mae.constant.Enums.Directions;
+import com.mae.entity.projectile.Fireball;
 import com.mae.handler.KeyboardInputHandler;
 import com.mae.object.OBJ_Shield;
 import com.mae.object.OBJ_Sword;
-import com.mae.object.parent.*;
+import com.mae.object.parent.Consumable;
+import com.mae.object.parent.Shield;
+import com.mae.object.parent.SuperObject;
+import com.mae.object.parent.Weapon;
 import com.mae.panel.GamePanel;
 import lombok.Data;
 
@@ -34,8 +38,6 @@ public class Player extends Entity {
     private boolean attacking = false;
     private boolean hitSoundEffectPlaying = false;
     private ArrayList<SuperObject> inventory = new ArrayList<>();
-    private Projectile projectileSkill;
-    private int shotAvailableCounter = 1;
 
 
     public Player(GamePanel gp, KeyboardInputHandler keyHandler) {
@@ -70,6 +72,8 @@ public class Player extends Entity {
         defence = getFinalDefenceValue();
 
         projectileSkill = new Fireball(gp);
+        setMaxMana(4);
+        setMana(getMaxMana());
 
         initPlayerImages();
         setPlayerAttackImages();
@@ -127,9 +131,10 @@ public class Player extends Entity {
         if (keyHandler.spacePressed) {
             setAttacking(true);
             attack();
-        } else if (keyHandler.shotKeyPressed && ! projectileSkill.isAlive() && shotAvailableCounter == 30) {
+        } else if (keyHandler.shotKeyPressed && !projectileSkill.isAlive() && shotAvailableCounter == 30 && projectileSkill.hasEnoughMana(this)) {
             projectileSkill.set(worldX, worldY, direction, true, this);
             gp.getProjectiles().add(projectileSkill);
+            projectileSkill.useMana(this);
             shotAvailableCounter = 0;
             gp.playSoundEffect(10);
         } else if (movementKeyPressed() || interactKeyPressed()) {
@@ -188,7 +193,6 @@ public class Player extends Entity {
 
         }
 
-        
 
         // invincible time
         if (invincible) {
@@ -215,11 +219,9 @@ public class Player extends Entity {
                 setCurrentWeapon((Weapon) selectedItem);
                 attack = getFinalAttackValue();
                 setPlayerAttackImages();
-                System.out.println("instance of weapon");
             } else if (selectedItem instanceof Shield) {
                 setCurrentShield((Shield) selectedItem);
                 defence = getFinalDefenceValue();
-                System.out.println("instance of weapon");
             } else if (selectedItem instanceof Consumable) {
                 Consumable item = (Consumable) selectedItem;
                 item.use(this);

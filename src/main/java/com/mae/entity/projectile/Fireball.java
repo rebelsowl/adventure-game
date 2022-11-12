@@ -1,10 +1,9 @@
-package com.mae.entity;
+package com.mae.entity.projectile;
 
 import com.mae.panel.GamePanel;
 import com.mae.utility.UtilityTool;
 
 import javax.imageio.ImageIO;
-
 import java.io.IOException;
 
 import static com.mae.config.Settings.TILE_SIZE;
@@ -42,5 +41,10 @@ public class Fireball extends Projectile {
         }
     }
 
+    /*
+    public boolean hasEnoughMana(Entity user){
+        return user.getMana() >= getUseCost();
+    }
+*/
 
 }
