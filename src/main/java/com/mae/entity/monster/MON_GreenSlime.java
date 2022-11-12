@@ -3,6 +3,7 @@ package com.mae.entity.monster;
 import com.mae.config.Settings;
 import com.mae.constant.Enums;
 import com.mae.entity.Entity;
+import com.mae.entity.projectile.Rock;
 import com.mae.panel.GamePanel;
 import com.mae.utility.UtilityTool;
 
@@ -24,6 +25,8 @@ public class MON_GreenSlime extends Entity {
         setType(2);
 
         setExp(2);
+
+        setProjectileSkill(new Rock(gp));
 
         solidArea.x = 3;
         solidArea.y = 18;
@@ -72,6 +75,14 @@ public class MON_GreenSlime extends Entity {
             }
             actionLockCounter = 0;
         }
+
+        int i = new Random().nextInt(100) + 1;
+        if (i > 99 && ! projectileSkill.isAlive() && shotAvailableCounter == 30){
+            projectileSkill.set(worldX, worldY, direction, true, this);
+            gp.getProjectiles().add(projectileSkill);
+            shotAvailableCounter = 0;
+        }
+
     }
 
     public void damageReaction(){

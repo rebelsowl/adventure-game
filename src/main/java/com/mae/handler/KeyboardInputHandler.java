@@ -9,7 +9,7 @@ import java.awt.event.KeyListener;
 public class KeyboardInputHandler implements KeyListener {
 
     private final GamePanel gp;
-    public boolean upPressed, downPressed, leftPressed, rightPressed, enterPressed, spacePressed;
+    public boolean upPressed, downPressed, leftPressed, rightPressed, enterPressed, spacePressed, shotKeyPressed;
 
     public KeyboardInputHandler(GamePanel gp) {
         this.gp = gp;
@@ -42,6 +42,8 @@ public class KeyboardInputHandler implements KeyListener {
             rightPressed = false;
         if (e.getKeyCode() == KeyEvent.VK_S)
             downPressed = false;
+        if (e.getKeyCode() == KeyEvent.VK_F)
+            shotKeyPressed = false;
     }
 
     private void handleTitleState(KeyEvent e) {
@@ -79,31 +81,30 @@ public class KeyboardInputHandler implements KeyListener {
         else if (e.getKeyCode() == KeyEvent.VK_S)
             downPressed = true;
 
-        if (e.getKeyCode() == KeyEvent.VK_ENTER || e.getKeyCode() == KeyEvent.VK_E)
-            enterPressed = true;
-
-        if (e.getKeyCode() == KeyEvent.VK_SPACE)
+        else if (e.getKeyCode() == KeyEvent.VK_SPACE)
             spacePressed = true;
-
-        if (e.getKeyCode() == KeyEvent.VK_C)
+        else if (e.getKeyCode() == KeyEvent.VK_F)
+            shotKeyPressed = true;
+        else if (e.getKeyCode() == KeyEvent.VK_ENTER || e.getKeyCode() == KeyEvent.VK_E)
+            enterPressed = true;
+        else if (e.getKeyCode() == KeyEvent.VK_C)
             gp.setGameState(GamePanel.CHARACTER_STATUS_STATE);
-
-        if (e.getKeyCode() == KeyEvent.VK_P)
+        else if (e.getKeyCode() == KeyEvent.VK_P)
             gp.setGameState(GamePanel.PAUSE_STATE);
     }
 
     private void handlePauseState(KeyEvent e) {
-        if (e.getKeyCode() == KeyEvent.VK_P)
+        if (e.getKeyCode() == KeyEvent.VK_P || e.getKeyCode() == KeyEvent.VK_ESCAPE)
             gp.setGameState(GamePanel.PLAY_STATE);
     }
 
     private void handleDialogueState(KeyEvent e) {
-        if (e.getKeyCode() == KeyEvent.VK_ENTER || e.getKeyCode() == KeyEvent.VK_ESCAPE)
+        if (e.getKeyCode() == KeyEvent.VK_ENTER || e.getKeyCode() == KeyEvent.VK_ESCAPE || e.getKeyCode() == KeyEvent.VK_E)
             gp.setGameState(GamePanel.PLAY_STATE);
     }
 
     private void handleCharacterStatusState(KeyEvent e) {
-        if (e.getKeyCode() == KeyEvent.VK_C)
+        if (e.getKeyCode() == KeyEvent.VK_C || e.getKeyCode() == KeyEvent.VK_ESCAPE)
             gp.setGameState(GamePanel.PLAY_STATE);
         else if (e.getKeyCode() == KeyEvent.VK_W) {
             if (gp.getUi().getInventorySlotRow() != 0 ) {

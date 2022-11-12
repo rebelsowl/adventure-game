@@ -93,9 +93,9 @@ public class EventHandler {
         if (gp.getKeyHandler().enterPressed) {
             gp.setGameState(gameState);
             gp.playSoundEffect(2);
-            gp.getUi().setCurrentDialogue("You drink the water. \nYour life has been recovered.");
+            gp.getUi().setCurrentDialogue("You drink the water. \nYour life and mana have been recovered.");
             gp.getPlayer().setLife(gp.getPlayer().getMaxLife());
-
+            gp.getPlayer().setMana(gp.getPlayer().getMaxMana());
             gp.getAssetSetter().createMonsters(); // resets monsters
 
         }

@@ -2,6 +2,7 @@ package com.mae.ui;
 
 import com.mae.config.Settings;
 import com.mae.object.OBJ_Heart;
+import com.mae.object.OBJ_Mana_Crystal;
 import com.mae.object.parent.SuperObject;
 import com.mae.panel.GamePanel;
 
@@ -15,7 +16,7 @@ import static com.mae.config.Settings.TILE_SIZE;
 public class UI {
     public static int titleScreenCommandNumber = 0;
     private final GamePanel gp;
-    BufferedImage heartFull, heartHalf, heartBlank;
+    BufferedImage heartFull, heartHalf, heartBlank, crystalFull, crystalBlank ;
     private Font purisaBoldFont;
 
     private String currentDialogue = "";
@@ -43,6 +44,10 @@ public class UI {
         heartHalf = heart.getImage2();
         heartBlank = heart.getImage3();
 
+        OBJ_Mana_Crystal mana = new OBJ_Mana_Crystal(gp);
+        crystalFull = mana.getImage();
+        crystalBlank = mana.getImage2();
+
     }
 
     public void draw(Graphics2D g2) {
@@ -53,13 +58,13 @@ public class UI {
         if (gp.getGameState() == GamePanel.TITLE_STATE) {
             drawTitleScreen(g2);
         } else if (gp.getGameState() == GamePanel.PLAY_STATE) {
-            drawPlayersLife(g2);
+            drawPlayersStats(g2);
             drawMessages(g2);
         } else if (gp.getGameState() == GamePanel.PAUSE_STATE) {
-            drawPlayersLife(g2);
+            drawPlayersStats(g2);
             drawPauseScreen(g2);
         } else if (gp.getGameState() == GamePanel.DIALOGUE_STATE) {
-            drawPlayersLife(g2);
+            drawPlayersStats(g2);
             drawDialogueScreen(g2);
         } else if (gp.getGameState() == GamePanel.CHARACTER_STATUS_STATE) {
             drawCharacterStatusScreen(g2);
@@ -67,16 +72,19 @@ public class UI {
         }
     }
 
-
-    private void drawPlayersLife(Graphics2D g2) {
+    /**
+     * Players stats: life, mana
+     * @param g2
+     */
+    private void drawPlayersStats(Graphics2D g2) {
         int x = TILE_SIZE / 2;
         int y = TILE_SIZE / 2;
-
+        // draw max life
         for (int i = 0; i < gp.getPlayer().getMaxLife() / 2; i++) { // max life
             g2.drawImage(heartBlank, x, y, null);
             x += TILE_SIZE;
         }
-
+        // draw life
         x = TILE_SIZE / 2;
         int i = 0;
         while (i < gp.getPlayer().getLife()) {
@@ -87,6 +95,26 @@ public class UI {
             }
             i++;
             x += TILE_SIZE;
+        }
+
+        // draw max mana
+        x = (TILE_SIZE / 2) - 5;
+        y = (int) (TILE_SIZE * 1.5);
+        i = 0;
+        while (i < gp.getPlayer().getMaxMana()){
+            g2.drawImage(crystalBlank, x, y, null);
+            i++;
+            x += 35;
+        }
+
+        //draw mana
+        x = (TILE_SIZE / 2) - 5;
+        y = (int) (TILE_SIZE * 1.5);
+        i = 0;
+        while (i < gp.getPlayer().getMana()){
+            g2.drawImage(crystalFull, x, y, null);
+            i++;
+            x += 35;
         }
 
     }
@@ -224,6 +252,8 @@ public class UI {
         textY += lineHeight;
         g2.drawString("Life", textX, textY);
         textY += lineHeight;
+        g2.drawString("Mana", textX, textY);
+        textY += lineHeight;
         g2.drawString("Strength", textX, textY);
         textY += lineHeight;
         g2.drawString("Dexterity", textX, textY);
@@ -237,7 +267,7 @@ public class UI {
         g2.drawString("Next Level", textX, textY);
         textY += lineHeight;
         g2.drawString("Coin", textX, textY);
-        textY += lineHeight + 20;
+        textY += lineHeight + 10;
         g2.drawString("Weapon", textX, textY);
         textY += lineHeight + 15;
         g2.drawString("Shield", textX, textY);
@@ -253,6 +283,11 @@ public class UI {
 
         textY += lineHeight;
         value = gp.getPlayer().getLife() + "/" + gp.getPlayer().getMaxLife();
+        textX = getXForAlignToRightTextDisplay(value, tailX, g2);
+        g2.drawString(value, textX, textY);
+
+        textY += lineHeight;
+        value = gp.getPlayer().getMana() + "/" + gp.getPlayer().getMaxMana();
         textX = getXForAlignToRightTextDisplay(value, tailX, g2);
         g2.drawString(value, textX, textY);
 
@@ -292,10 +327,10 @@ public class UI {
         g2.drawString(value, textX, textY);
 
         textY += lineHeight;
-        g2.drawImage(gp.getPlayer().getCurrentWeapon().getImage(), tailX - TILE_SIZE, textY - 14, null);
+        g2.drawImage(gp.getPlayer().getCurrentWeapon().getImage(), tailX - TILE_SIZE, textY - 24, null);
 
         textY += TILE_SIZE;
-        g2.drawImage(gp.getPlayer().getCurrentShield().getImage(), tailX - TILE_SIZE, textY - 14, null);
+        g2.drawImage(gp.getPlayer().getCurrentShield().getImage(), tailX - TILE_SIZE, textY - 24, null);
 
 
     }

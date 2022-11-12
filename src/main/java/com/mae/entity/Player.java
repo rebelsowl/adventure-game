@@ -2,6 +2,7 @@ package com.mae.entity;
 
 import com.mae.config.Settings;
 import com.mae.constant.Enums.Directions;
+import com.mae.entity.projectile.Fireball;
 import com.mae.handler.KeyboardInputHandler;
 import com.mae.object.OBJ_Shield;
 import com.mae.object.OBJ_Sword;
@@ -38,6 +39,7 @@ public class Player extends Entity {
     private boolean hitSoundEffectPlaying = false;
     private ArrayList<SuperObject> inventory = new ArrayList<>();
 
+
     public Player(GamePanel gp, KeyboardInputHandler keyHandler) {
         super(gp);
 
@@ -69,6 +71,9 @@ public class Player extends Entity {
         attack = getFinalAttackValue();
         defence = getFinalDefenceValue();
 
+        projectileSkill = new Fireball(gp);
+        setMaxMana(4);
+        setMana(getMaxMana());
 
         initPlayerImages();
         setPlayerAttackImages();
@@ -126,8 +131,12 @@ public class Player extends Entity {
         if (keyHandler.spacePressed) {
             setAttacking(true);
             attack();
-
-
+        } else if (keyHandler.shotKeyPressed && !projectileSkill.isAlive() && shotAvailableCounter == 30 && projectileSkill.hasEnoughMana(this)) {
+            projectileSkill.set(worldX, worldY, direction, true, this);
+            gp.getProjectiles().add(projectileSkill);
+            projectileSkill.useMana(this);
+            shotAvailableCounter = 0;
+            gp.playSoundEffect(10);
         } else if (movementKeyPressed() || interactKeyPressed()) {
             if (keyHandler.upPressed) {
                 setDirection(Directions.UP);
@@ -174,9 +183,7 @@ public class Player extends Entity {
                         break;
                 }
             }
-
             keyHandler.enterPressed = false;
-
 
             spriteCounter++; // for movement animation
             if (spriteCounter > 12) {
@@ -185,6 +192,8 @@ public class Player extends Entity {
             }
 
         }
+
+
         // invincible time
         if (invincible) {
             invincibleCounter++;
@@ -192,6 +201,11 @@ public class Player extends Entity {
                 invincible = false;
                 invincibleCounter = 0;
             }
+        }
+
+        // projectile skill cooldown
+        if (shotAvailableCounter < 30) {
+            shotAvailableCounter++;
         }
 
     }
@@ -205,11 +219,9 @@ public class Player extends Entity {
                 setCurrentWeapon((Weapon) selectedItem);
                 attack = getFinalAttackValue();
                 setPlayerAttackImages();
-                System.out.println("instance of weapon");
             } else if (selectedItem instanceof Shield) {
                 setCurrentShield((Shield) selectedItem);
                 defence = getFinalDefenceValue();
-                System.out.println("instance of weapon");
             } else if (selectedItem instanceof Consumable) {
                 Consumable item = (Consumable) selectedItem;
                 item.use(this);
@@ -264,7 +276,7 @@ public class Player extends Entity {
             solidArea.height = attackArea.height;
 
             int monsterIndex = gp.getCollisionChecker().checkEntity(this, gp.getMonsters());
-            hitMonster(monsterIndex);
+            hitMonster(monsterIndex, attack);
 
             worldX = currentWorldX;
             worldY = currentWorldY;
@@ -280,12 +292,12 @@ public class Player extends Entity {
 
     }
 
-    private void hitMonster(int index) {
+    public void hitMonster(int index, int attack) {
         if (index > -1) {
             if (!gp.getMonsters()[index].isInvincible()) {
                 gp.playSoundEffect(6);
 
-                int damage = getFinalAttackValue() - gp.getMonsters()[index].getDefence();
+                int damage = attack - gp.getMonsters()[index].getDefence();
                 damage = Math.max(damage, 0);
                 gp.getUi().addMessage(damage + " damage!");
                 gp.getMonsters()[index].life -= damage;
@@ -305,7 +317,7 @@ public class Player extends Entity {
 
     private void interactWithMonster(int index) {
         if (index > -1) {
-            if (!invincible) {
+            if (!invincible && !gp.getMonsters()[index].isDying()) {
                 gp.playSoundEffect(5);
 
                 int damage = gp.getMonsters()[index].getAttack() - getDefence();
