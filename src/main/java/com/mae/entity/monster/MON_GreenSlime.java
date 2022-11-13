@@ -2,19 +2,20 @@ package com.mae.entity.monster;
 
 import com.mae.config.Settings;
 import com.mae.constant.Enums;
-import com.mae.entity.Entity;
 import com.mae.entity.projectile.Rock;
+import com.mae.object.OBJ_Coin;
+import com.mae.object.OBJ_Heart;
+import com.mae.object.OBJ_Mana_Crystal;
 import com.mae.panel.GamePanel;
 import com.mae.utility.UtilityTool;
 
 import javax.imageio.ImageIO;
-
 import java.io.IOException;
 import java.util.Random;
 
 import static com.mae.config.Settings.TILE_SIZE;
 
-public class MON_GreenSlime extends Entity {
+public class MON_GreenSlime extends Monster {
 
     public MON_GreenSlime(GamePanel gp) {
         super(gp);
@@ -41,6 +42,7 @@ public class MON_GreenSlime extends Entity {
         initImages();
     }
 
+
     public void initImages() {
         try {
             setUp1(UtilityTool.scaleImage(ImageIO.read(getClass().getResourceAsStream("/monster/slime/greenslime_down_1.png")), TILE_SIZE, TILE_SIZE));
@@ -57,7 +59,7 @@ public class MON_GreenSlime extends Entity {
         }
     }
 
-    public void setAction(){
+    public void setAction() {
         actionLockCounter++;
 
         if (actionLockCounter > Settings.FPS * 3) {
@@ -77,7 +79,7 @@ public class MON_GreenSlime extends Entity {
         }
 
         int i = new Random().nextInt(100) + 1;
-        if (i > 99 && ! projectileSkill.isAlive() && shotAvailableCounter == 30){
+        if (i > 99 && !projectileSkill.isAlive() && shotAvailableCounter == 30) {
             projectileSkill.set(worldX, worldY, direction, true, this);
             gp.getProjectiles().add(projectileSkill);
             shotAvailableCounter = 0;
@@ -85,9 +87,22 @@ public class MON_GreenSlime extends Entity {
 
     }
 
-    public void damageReaction(){
+    public void damageReaction() {
         actionLockCounter = 0;
         direction = gp.getPlayer().getDirection(); // move away from the player
+    }
+
+    @Override
+    public void checkDrop() {
+        int i = new Random().nextInt(100) + 1;
+
+        if (i < 50)
+            dropItem(new OBJ_Coin(gp));
+        else if (i < 75)
+            dropItem(new OBJ_Heart(gp));
+        else
+            dropItem(new OBJ_Mana_Crystal(gp));
+
     }
 
 }

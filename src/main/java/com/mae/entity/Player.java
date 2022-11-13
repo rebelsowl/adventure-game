@@ -6,10 +6,7 @@ import com.mae.entity.projectile.Fireball;
 import com.mae.handler.KeyboardInputHandler;
 import com.mae.object.OBJ_Shield;
 import com.mae.object.OBJ_Sword;
-import com.mae.object.parent.Consumable;
-import com.mae.object.parent.Shield;
-import com.mae.object.parent.SuperObject;
-import com.mae.object.parent.Weapon;
+import com.mae.object.parent.*;
 import com.mae.panel.GamePanel;
 import lombok.Data;
 
@@ -330,17 +327,22 @@ public class Player extends Entity {
 
     public void interactWithObject(int index) {
         if (index > -1) {
-            String text;
-            if (inventory.size() < maxInventorySize) {
-                inventory.add(gp.getObjects()[index]);
-                gp.playSoundEffect(1);
-                text = "Obtained a " + gp.getObjects()[index].getName() + "!";
+
+            if (gp.getObjects()[index] instanceof Collectable){ // collectable
+                ((Collectable) gp.getObjects()[index]).use(this);
                 gp.getObjects()[index] = null;
             } else {
-                text = "You cannot carry anymore!";
+                String text;
+                if (inventory.size() < maxInventorySize) {
+                    inventory.add(gp.getObjects()[index]);
+                    gp.playSoundEffect(1);
+                    text = "Obtained a " + gp.getObjects()[index].getName() + "!";
+                    gp.getObjects()[index] = null;
+                } else {
+                    text = "You cannot carry anymore!";
+                }
+                gp.getUi().addMessage(text);
             }
-            gp.getUi().addMessage(text);
-
 
         }
     }
@@ -430,6 +432,7 @@ public class Player extends Entity {
 
             maxLife += 2;
             setLife(maxLife);
+            setMana(maxMana);
             strength++;
             dexterity++;
 

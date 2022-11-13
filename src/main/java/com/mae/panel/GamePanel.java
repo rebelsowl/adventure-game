@@ -3,6 +3,7 @@ package com.mae.panel;
 import com.mae.config.Settings;
 import com.mae.entity.Entity;
 import com.mae.entity.Player;
+import com.mae.entity.monster.Monster;
 import com.mae.handler.*;
 import com.mae.interfaces.Drawable;
 import com.mae.entity.projectile.Projectile;
@@ -38,9 +39,9 @@ public class GamePanel extends JPanel implements Runnable {
     EventHandler eventHandler = new EventHandler(this);
     UI ui = new UI(this);
     Thread gameThread;
-    SuperObject[] objects = new SuperObject[10];
+    SuperObject[] objects = new SuperObject[20];
     Entity[] npcs = new Entity[10];
-    Entity[] monsters = new Entity[20];
+    Monster[] monsters = new Monster[20];
     ArrayList<Drawable> drawables = new ArrayList<>();
     ArrayList<Projectile> projectiles = new ArrayList<>();
 
@@ -119,8 +120,11 @@ public class GamePanel extends JPanel implements Runnable {
                 if (monsters[i] != null) {
                     if (monsters[i].isAlive() && !monsters[i].isDying())
                         monsters[i].update();
-                    if (!monsters[i].isAlive())
+                    if (!monsters[i].isAlive()) {
+                        monsters[i].checkDrop();
                         monsters[i] = null;
+
+                    }
                 }
             }
 

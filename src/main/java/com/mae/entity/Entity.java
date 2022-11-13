@@ -46,6 +46,10 @@ public abstract class Entity implements Drawable { // parent class for Player, N
     protected int dialogueIndex = 0;
     protected int type; // 0 -> player 1 -> npc 2 -> monster
 
+    protected boolean alive = true;
+    protected boolean dying = false;
+    protected int dyingCounter = 0;
+
     // CHARACTER STATUS
     protected int attack;
 
@@ -59,10 +63,7 @@ public abstract class Entity implements Drawable { // parent class for Player, N
     protected Projectile projectileSkill;
     protected int shotAvailableCounter = 1;
 
-    //TODO: abstract to monster parent class
-    protected boolean alive = true;
-    protected boolean dying = false;
-    protected int dyingCounter = 0;
+
 
     protected boolean hpBarOn = false;
     protected int hpBarCounter = 0;
