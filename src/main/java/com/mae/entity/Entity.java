@@ -5,6 +5,7 @@ import com.mae.constant.Enums;
 import com.mae.constant.Enums.Directions;
 import com.mae.entity.projectile.Projectile;
 import com.mae.interfaces.Drawable;
+import com.mae.object.parent.Weapon;
 import com.mae.panel.GamePanel;
 import com.mae.utility.UtilityTool;
 import lombok.Data;
@@ -39,6 +40,7 @@ public abstract class Entity implements Drawable { // parent class for Player, N
 
     protected Rectangle attackArea = new Rectangle(0, 0, 0, 0);
 
+    protected Weapon currentWeapon;
     protected int actionLockCounter = 0; // for npc AI's movement to be smooth
     protected boolean invincible = false;
     protected int invincibleCounter = 0;
@@ -132,6 +134,7 @@ public abstract class Entity implements Drawable { // parent class for Player, N
 
             if (dying) {
                 dyingAnimation(g2);
+
             }
 
             g2.drawImage(img, screenX, screenY, null);
@@ -180,6 +183,7 @@ public abstract class Entity implements Drawable { // parent class for Player, N
         gp.getCollisionChecker().checkObject(this, false);
         gp.getCollisionChecker().checkEntity(this, gp.getNpcs());
         gp.getCollisionChecker().checkEntity(this, gp.getMonsters());
+        gp.getCollisionChecker().checkEntity(this, gp.getITiles());
         boolean playerContact = gp.getCollisionChecker().checkPlayer(this);
         if (this.type == 2 && playerContact) {
             damagePlayer(attack);
