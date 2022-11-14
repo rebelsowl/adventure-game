@@ -4,6 +4,7 @@ import com.mae.config.Settings;
 import com.mae.entity.Entity;
 import com.mae.entity.Player;
 import com.mae.entity.monster.Monster;
+import com.mae.entity.particle.Particle;
 import com.mae.handler.*;
 import com.mae.interfaces.Drawable;
 import com.mae.entity.projectile.Projectile;
@@ -48,6 +49,7 @@ public class GamePanel extends JPanel implements Runnable {
 
     ArrayList<Drawable> drawables = new ArrayList<>();
     ArrayList<Projectile> projectiles = new ArrayList<>();
+    ArrayList<Particle> particles = new ArrayList<>();
 
     // GAME STATE
     private int gameState;
@@ -133,14 +135,22 @@ public class GamePanel extends JPanel implements Runnable {
                 }
             }
 
-
-            Iterator<Projectile> iterator = projectiles.iterator();
-            while (iterator.hasNext()){
-                Projectile currentProjectile = iterator.next();
+            Iterator<Projectile> projectileIterator = projectiles.iterator();
+            while (projectileIterator.hasNext()){
+                Projectile currentProjectile = projectileIterator.next();
                 if (currentProjectile.isAlive())
                     currentProjectile.update();
                 else
-                    iterator.remove();
+                    projectileIterator.remove();
+            }
+
+            Iterator<Particle> particleIterator = particles.iterator();
+            while (particleIterator.hasNext()){
+                Particle currentParticle = particleIterator.next();
+                if (currentParticle.isAlive())
+                    currentParticle.update();
+                else
+                    particleIterator.remove();
             }
 
             for (InteractiveTile iTile : iTiles) {
@@ -187,6 +197,8 @@ public class GamePanel extends JPanel implements Runnable {
             }
 
             drawables.addAll(projectiles);
+
+            drawables.addAll(particles);
 
             drawables.sort(Comparator.comparingInt(Drawable::getWorldY));
 

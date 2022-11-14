@@ -7,6 +7,7 @@ import com.mae.panel.GamePanel;
 import com.mae.utility.UtilityTool;
 
 import javax.imageio.ImageIO;
+import java.awt.*;
 import java.io.IOException;
 import java.util.Random;
 
@@ -18,7 +19,7 @@ public class IT_DryTree extends InteractiveTile {
         super(gp, col, row);
         setDirection(Enums.Directions.DOWN);
         setDestructible(true);
-        setLife(new Random().nextInt(3)+1);
+        setLife(new Random().nextInt(3) + 1);
         try {
             setDown1(UtilityTool.scaleImage(ImageIO.read(getClass().getResourceAsStream("/tiles_interactive/drytree.png")), TILE_SIZE, TILE_SIZE));
             setDown2(UtilityTool.scaleImage(ImageIO.read(getClass().getResourceAsStream("/tiles_interactive/drytree.png")), TILE_SIZE, TILE_SIZE));
@@ -29,20 +30,39 @@ public class IT_DryTree extends InteractiveTile {
     }
 
     @Override
-    public boolean isCorrectItem(Entity entity){
+    public boolean isCorrectItem(Entity entity) {
         return entity.getCurrentWeapon() instanceof OBJ_Axe;
     }
 
     @Override
-    public void playSoundEffect(){
+    public void playSoundEffect() {
         gp.playSoundEffect(11);
     }
 
     @Override
     public InteractiveTile getDestroyedForm() {
-        return new IT_Trunk(gp, worldX/TILE_SIZE, worldY/TILE_SIZE);
+        return new IT_Trunk(gp, worldX / TILE_SIZE, worldY / TILE_SIZE);
     }
 
+    @Override
+    public Color getParticleColor() {
+        return new Color(65, 50, 30);
+    }
+
+    @Override
+    public int getParticleSize() {
+        return 6; //pixels
+    }
+
+    @Override
+    public int getParticleSpeed() {
+        return 1;
+    }
+
+    @Override
+    public int getParticleMaxLife() {
+        return 20; // frames
+    }
 
 
 }
