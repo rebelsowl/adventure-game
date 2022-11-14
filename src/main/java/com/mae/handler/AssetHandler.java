@@ -6,6 +6,7 @@ import com.mae.entity.monster.MON_GreenSlime;
 import com.mae.entity.monster.Monster;
 import com.mae.object.*;
 import com.mae.panel.GamePanel;
+import com.mae.tile.interactive.IT_DryTree;
 
 import static com.mae.config.Settings.TILE_SIZE;
 
@@ -113,4 +114,30 @@ public class AssetHandler {
         gp.getMonsters()[4] = slime4;
 
     }
+
+    public void createInteractiveTiles() {
+        int i = 0;
+
+        gp.getITiles()[i] = new IT_DryTree(gp, 27, 12);
+
+        i++;
+        gp.getITiles()[i] = new IT_DryTree(gp, 28 ,12);
+
+        i++;
+        gp.getITiles()[i] = new IT_DryTree(gp, 29, 12);
+
+        i++;
+        gp.getITiles()[i] = new IT_DryTree(gp, 30, 12);
+
+        i++;
+        gp.getITiles()[i] = new IT_DryTree(gp, 31, 12);
+
+        i++;
+        gp.getITiles()[i] = new IT_DryTree(gp, 32, 12);
+
+        i++;
+        gp.getITiles()[i] = new IT_DryTree(gp, 33, 12);
+
+    }
+
 }

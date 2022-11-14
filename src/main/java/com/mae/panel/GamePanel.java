@@ -9,6 +9,7 @@ import com.mae.interfaces.Drawable;
 import com.mae.entity.projectile.Projectile;
 import com.mae.object.parent.SuperObject;
 import com.mae.tile.TileManager;
+import com.mae.tile.interactive.InteractiveTile;
 import com.mae.ui.UI;
 import lombok.Data;
 
@@ -42,6 +43,9 @@ public class GamePanel extends JPanel implements Runnable {
     SuperObject[] objects = new SuperObject[20];
     Entity[] npcs = new Entity[10];
     Monster[] monsters = new Monster[20];
+
+    InteractiveTile[] iTiles = new InteractiveTile[50];
+
     ArrayList<Drawable> drawables = new ArrayList<>();
     ArrayList<Projectile> projectiles = new ArrayList<>();
 
@@ -61,6 +65,7 @@ public class GamePanel extends JPanel implements Runnable {
 
     public void setupGame() {
         assetSetter.placeInitialObjectsInWorld();
+        assetSetter.createInteractiveTiles();
         assetSetter.createNpcs();
         assetSetter.createMonsters();
         gameState = TITLE_STATE;
@@ -138,6 +143,12 @@ public class GamePanel extends JPanel implements Runnable {
                     iterator.remove();
             }
 
+            for (InteractiveTile iTile : iTiles) {
+                if (iTile != null) {
+                    iTile.update();
+                }
+            }
+
         } else if (gameState == PAUSE_STATE) {
             // nothing for now
         }
@@ -151,6 +162,12 @@ public class GamePanel extends JPanel implements Runnable {
             ui.draw(g2);
         } else {
             tileManager.draw(g2);
+
+            for (InteractiveTile iTile : iTiles) {
+                if (iTile != null) {
+                    iTile.draw(g2);
+                }
+            }
 
             drawables.add(player);
             for (SuperObject obj : objects) {

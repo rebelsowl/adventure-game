@@ -4,8 +4,8 @@ import com.mae.config.Settings;
 import com.mae.constant.Enums.Directions;
 import com.mae.entity.projectile.Fireball;
 import com.mae.handler.KeyboardInputHandler;
+import com.mae.object.OBJ_Axe;
 import com.mae.object.OBJ_Shield;
-import com.mae.object.OBJ_Sword;
 import com.mae.object.parent.*;
 import com.mae.panel.GamePanel;
 import lombok.Data;
@@ -30,7 +30,7 @@ public class Player extends Entity {
     private int dexterity;
     private int nextLvlExp;
     private int coin;
-    private Weapon currentWeapon;
+
     private Shield currentShield;
     private boolean attacking = false;
     private boolean hitSoundEffectPlaying = false;
@@ -63,7 +63,8 @@ public class Player extends Entity {
         exp = 0;
         nextLvlExp = 5;
         coin = 0;
-        currentWeapon = new OBJ_Sword(gp);
+//        currentWeapon = new OBJ_Sword(gp);
+        currentWeapon = new OBJ_Axe(gp);
         currentShield = new OBJ_Shield(gp);
         attack = getFinalAttackValue();
         defence = getFinalDefenceValue();
@@ -148,6 +149,9 @@ public class Player extends Entity {
             // tile collision
             setCollision(false);
             gp.getCollisionChecker().checkTile(this);
+
+            // Interactive tile collision
+            gp.getCollisionChecker().checkEntity(this, gp.getITiles());
 
             // object collision
             int objIndex = gp.getCollisionChecker().checkObject(this, true);
@@ -275,6 +279,10 @@ public class Player extends Entity {
             int monsterIndex = gp.getCollisionChecker().checkEntity(this, gp.getMonsters());
             hitMonster(monsterIndex, attack);
 
+            int iTileIndex = gp.getCollisionChecker().checkEntity(this, gp.getITiles());
+            hitInteractiveTile(iTileIndex);
+
+
             worldX = currentWorldX;
             worldY = currentWorldY;
             solidArea.width = solidAreaWidth;
@@ -288,6 +296,8 @@ public class Player extends Entity {
         }
 
     }
+
+
 
     public void hitMonster(int index, int attack) {
         if (index > -1) {
@@ -310,6 +320,18 @@ public class Player extends Entity {
                 }
             }
         }
+    }
+
+    private void hitInteractiveTile(int index) {
+        if (index > -1 && gp.getITiles()[index].isDestructible() && gp.getITiles()[index].isCorrectItem(this) && !gp.getITiles()[index].isInvincible()) {
+            gp.getITiles()[index].life --;
+            gp.getITiles()[index].setInvincible(true);
+            if (gp.getITiles()[index].life <= 0) {
+                gp.getITiles()[index].playSoundEffect();
+                gp.getITiles()[index] = gp.getITiles()[index].getDestroyedForm();
+            }
+        }
+
     }
 
     private void interactWithMonster(int index) {
