@@ -281,13 +281,13 @@ public abstract class Entity implements Drawable { // parent class for Player, N
         int speed = generator.getParticleSpeed();
         int maxLife = generator.getParticleMaxLife();
 
-        Particle p1 = new Particle(gp, generator, color, size, speed,maxLife, -1,-1);
+        Particle p1 = new Particle(gp, target, color, size, speed,maxLife, -1,-1);
         gp.getParticles().add(p1);
-        Particle p2 = new Particle(gp, generator, color, size, speed,maxLife, 1,-1);
+        Particle p2 = new Particle(gp, target, color, size, speed,maxLife, 1,-1);
         gp.getParticles().add(p2);
-        Particle p3 = new Particle(gp, generator, color, size, speed,maxLife, -1,1);
+        Particle p3 = new Particle(gp, target, color, size, speed,maxLife, -1,1);
         gp.getParticles().add(p3);
-        Particle p4 = new Particle(gp, generator, color, size, speed,maxLife, 1,1);
+        Particle p4 = new Particle(gp, target, color, size, speed,maxLife, 1,1);
         gp.getParticles().add(p4);
 
 
