@@ -60,7 +60,7 @@ public class KeyboardInputHandler implements KeyListener {
             switch (UI.titleScreenCommandNumber) {
                 case 0:
                     gp.setGameState(GamePanel.PLAY_STATE);
-                    gp.playThemeSong(0);
+//                    gp.playThemeSong(0); // TODO: enable when project finished :)
                     break;
                 case 1:
                     break;

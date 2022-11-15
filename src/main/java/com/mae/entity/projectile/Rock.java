@@ -4,6 +4,7 @@ import com.mae.panel.GamePanel;
 import com.mae.utility.UtilityTool;
 
 import javax.imageio.ImageIO;
+import java.awt.*;
 import java.io.IOException;
 
 import static com.mae.config.Settings.TILE_SIZE;
@@ -39,6 +40,26 @@ public class Rock extends Projectile {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public Color getParticleColor() {
+        return new Color(65, 50, 30);
+    }
+
+    @Override
+    public int getParticleSize() {
+        return 6; //pixels
+    }
+
+    @Override
+    public int getParticleSpeed() {
+        return 1;
+    }
+
+    @Override
+    public int getParticleMaxLife() {
+        return 20; // frames
     }
 
 

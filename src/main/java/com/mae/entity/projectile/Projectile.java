@@ -37,12 +37,14 @@ public abstract class Projectile extends Entity {
             int monsterIndex = gp.collisionChecker.checkEntity(this, gp.getMonsters());
             if (monsterIndex > -1){
                 gp.getPlayer().hitMonster(monsterIndex, attack);
+                generateParticle(user.getProjectileSkill(), gp.getMonsters()[monsterIndex]);
                 alive = false;
             }
         } else {
             boolean contactPlayer = gp.getCollisionChecker().checkPlayer(this);
             if (contactPlayer && ! gp.getPlayer().isInvincible()) {
                 damagePlayer(attack);
+                generateParticle(user.getProjectileSkill(), gp.getPlayer());
                 alive = false;
             }
         }

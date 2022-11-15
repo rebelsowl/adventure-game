@@ -298,7 +298,6 @@ public class Player extends Entity {
     }
 
 
-
     public void hitMonster(int index, int attack) {
         if (index > -1) {
             if (!gp.getMonsters()[index].isInvincible()) {
@@ -324,8 +323,9 @@ public class Player extends Entity {
 
     private void hitInteractiveTile(int index) {
         if (index > -1 && gp.getITiles()[index].isDestructible() && gp.getITiles()[index].isCorrectItem(this) && !gp.getITiles()[index].isInvincible()) {
-            gp.getITiles()[index].life --;
+            gp.getITiles()[index].life--;
             gp.getITiles()[index].setInvincible(true);
+            generateParticle(gp.getITiles()[index], gp.getITiles()[index]);
             if (gp.getITiles()[index].life <= 0) {
                 gp.getITiles()[index].playSoundEffect();
                 gp.getITiles()[index] = gp.getITiles()[index].getDestroyedForm();
@@ -350,7 +350,7 @@ public class Player extends Entity {
     public void interactWithObject(int index) {
         if (index > -1) {
 
-            if (gp.getObjects()[index] instanceof Collectable){ // collectable
+            if (gp.getObjects()[index] instanceof Collectable) { // collectable
                 ((Collectable) gp.getObjects()[index]).use(this);
                 gp.getObjects()[index] = null;
             } else {

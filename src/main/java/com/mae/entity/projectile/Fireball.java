@@ -4,6 +4,7 @@ import com.mae.panel.GamePanel;
 import com.mae.utility.UtilityTool;
 
 import javax.imageio.ImageIO;
+import java.awt.*;
 import java.io.IOException;
 
 import static com.mae.config.Settings.TILE_SIZE;
@@ -41,10 +42,24 @@ public class Fireball extends Projectile {
         }
     }
 
-    /*
-    public boolean hasEnoughMana(Entity user){
-        return user.getMana() >= getUseCost();
+    @Override
+    public Color getParticleColor() {
+        return new Color(240, 50, 0);
     }
-*/
+
+    @Override
+    public int getParticleSize() {
+        return 10; //pixels
+    }
+
+    @Override
+    public int getParticleSpeed() {
+        return 1;
+    }
+
+    @Override
+    public int getParticleMaxLife() {
+        return 20; // frames
+    }
 
 }

@@ -3,6 +3,7 @@ package com.mae.entity;
 import com.mae.config.Settings;
 import com.mae.constant.Enums;
 import com.mae.constant.Enums.Directions;
+import com.mae.entity.particle.Particle;
 import com.mae.entity.projectile.Projectile;
 import com.mae.interfaces.Drawable;
 import com.mae.object.parent.Weapon;
@@ -271,4 +272,43 @@ public abstract class Entity implements Drawable { // parent class for Player, N
         }
         return image;
     }
+
+
+    // PARTICLE
+    public void generateParticle(Entity generator, Entity target) {
+        Color color = generator.getParticleColor();
+        int size =generator.getParticleSize();
+        int speed = generator.getParticleSpeed();
+        int maxLife = generator.getParticleMaxLife();
+
+        Particle p1 = new Particle(gp, target, color, size, speed,maxLife, -1,-1);
+        gp.getParticles().add(p1);
+        Particle p2 = new Particle(gp, target, color, size, speed,maxLife, 1,-1);
+        gp.getParticles().add(p2);
+        Particle p3 = new Particle(gp, target, color, size, speed,maxLife, -1,1);
+        gp.getParticles().add(p3);
+        Particle p4 = new Particle(gp, target, color, size, speed,maxLife, 1,1);
+        gp.getParticles().add(p4);
+
+
+    }
+
+    public Color getParticleColor() {
+        return new Color(0,0,0);
+    }
+
+    public int getParticleSize() {
+        return 0; //pixels
+    }
+
+    public int getParticleSpeed() {
+        return 0;
+    }
+
+    public int getParticleMaxLife() {
+        return 20; // frames
+    }
+
+
+
 }
