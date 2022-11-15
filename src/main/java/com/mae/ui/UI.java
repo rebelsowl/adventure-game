@@ -232,7 +232,7 @@ public class UI {
 
     private void drawCharacterStatusScreen(Graphics2D g2) {
         // create a frame
-        final int frameX = TILE_SIZE;
+        final int frameX = TILE_SIZE * 2;
         final int frameY = TILE_SIZE;
         final int frameWidth = TILE_SIZE * 5;
         final int frameHeight = TILE_SIZE * 10;
@@ -337,7 +337,7 @@ public class UI {
 
     private void drawInventory(Graphics2D g2) {
         // create a frame
-        final int frameX = TILE_SIZE * 9;
+        final int frameX = TILE_SIZE * 12;
         final int frameY = TILE_SIZE;
         final int frameWidth = TILE_SIZE * 6;
         final int frameHeight = TILE_SIZE * 5;
