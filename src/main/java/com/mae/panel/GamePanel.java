@@ -1,13 +1,15 @@
 package com.mae.panel;
 
+import com.mae.App;
+import com.mae.config.Configuration;
 import com.mae.config.Settings;
 import com.mae.entity.Entity;
 import com.mae.entity.Player;
 import com.mae.entity.monster.Monster;
 import com.mae.entity.particle.Particle;
+import com.mae.entity.projectile.Projectile;
 import com.mae.handler.*;
 import com.mae.interfaces.Drawable;
-import com.mae.entity.projectile.Projectile;
 import com.mae.object.parent.SuperObject;
 import com.mae.tile.TileManager;
 import com.mae.tile.interactive.InteractiveTile;
@@ -16,20 +18,28 @@ import lombok.Data;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Iterator;
 
+import static com.mae.config.Settings.*;
+
 @Data
 public class GamePanel extends JPanel implements Runnable {
 
+    // GAME STATE
     public static final int TITLE_STATE = 0;
     public static final int PLAY_STATE = 1;
     public static final int PAUSE_STATE = 2;
     public static final int DIALOGUE_STATE = 3;
     public static final int CHARACTER_STATUS_STATE = 4;
+    public static final int OPTIONS_STATE = 5;
 
+    // Settings
+    public static boolean fullScreenOn = false;
     public CollisionHandler collisionChecker = new CollisionHandler(this);
+    Configuration config = new Configuration(this);
     // SYSTEM
     TileManager tileManager = new TileManager(this);
     KeyboardInputHandler keyHandler = new KeyboardInputHandler(this);
@@ -44,23 +54,25 @@ public class GamePanel extends JPanel implements Runnable {
     SuperObject[] objects = new SuperObject[20];
     Entity[] npcs = new Entity[10];
     Monster[] monsters = new Monster[20];
-
     InteractiveTile[] iTiles = new InteractiveTile[50];
-
     ArrayList<Drawable> drawables = new ArrayList<>();
     ArrayList<Projectile> projectiles = new ArrayList<>();
     ArrayList<Particle> particles = new ArrayList<>();
-
-    // GAME STATE
+    // FULL SCREEN
+    BufferedImage tempScreen;
+    Graphics2D g2;
     private int gameState;
 
 
     public GamePanel() {
-        this.setPreferredSize(new Dimension(Settings.SCREEN_WIDTH, Settings.SCREEN_HEIGHT));
+        this.setPreferredSize(new Dimension(SCREEN_WIDTH, Settings.SCREEN_HEIGHT));
         this.setBackground(Color.BLACK);
         this.setDoubleBuffered(true); // double buffering increases the rendering performance
         this.addKeyListener(keyHandler);
         this.setFocusable(true);
+
+        tempScreen = new BufferedImage(SCREEN_WIDTH, SCREEN_HEIGHT, BufferedImage.TYPE_INT_ARGB);
+        g2 = (Graphics2D) tempScreen.getGraphics();
 
     }
 
@@ -72,6 +84,8 @@ public class GamePanel extends JPanel implements Runnable {
         assetSetter.createMonsters();
         gameState = TITLE_STATE;
 
+        if (fullScreenOn)
+            setFullScreen();
     }
 
     public void startGameThread() {
@@ -98,7 +112,8 @@ public class GamePanel extends JPanel implements Runnable {
                 // update
                 update();
                 // draw
-                repaint(); // calls paintComponent() method
+                drawToTempScreen(); // we will draw everything to tempScreen
+                drawToScreen(); // then we will scale it to jPanel(with specified resolution)
                 delta--; // making -- doesn't reset the missing process ex-> if it worked at %105 it hands %05 to next iter
                 // drawCount += 1; // for fps display
             }
@@ -136,7 +151,7 @@ public class GamePanel extends JPanel implements Runnable {
             }
 
             Iterator<Projectile> projectileIterator = projectiles.iterator();
-            while (projectileIterator.hasNext()){
+            while (projectileIterator.hasNext()) {
                 Projectile currentProjectile = projectileIterator.next();
                 if (currentProjectile.isAlive())
                     currentProjectile.update();
@@ -145,7 +160,7 @@ public class GamePanel extends JPanel implements Runnable {
             }
 
             Iterator<Particle> particleIterator = particles.iterator();
-            while (particleIterator.hasNext()){
+            while (particleIterator.hasNext()) {
                 Particle currentParticle = particleIterator.next();
                 if (currentParticle.isAlive())
                     currentParticle.update();
@@ -164,31 +179,25 @@ public class GamePanel extends JPanel implements Runnable {
         }
     }
 
-    public void paintComponent(Graphics g) { // built-in method for drawing
-        super.paintComponent(g);
-        Graphics2D g2 = (Graphics2D) g;
-
+    public void drawToTempScreen() {
         if (gameState == TITLE_STATE) {
             ui.draw(g2);
         } else {
             tileManager.draw(g2);
 
             for (InteractiveTile iTile : iTiles) {
-                if (iTile != null) {
+                if (iTile != null)
                     iTile.draw(g2);
-                }
             }
 
             drawables.add(player);
             for (SuperObject obj : objects) {
-                if (obj != null) {
+                if (obj != null)
                     drawables.add(obj);
-                }
             }
             for (Entity entity : npcs) {
-                if (entity != null) {
+                if (entity != null)
                     drawables.add(entity);
-                }
             }
 
             for (Entity monster : monsters) {
@@ -197,26 +206,32 @@ public class GamePanel extends JPanel implements Runnable {
             }
 
             drawables.addAll(projectiles);
-
             drawables.addAll(particles);
-
             drawables.sort(Comparator.comparingInt(Drawable::getWorldY));
-
             for (Drawable drawable : drawables) {
                 drawable.draw(g2);
             }
-
             drawables.clear();
-
-
             ui.draw(g2);
 
-            // performance test
-            // System.out.println("draw time: " + (System.nanoTime() - drawStartTime));
-
         }
+    }
 
-        g2.dispose();
+    public void drawToScreen() {
+        Graphics g = getGraphics();
+        g.drawImage(tempScreen, 0, 0, SCREEN_WIDTH2, SCREEN_HEIGHT2, null);
+        g.dispose();
+    }
+
+    public void setFullScreen() {
+        // get local screen device
+        GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+        GraphicsDevice gd = ge.getDefaultScreenDevice();
+        gd.setFullScreenWindow(App.window);
+
+        // get full screen width and height
+        SCREEN_WIDTH2 = App.window.getWidth();
+        SCREEN_HEIGHT2 = App.window.getHeight();
     }
 
     public void playThemeSong(int i) {
