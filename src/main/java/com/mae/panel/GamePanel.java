@@ -33,6 +33,12 @@ public class GamePanel extends JPanel implements Runnable {
     public static final int PAUSE_STATE = 2;
     public static final int DIALOGUE_STATE = 3;
     public static final int CHARACTER_STATUS_STATE = 4;
+    public static final int OPTIONS_STATE = 5;
+
+    // Settings
+    public static boolean fullScreenOn = false;
+
+
     public CollisionHandler collisionChecker = new CollisionHandler(this);
     // SYSTEM
     TileManager tileManager = new TileManager(this);

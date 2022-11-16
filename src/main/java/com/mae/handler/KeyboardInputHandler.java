@@ -30,8 +30,11 @@ public class KeyboardInputHandler implements KeyListener {
             handleDialogueState(e);
         else if (gp.getGameState() == GamePanel.CHARACTER_STATUS_STATE) // CHARACTER_STATUS_STATE
             handleCharacterStatusState(e);
+        else if (gp.getGameState() == GamePanel.OPTIONS_STATE) // OPTIONS_STATE
+            handleOptionsState(e);
 
     }
+
 
     public void keyReleased(KeyEvent e) {
         if (e.getKeyCode() == KeyEvent.VK_W)
@@ -48,19 +51,19 @@ public class KeyboardInputHandler implements KeyListener {
 
     private void handleTitleState(KeyEvent e) {
         if (e.getKeyCode() == KeyEvent.VK_W) {
-            UI.titleScreenCommandNumber--;
-            if (UI.titleScreenCommandNumber < 0)
-                UI.titleScreenCommandNumber = 2;
+            UI.stateCommandNumber--;
+            if (UI.stateCommandNumber < 0)
+                UI.stateCommandNumber = 2;
         } else if (e.getKeyCode() == KeyEvent.VK_S) {
-            UI.titleScreenCommandNumber++;
-            if (UI.titleScreenCommandNumber > 2) {
-                UI.titleScreenCommandNumber = 0;
+            UI.stateCommandNumber++;
+            if (UI.stateCommandNumber > 2) {
+                UI.stateCommandNumber = 0;
             }
         } else if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-            switch (UI.titleScreenCommandNumber) {
+            switch (UI.stateCommandNumber) {
                 case 0:
                     gp.setGameState(GamePanel.PLAY_STATE);
-//                    gp.playThemeSong(0); // TODO: enable when project finished :)
+                    gp.playThemeSong(0);
                     break;
                 case 1:
                     break;
@@ -91,6 +94,9 @@ public class KeyboardInputHandler implements KeyListener {
             gp.setGameState(GamePanel.CHARACTER_STATUS_STATE);
         else if (e.getKeyCode() == KeyEvent.VK_P)
             gp.setGameState(GamePanel.PAUSE_STATE);
+        else if (e.getKeyCode() == KeyEvent.VK_ESCAPE)
+            gp.setGameState(GamePanel.OPTIONS_STATE);
+
     }
 
     private void handlePauseState(KeyEvent e) {
@@ -107,7 +113,7 @@ public class KeyboardInputHandler implements KeyListener {
         if (e.getKeyCode() == KeyEvent.VK_C || e.getKeyCode() == KeyEvent.VK_ESCAPE)
             gp.setGameState(GamePanel.PLAY_STATE);
         else if (e.getKeyCode() == KeyEvent.VK_W) {
-            if (gp.getUi().getInventorySlotRow() != 0 ) {
+            if (gp.getUi().getInventorySlotRow() != 0) {
                 gp.getUi().setInventorySlotRow(gp.getUi().getInventorySlotRow() - 1);
                 gp.playSoundEffect(9);
             }
@@ -128,7 +134,58 @@ public class KeyboardInputHandler implements KeyListener {
             }
         } else if (e.getKeyCode() == KeyEvent.VK_ENTER) {
             gp.getPlayer().selectItem();
-            
+
+        }
+    }
+
+    private void handleOptionsState(KeyEvent e) {
+        if (e.getKeyCode() == KeyEvent.VK_ESCAPE)
+            gp.setGameState(GamePanel.PLAY_STATE);
+
+        int maxCommandNumber = 0;
+        switch (UI.optionsScreenSubStateNumber) {
+            case 0:
+                maxCommandNumber = 5;
+                break;
+            case 3:
+                maxCommandNumber = 1;
+                break;
+        }
+
+        if (e.getKeyCode() == KeyEvent.VK_W) {
+            UI.stateCommandNumber--;
+            gp.playSoundEffect(9);
+            if (UI.stateCommandNumber < 0)
+                UI.stateCommandNumber = maxCommandNumber;
+        } else if (e.getKeyCode() == KeyEvent.VK_S) {
+            UI.stateCommandNumber++;
+            gp.playSoundEffect(9);
+            if (UI.stateCommandNumber > maxCommandNumber)
+                UI.stateCommandNumber = 0;
+        } else if (e.getKeyCode() == KeyEvent.VK_ENTER)
+            enterPressed = true;
+        else if (e.getKeyCode() == KeyEvent.VK_A) {
+            if (UI.optionsScreenSubStateNumber == 0) {
+                if (UI.stateCommandNumber == 1 && gp.getThemeMusicHandler().getVolumeScale() > 0) {
+                    gp.getThemeMusicHandler().setVolumeScale(gp.getThemeMusicHandler().getVolumeScale() - 1);
+                    gp.getThemeMusicHandler().checkVolume();
+                    gp.playSoundEffect(9);
+                } else if (UI.stateCommandNumber == 2 && gp.getSoundEffectHandler().getVolumeScale() > 0) {
+                    gp.getSoundEffectHandler().setVolumeScale(gp.getSoundEffectHandler().getVolumeScale() - 1);
+                    gp.playSoundEffect(9);
+                }
+            }
+        } else if (e.getKeyCode() == KeyEvent.VK_D) {
+            if (UI.optionsScreenSubStateNumber == 0) {
+                if (UI.stateCommandNumber == 1 && gp.getThemeMusicHandler().getVolumeScale() < 5) {
+                    gp.getThemeMusicHandler().setVolumeScale(gp.getThemeMusicHandler().getVolumeScale() + 1);
+                    gp.getThemeMusicHandler().checkVolume();
+                    gp.playSoundEffect(9);
+                } else if (UI.stateCommandNumber == 2 && gp.getSoundEffectHandler().getVolumeScale() < 5) {
+                    gp.getSoundEffectHandler().setVolumeScale(gp.getSoundEffectHandler().getVolumeScale() + 1);
+                    gp.playSoundEffect(9);
+                }
+            }
         }
 
 
