@@ -527,6 +527,7 @@ public class UI {
         volumeWidth = 24 * gp.getSoundEffectHandler().getVolumeScale();
         g2.fillRect(textX, textY, volumeWidth, TILE_SIZE / 2);
 
+        gp.getConfig().saveConfig();
     }
 
     public void optionsFullScreen(int frameX, int frameY, Graphics2D g2) {

@@ -1,6 +1,7 @@
 package com.mae.panel;
 
 import com.mae.App;
+import com.mae.config.Configuration;
 import com.mae.config.Settings;
 import com.mae.entity.Entity;
 import com.mae.entity.Player;
@@ -37,9 +38,8 @@ public class GamePanel extends JPanel implements Runnable {
 
     // Settings
     public static boolean fullScreenOn = false;
-
-
     public CollisionHandler collisionChecker = new CollisionHandler(this);
+    Configuration config = new Configuration(this);
     // SYSTEM
     TileManager tileManager = new TileManager(this);
     KeyboardInputHandler keyHandler = new KeyboardInputHandler(this);
@@ -84,7 +84,8 @@ public class GamePanel extends JPanel implements Runnable {
         assetSetter.createMonsters();
         gameState = TITLE_STATE;
 
-//        setFullScreen();
+        if (fullScreenOn)
+            setFullScreen();
     }
 
     public void startGameThread() {
