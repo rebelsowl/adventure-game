@@ -42,11 +42,17 @@ public class Player extends Entity {
 
         this.keyHandler = keyHandler;
         // setting initial values
-        setWorldX(TILE_SIZE * 23);
-        setWorldY(TILE_SIZE * 21);
+        setDefaultPositionAndDirection();
         setSpeed(4);
-        direction = Directions.DOWN;
 
+        setDefaultValues();
+
+        initPlayerImages();
+        setPlayerAttackImages();
+        setItems();
+    }
+
+    public void setDefaultValues(){
         solidArea = new Rectangle(8, 16, 27, 27);
         setSolidAreaDefaultX(solidArea.x);
         setSolidAreaDefaultY(solidArea.y);
@@ -71,21 +77,7 @@ public class Player extends Entity {
         projectileSkill = new Fireball(gp);
         setMaxMana(4);
         setMana(getMaxMana());
-
-        initPlayerImages();
-        setPlayerAttackImages();
-        addInitialItemsToInventory();
     }
-
-    private int getFinalDefenceValue() {
-        return defence = dexterity * currentShield.getDefenceValue();
-    }
-
-    private int getFinalAttackValue() {
-        attackArea = currentWeapon.getAttackArea();
-        return attack = strength * currentWeapon.getAttackValue();
-    }
-
 
     public void initPlayerImages() {
         setUp1(setImage("/player/boy_up_1", TILE_SIZE, TILE_SIZE));
@@ -96,8 +88,6 @@ public class Player extends Entity {
         setRight2(setImage("/player/boy_right_2", TILE_SIZE, TILE_SIZE));
         setDown1(setImage("/player/boy_down_1", TILE_SIZE, TILE_SIZE));
         setDown2(setImage("/player/boy_down_2", TILE_SIZE, TILE_SIZE));
-
-
     }
 
     public void setPlayerAttackImages() {
@@ -121,6 +111,20 @@ public class Player extends Entity {
             setAttackDown2(setImage("/player/boy_axe_down_2", TILE_SIZE, TILE_SIZE * 2));
         }
     }
+
+
+    public void setDefaultPositionAndDirection(){
+        setWorldX(TILE_SIZE * 23);
+        setWorldY(TILE_SIZE * 21);
+        direction = Directions.DOWN;
+    }
+
+    public void restoreLifeAndMana(){
+        life = maxLife;
+        mana = maxMana;
+        invincible = false;
+    }
+
 
 
     public void update() {
@@ -208,6 +212,11 @@ public class Player extends Entity {
             shotAvailableCounter++;
         }
 
+        if (life <= 0) {
+            gp.setGameState(GamePanel.GAME_OVER_STATE);
+            gp.playSoundEffect(12);
+        }
+
     }
 
     public void selectItem() {
@@ -230,10 +239,10 @@ public class Player extends Entity {
         }
     }
 
-    public void addInitialItemsToInventory() {
+    public void setItems() {
+        inventory.clear();
         inventory.add(currentWeapon);
         inventory.add(currentShield);
-
     }
 
     private void attack() {
@@ -466,6 +475,15 @@ public class Player extends Entity {
 
         }
 
+    }
+
+    private int getFinalDefenceValue() {
+        return defence = dexterity * currentShield.getDefenceValue();
+    }
+
+    private int getFinalAttackValue() {
+        attackArea = currentWeapon.getAttackArea();
+        return attack = strength * currentWeapon.getAttackValue();
     }
 
     private boolean movementKeyPressed() {

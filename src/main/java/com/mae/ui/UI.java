@@ -11,11 +11,12 @@ import java.awt.image.BufferedImage;
 import java.io.InputStream;
 import java.util.ArrayList;
 
-import static com.mae.config.Settings.TILE_SIZE;
+import static com.mae.config.Settings.*;
 
 public class UI {
-    public static int stateCommandNumber = 0;
-    public static int optionsScreenSubStateNumber = 0;
+
+    public static int stateCommandNumber = 0; // used for cursor number
+    public static int optionsScreenSubStateNumber = 0; // holds state in the options ui
     private final GamePanel gp;
     private final ArrayList<String> messages = new ArrayList<>();
     private final ArrayList<Integer> messageCounter = new ArrayList<>();
@@ -69,8 +70,12 @@ public class UI {
             drawInventory(g2);
         } else if (gp.getGameState() == GamePanel.OPTIONS_STATE) {
             drawOptionsScreen(g2);
+        } else if (gp.getGameState() == GamePanel.GAME_OVER_STATE) {
+            drawGameOverScreen(g2);
         }
     }
+
+
 
 
     /**
@@ -440,6 +445,43 @@ public class UI {
 
     }
 
+    private void drawGameOverScreen(Graphics2D g2) {
+        g2.setColor(new Color(0,0,0,150));
+        g2.fillRect(0,0,SCREEN_WIDTH2, SCREEN_HEIGHT2);
+
+        int x;
+        int y = TILE_SIZE * 4;
+        String text = "GAME OVER";
+        g2.setFont(g2.getFont().deriveFont(Font.BOLD, 70f));
+
+
+        g2.setColor(Color.black); // shadow
+        x = getXForCenteredTextDisplay(text, g2);
+        g2.drawString(text, x, y);
+
+        g2.setColor(Color.white);
+        g2.drawString(text, x-4, y-4);
+
+        // retry
+        g2.setFont(g2.getFont().deriveFont(Font.BOLD, 40f));
+        text = "Retry";
+        x = getXForCenteredTextDisplay(text, g2);
+        y += TILE_SIZE * 4;
+        g2.drawString(text, x, y);
+        if (stateCommandNumber == 0){
+            g2.drawString(">", x - 40, y );
+        }
+        // Back
+        text = "Quit";
+        x = getXForCenteredTextDisplay(text, g2);
+        y += 55;
+        g2.drawString(text, x, y);
+        if (stateCommandNumber == 1){
+            g2.drawString(">", x - 40, y );
+        }
+
+    }
+
     private void optionsTop(int frameX, int frameY, Graphics2D g2) {
         int textX;
         int textY;
@@ -530,7 +572,7 @@ public class UI {
         gp.getConfig().saveConfig();
     }
 
-    public void optionsFullScreen(int frameX, int frameY, Graphics2D g2) {
+    private void optionsFullScreen(int frameX, int frameY, Graphics2D g2) {
         int textX = frameX + 25;
         int textY = frameY + TILE_SIZE;
 
@@ -552,7 +594,7 @@ public class UI {
 
     }
 
-    public void optionsControl(int frameX, int frameY, Graphics2D g2) {
+    private void optionsControl(int frameX, int frameY, Graphics2D g2) {
         int textX;
         int textY = frameY + TILE_SIZE;
         g2.setFont(g2.getFont().deriveFont(20F));
