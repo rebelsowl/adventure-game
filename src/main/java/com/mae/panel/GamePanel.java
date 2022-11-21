@@ -29,12 +29,14 @@ import static com.mae.config.Settings.*;
 public class GamePanel extends JPanel implements Runnable {
 
     // GAME STATE
+    private int gameState;
     public static final int TITLE_STATE = 0;
     public static final int PLAY_STATE = 1;
     public static final int PAUSE_STATE = 2;
     public static final int DIALOGUE_STATE = 3;
     public static final int CHARACTER_STATUS_STATE = 4;
     public static final int OPTIONS_STATE = 5;
+    public static final int GAME_OVER_STATE = 6;
 
     // Settings
     public static boolean fullScreenOn = false;
@@ -61,7 +63,7 @@ public class GamePanel extends JPanel implements Runnable {
     // FULL SCREEN
     BufferedImage tempScreen;
     Graphics2D g2;
-    private int gameState;
+
 
 
     public GamePanel() {
@@ -221,6 +223,26 @@ public class GamePanel extends JPanel implements Runnable {
         Graphics g = getGraphics();
         g.drawImage(tempScreen, 0, 0, SCREEN_WIDTH2, SCREEN_HEIGHT2, null);
         g.dispose();
+    }
+
+    public void retry(){
+        player.setDefaultPositionAndDirection();
+        player.restoreLifeAndMana();
+        assetSetter.createNpcs();
+        assetSetter.createMonsters();
+    }
+
+    public void restart(){
+        player.setDefaultValues();
+        player.setDefaultPositionAndDirection();
+        player.restoreLifeAndMana();
+        player.setItems();
+
+        assetSetter.placeInitialObjectsInWorld();
+        assetSetter.createNpcs();
+        assetSetter.createMonsters();
+        assetSetter.createInteractiveTiles();
+
     }
 
     public void setFullScreen() {

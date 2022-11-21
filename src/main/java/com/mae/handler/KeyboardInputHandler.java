@@ -22,18 +22,24 @@ public class KeyboardInputHandler implements KeyListener {
 
         if (gp.getGameState() == GamePanel.TITLE_STATE)// TITLE_STATE
             handleTitleState(e);
-        else if (gp.getGameState() == GamePanel.PLAY_STATE) // PLAY_STATE
+        else if (gp.getGameState() == GamePanel.PLAY_STATE)
             handlePlayState(e);
-        else if (gp.getGameState() == GamePanel.PAUSE_STATE) // PAUSE_STATE
+        else if (gp.getGameState() == GamePanel.PAUSE_STATE)
             handlePauseState(e);
-        else if (gp.getGameState() == GamePanel.DIALOGUE_STATE) // DIALOGUE_STATE
+        else if (gp.getGameState() == GamePanel.DIALOGUE_STATE)
             handleDialogueState(e);
-        else if (gp.getGameState() == GamePanel.CHARACTER_STATUS_STATE) // CHARACTER_STATUS_STATE
+        else if (gp.getGameState() == GamePanel.CHARACTER_STATUS_STATE)
             handleCharacterStatusState(e);
-        else if (gp.getGameState() == GamePanel.OPTIONS_STATE) // OPTIONS_STATE
+        else if (gp.getGameState() == GamePanel.OPTIONS_STATE)
             handleOptionsState(e);
+        else if (gp.getGameState() == GamePanel.GAME_OVER_STATE)
+            handleGameOverState(e);
 
-    }
+        }
+
+
+
+
 
 
     public void keyReleased(KeyEvent e) {
@@ -96,6 +102,7 @@ public class KeyboardInputHandler implements KeyListener {
             gp.setGameState(GamePanel.PAUSE_STATE);
         else if (e.getKeyCode() == KeyEvent.VK_ESCAPE)
             gp.setGameState(GamePanel.OPTIONS_STATE);
+
 
     }
 
@@ -185,6 +192,26 @@ public class KeyboardInputHandler implements KeyListener {
                     gp.getSoundEffectHandler().setVolumeScale(gp.getSoundEffectHandler().getVolumeScale() + 1);
                     gp.playSoundEffect(9);
                 }
+            }
+        }
+    }
+
+    private void handleGameOverState(KeyEvent e) {
+        if (e.getKeyCode() == KeyEvent.VK_W) {
+            UI.stateCommandNumber = 0;
+            gp.playSoundEffect(9);
+        } else if (e.getKeyCode() == KeyEvent.VK_S) {
+            UI.stateCommandNumber = 1;
+            gp.playSoundEffect(9);
+        }
+
+        if (e.getKeyCode() == KeyEvent.VK_ENTER){
+            if (UI.stateCommandNumber == 0){
+                gp.retry();
+                gp.setGameState(GamePanel.PLAY_STATE);
+            } else if (UI.stateCommandNumber == 1) {
+                gp.restart();
+                gp.setGameState(GamePanel.TITLE_STATE);
             }
         }
 
