@@ -214,6 +214,7 @@ public class Player extends Entity {
 
         if (life <= 0) {
             gp.setGameState(GamePanel.GAME_OVER_STATE);
+            gp.stopThemeSong();
             gp.playSoundEffect(12);
         }
 
