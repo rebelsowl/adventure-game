@@ -34,10 +34,10 @@ public abstract class Projectile extends Entity {
     public void update() {
 
         if (user.equals(gp.getPlayer())) {
-            int monsterIndex = gp.collisionChecker.checkEntity(this, gp.getMonsters());
+            int monsterIndex = gp.collisionChecker.checkEntity(this, gp.getMonsters()[GamePanel.currentMap]);
             if (monsterIndex > -1){
                 gp.getPlayer().hitMonster(monsterIndex, attack);
-                generateParticle(user.getProjectileSkill(), gp.getMonsters()[monsterIndex]);
+                generateParticle(user.getProjectileSkill(), gp.getMonsters()[GamePanel.currentMap][monsterIndex]);
                 alive = false;
             }
         } else {

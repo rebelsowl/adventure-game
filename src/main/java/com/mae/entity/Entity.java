@@ -182,9 +182,9 @@ public abstract class Entity implements Drawable { // parent class for Player, N
         setCollision(false);
         gp.getCollisionChecker().checkTile(this);
         gp.getCollisionChecker().checkObject(this, false);
-        gp.getCollisionChecker().checkEntity(this, gp.getNpcs());
-        gp.getCollisionChecker().checkEntity(this, gp.getMonsters());
-        gp.getCollisionChecker().checkEntity(this, gp.getITiles());
+        gp.getCollisionChecker().checkEntity(this, gp.getNpcs()[GamePanel.currentMap]);
+        gp.getCollisionChecker().checkEntity(this, gp.getMonsters()[GamePanel.currentMap]);
+        gp.getCollisionChecker().checkEntity(this, gp.getITiles()[GamePanel.currentMap]);
         boolean playerContact = gp.getCollisionChecker().checkPlayer(this);
         if (this.type == 2 && playerContact) {
             damagePlayer(attack);

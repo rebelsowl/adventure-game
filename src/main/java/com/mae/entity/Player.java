@@ -154,18 +154,18 @@ public class Player extends Entity {
             gp.getCollisionChecker().checkTile(this);
 
             // Interactive tile collision
-            gp.getCollisionChecker().checkEntity(this, gp.getITiles());
+            gp.getCollisionChecker().checkEntity(this, gp.getITiles()[GamePanel.currentMap]);
 
             // object collision
             int objIndex = gp.getCollisionChecker().checkObject(this, true);
             interactWithObject(objIndex);
 
             // Entity Collision
-            int entityIndex = gp.getCollisionChecker().checkEntity(this, gp.getNpcs());
+            int entityIndex = gp.getCollisionChecker().checkEntity(this, gp.getNpcs()[GamePanel.currentMap]);
             interactWithEntity(entityIndex);
 
             // Monster Collision
-            int monsterIndex = gp.getCollisionChecker().checkEntity(this, gp.getMonsters());
+            int monsterIndex = gp.getCollisionChecker().checkEntity(this, gp.getMonsters()[GamePanel.currentMap]);
             interactWithMonster(monsterIndex);
 
             // Check event
@@ -285,10 +285,10 @@ public class Player extends Entity {
             solidArea.width = attackArea.width;
             solidArea.height = attackArea.height;
 
-            int monsterIndex = gp.getCollisionChecker().checkEntity(this, gp.getMonsters());
+            int monsterIndex = gp.getCollisionChecker().checkEntity(this, gp.getMonsters()[GamePanel.currentMap]);
             hitMonster(monsterIndex, attack);
 
-            int iTileIndex = gp.getCollisionChecker().checkEntity(this, gp.getITiles());
+            int iTileIndex = gp.getCollisionChecker().checkEntity(this, gp.getITiles()[GamePanel.currentMap]);
             hitInteractiveTile(iTileIndex);
 
 
@@ -309,21 +309,21 @@ public class Player extends Entity {
 
     public void hitMonster(int index, int attack) {
         if (index > -1) {
-            if (!gp.getMonsters()[index].isInvincible()) {
+            if (!gp.getMonsters()[GamePanel.currentMap][index].isInvincible()) {
                 gp.playSoundEffect(6);
 
-                int damage = attack - gp.getMonsters()[index].getDefence();
+                int damage = attack - gp.getMonsters()[GamePanel.currentMap][index].getDefence();
                 damage = Math.max(damage, 0);
                 gp.getUi().addMessage(damage + " damage!");
-                gp.getMonsters()[index].life -= damage;
-                gp.getMonsters()[index].setInvincible(true);
-                gp.getMonsters()[index].damageReaction();
-                if (gp.getMonsters()[index].getLife() <= 0) {
-                    gp.getMonsters()[index].setDying(true);
-                    gp.getUi().addMessage("Killed the " + gp.getMonsters()[index].getName() + "!");
-                    gp.getUi().addMessage("Exp + " + gp.getMonsters()[index].getExp());
+                gp.getMonsters()[GamePanel.currentMap][index].life -= damage;
+                gp.getMonsters()[GamePanel.currentMap][index].setInvincible(true);
+                gp.getMonsters()[GamePanel.currentMap][index].damageReaction();
+                if (gp.getMonsters()[GamePanel.currentMap][index].getLife() <= 0) {
+                    gp.getMonsters()[GamePanel.currentMap][index].setDying(true);
+                    gp.getUi().addMessage("Killed the " + gp.getMonsters()[GamePanel.currentMap][index].getName() + "!");
+                    gp.getUi().addMessage("Exp + " + gp.getMonsters()[GamePanel.currentMap][index].getExp());
 
-                    exp += gp.getMonsters()[index].getExp(); // TODO: status abstraction --> exp handler
+                    exp += gp.getMonsters()[GamePanel.currentMap][index].getExp(); // TODO: status abstraction --> exp handler
                     checkLevelUp();
                 }
             }
@@ -331,13 +331,13 @@ public class Player extends Entity {
     }
 
     private void hitInteractiveTile(int index) {
-        if (index > -1 && gp.getITiles()[index].isDestructible() && gp.getITiles()[index].isCorrectItem(this) && !gp.getITiles()[index].isInvincible()) {
-            gp.getITiles()[index].life--;
-            gp.getITiles()[index].setInvincible(true);
-            generateParticle(gp.getITiles()[index], gp.getITiles()[index]);
-            if (gp.getITiles()[index].life <= 0) {
-                gp.getITiles()[index].playSoundEffect();
-                gp.getITiles()[index] = gp.getITiles()[index].getDestroyedForm();
+        if (index > -1 && gp.getITiles()[GamePanel.currentMap][index].isDestructible() && gp.getITiles()[GamePanel.currentMap][index].isCorrectItem(this) && !gp.getITiles()[GamePanel.currentMap][index].isInvincible()) {
+            gp.getITiles()[GamePanel.currentMap][index].life--;
+            gp.getITiles()[GamePanel.currentMap][index].setInvincible(true);
+            generateParticle(gp.getITiles()[GamePanel.currentMap][index], gp.getITiles()[GamePanel.currentMap][index]);
+            if (gp.getITiles()[GamePanel.currentMap][index].life <= 0) {
+                gp.getITiles()[GamePanel.currentMap][index].playSoundEffect();
+                gp.getITiles()[GamePanel.currentMap][index] = gp.getITiles()[GamePanel.currentMap][index].getDestroyedForm();
             }
         }
 
@@ -345,10 +345,10 @@ public class Player extends Entity {
 
     private void interactWithMonster(int index) {
         if (index > -1) {
-            if (!invincible && !gp.getMonsters()[index].isDying()) {
+            if (!invincible && !gp.getMonsters()[GamePanel.currentMap][index].isDying()) {
                 gp.playSoundEffect(5);
 
-                int damage = gp.getMonsters()[index].getAttack() - getDefence();
+                int damage = gp.getMonsters()[GamePanel.currentMap][index].getAttack() - getDefence();
                 damage = Math.max(damage, 0);
                 life -= damage;
                 invincible = true;
@@ -359,16 +359,16 @@ public class Player extends Entity {
     public void interactWithObject(int index) {
         if (index > -1) {
 
-            if (gp.getObjects()[index] instanceof Collectable) { // collectable
-                ((Collectable) gp.getObjects()[index]).use(this);
-                gp.getObjects()[index] = null;
+            if (gp.getObjects()[GamePanel.currentMap][index] instanceof Collectable) { // collectable
+                ((Collectable) gp.getObjects()[GamePanel.currentMap][index]).use(this);
+                gp.getObjects()[GamePanel.currentMap][index] = null;
             } else {
                 String text;
                 if (inventory.size() < maxInventorySize) {
-                    inventory.add(gp.getObjects()[index]);
+                    inventory.add(gp.getObjects()[GamePanel.currentMap][index]);
                     gp.playSoundEffect(1);
-                    text = "Obtained a " + gp.getObjects()[index].getName() + "!";
-                    gp.getObjects()[index] = null;
+                    text = "Obtained a " + gp.getObjects()[GamePanel.currentMap][index].getName() + "!";
+                    gp.getObjects()[GamePanel.currentMap][index] = null;
                 } else {
                     text = "You cannot carry anymore!";
                 }
@@ -382,7 +382,7 @@ public class Player extends Entity {
         if (entityIndex > -1) {
             if (keyHandler.enterPressed) {
                 gp.setGameState(GamePanel.DIALOGUE_STATE);
-                gp.getNpcs()[entityIndex].speak();
+                gp.getNpcs()[GamePanel.currentMap][entityIndex].speak();
             }
         }
 
