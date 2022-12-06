@@ -208,6 +208,7 @@ public class KeyboardInputHandler implements KeyListener {
         if (e.getKeyCode() == KeyEvent.VK_ENTER){
             if (UI.stateCommandNumber == 0){
                 gp.retry();
+                gp.playThemeSong(0);
                 gp.setGameState(GamePanel.PLAY_STATE);
             } else if (UI.stateCommandNumber == 1) {
                 gp.restart();

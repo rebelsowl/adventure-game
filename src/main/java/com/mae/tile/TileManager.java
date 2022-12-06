@@ -19,16 +19,17 @@ import static com.mae.config.Settings.TILE_SIZE;
 public class TileManager {
     public Tile[] tileTypes;
     GamePanel gp;
-    int[][] mapTileNum;
+    int[][][] mapTileNum; // 3D array, first holds map number, 2nd and 3rd are for column and rows
 
     public TileManager(GamePanel gp) {
         this.gp = gp;
         this.tileTypes = new Tile[50];
 
-        mapTileNum = new int[Settings.MAX_WORLD_COL][Settings.MAX_WORLD_ROW];
+        mapTileNum = new int[GamePanel.MAX_MAP][Settings.MAX_WORLD_COL][Settings.MAX_WORLD_ROW];
 
         initializeTileTypes();
-        loadMap("/maps/worldV2.txt");
+        loadMap("/maps/worldV3.txt", 0);
+        loadMap("/maps/interior01.txt", 1);
     }
 
     private void initializeTileTypes() {
@@ -76,6 +77,10 @@ public class TileManager {
         setUpTileType(40, "wall", true);
         setUpTileType(41, "tree", true);
 
+        setUpTileType(42, "hut", false);
+        setUpTileType(43, "floor01", false);
+        setUpTileType(44, "table01", true);
+
 
     }
 
@@ -96,7 +101,7 @@ public class TileManager {
 
         //TODO: make for loop and make mapTileNum[row][col]
         while (worldCol < Settings.MAX_WORLD_COL && worldRow < Settings.MAX_WORLD_ROW) {
-            int tileNum = mapTileNum[worldCol][worldRow];
+            int tileNum = mapTileNum[GamePanel.currentMap][worldCol][worldRow];
 
             int worldX = worldCol * TILE_SIZE;
             int worldY = worldRow * TILE_SIZE;
@@ -121,7 +126,7 @@ public class TileManager {
 
     }
 
-    public void loadMap(String mapPath) {
+    public void loadMap(String mapPath, int mapNumber) {
         try {
             InputStream is = getClass().getResourceAsStream(mapPath);
             BufferedReader br = new BufferedReader(new InputStreamReader(is));
@@ -134,7 +139,7 @@ public class TileManager {
                 String[] numbers = line.split(" ");
                 while (col < Settings.MAX_WORLD_COL) {
                     int num = Integer.parseInt(numbers[col]);
-                    mapTileNum[col][row] = num;
+                    mapTileNum[mapNumber][col][row] = num;
                     col++;
                 }
                 if (col == Settings.MAX_WORLD_COL) {

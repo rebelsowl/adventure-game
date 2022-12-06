@@ -2,7 +2,6 @@ package com.mae.handler;
 
 import com.mae.config.Settings;
 import com.mae.entity.Entity;
-import com.mae.object.parent.SuperObject;
 import com.mae.panel.GamePanel;
 
 public class CollisionHandler {
@@ -27,32 +26,32 @@ public class CollisionHandler {
         switch (entity.getDirection()) {
             case UP:
                 entityTopRow = (entityTopWorldY - entity.getSpeed()) / Settings.TILE_SIZE;
-                tileNum1 = gp.getTileManager().getMapTileNum()[entityLeftCol][entityTopRow];
-                tileNum2 = gp.getTileManager().getMapTileNum()[entityRightCol][entityTopRow];
+                tileNum1 = gp.getTileManager().getMapTileNum()[GamePanel.currentMap][entityLeftCol][entityTopRow];
+                tileNum2 = gp.getTileManager().getMapTileNum()[GamePanel.currentMap][entityRightCol][entityTopRow];
                 if (gp.getTileManager().getTileTypes()[tileNum1].isCollision() || gp.getTileManager().getTileTypes()[tileNum2].isCollision()) {
                     entity.setCollision(true);
                 }
                 break;
             case DOWN:
                 entityBottomRow = (entityBottomWorldY + entity.getSpeed()) / Settings.TILE_SIZE;
-                tileNum1 = gp.getTileManager().getMapTileNum()[entityLeftCol][entityBottomRow];
-                tileNum2 = gp.getTileManager().getMapTileNum()[entityRightCol][entityBottomRow];
+                tileNum1 = gp.getTileManager().getMapTileNum()[GamePanel.currentMap][entityLeftCol][entityBottomRow];
+                tileNum2 = gp.getTileManager().getMapTileNum()[GamePanel.currentMap][entityRightCol][entityBottomRow];
                 if (gp.getTileManager().getTileTypes()[tileNum1].isCollision() || gp.getTileManager().getTileTypes()[tileNum2].isCollision()) {
                     entity.setCollision(true);
                 }
                 break;
             case LEFT:
                 entityLeftCol = (entityLeftWorldX - entity.getSpeed()) / Settings.TILE_SIZE;
-                tileNum1 = gp.getTileManager().getMapTileNum()[entityLeftCol][entityBottomRow];
-                tileNum2 = gp.getTileManager().getMapTileNum()[entityLeftCol][entityTopRow];
+                tileNum1 = gp.getTileManager().getMapTileNum()[GamePanel.currentMap][entityLeftCol][entityBottomRow];
+                tileNum2 = gp.getTileManager().getMapTileNum()[GamePanel.currentMap][entityLeftCol][entityTopRow];
                 if (gp.getTileManager().getTileTypes()[tileNum1].isCollision() || gp.getTileManager().getTileTypes()[tileNum2].isCollision()) {
                     entity.setCollision(true);
                 }
                 break;
             case RIGHT:
                 entityRightCol = (entityRightWorldX + entity.getSpeed()) / Settings.TILE_SIZE;
-                tileNum1 = gp.getTileManager().getMapTileNum()[entityRightCol][entityBottomRow];
-                tileNum2 = gp.getTileManager().getMapTileNum()[entityRightCol][entityTopRow];
+                tileNum1 = gp.getTileManager().getMapTileNum()[GamePanel.currentMap][entityRightCol][entityBottomRow];
+                tileNum2 = gp.getTileManager().getMapTileNum()[GamePanel.currentMap][entityRightCol][entityTopRow];
                 if (gp.getTileManager().getTileTypes()[tileNum1].isCollision() || gp.getTileManager().getTileTypes()[tileNum2].isCollision()) {
                     entity.setCollision(true);
                 }
@@ -72,14 +71,13 @@ public class CollisionHandler {
     public int checkObject(Entity entity, boolean player) {
         int index = -1;
 
-        int i = 0;
-        for (SuperObject obj : gp.getObjects()) {
-            if (obj != null) {
+        for (int i = 0; i < gp.getObjects()[GamePanel.currentMap].length; i++) {
+            if (gp.getObjects()[GamePanel.currentMap][i] != null) {
                 entity.getSolidArea().x = entity.getWorldX() + entity.getSolidArea().x;
                 entity.getSolidArea().y = entity.getWorldY() + entity.getSolidArea().y;
 
-                obj.getSolidArea().x = obj.getWorldX() + obj.getSolidArea().x;
-                obj.getSolidArea().y = obj.getWorldY() + obj.getSolidArea().y;
+                gp.getObjects()[GamePanel.currentMap][i].getSolidArea().x = gp.getObjects()[GamePanel.currentMap][i].getWorldX() + gp.getObjects()[GamePanel.currentMap][i].getSolidArea().x;
+                gp.getObjects()[GamePanel.currentMap][i].getSolidArea().y = gp.getObjects()[GamePanel.currentMap][i].getWorldY() + gp.getObjects()[GamePanel.currentMap][i].getSolidArea().y;
 
                 switch (entity.getDirection()) {
                     case UP:
@@ -95,8 +93,8 @@ public class CollisionHandler {
                         entity.getSolidArea().x += entity.getSpeed();
                         break;
                 }
-                if (entity.getSolidArea().intersects(obj.getSolidArea())) {
-                    if (obj.isCollision())
+                if (entity.getSolidArea().intersects(gp.getObjects()[GamePanel.currentMap][i].getSolidArea())) {
+                    if (gp.getObjects()[GamePanel.currentMap][i].isCollision())
                         entity.setCollision(true);
                     if (player)
                         index = i;
@@ -104,10 +102,10 @@ public class CollisionHandler {
                 entity.getSolidArea().x = entity.getSolidAreaDefaultX();
                 entity.getSolidArea().y = entity.getSolidAreaDefaultY();
 
-                obj.getSolidArea().x = obj.getSolidAreaDefaultX();
-                obj.getSolidArea().y = obj.getSolidAreaDefaultY();
+                gp.getObjects()[GamePanel.currentMap][i].getSolidArea().x = gp.getObjects()[GamePanel.currentMap][i].getSolidAreaDefaultX();
+                gp.getObjects()[GamePanel.currentMap][i].getSolidArea().y = gp.getObjects()[GamePanel.currentMap][i].getSolidAreaDefaultY();
             }
-            i++;
+
         }
 
         return index;
