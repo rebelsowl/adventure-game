@@ -16,7 +16,7 @@ public class OBJ_Potion extends Consumable {
         super(gp);
         setName("Red Potion");
         setDescription("[" + getName() + "]\nHeals your life by: " + healingValue);
-        setDescription("");
+        setPrice(25);
         try {
             setImage(UtilityTool.scaleImage(ImageIO.read(getClass().getResourceAsStream("/objects/potion_red.png")), Settings.TILE_SIZE, Settings.TILE_SIZE));
         } catch (IOException e) {

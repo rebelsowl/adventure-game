@@ -34,13 +34,10 @@ public class KeyboardInputHandler implements KeyListener {
             handleOptionsState(e);
         else if (gp.getGameState() == GamePanel.GAME_OVER_STATE)
             handleGameOverState(e);
+        else if (gp.getGameState() == GamePanel.TRADE_STATE)
+            handleTradeState(e);
 
-        }
-
-
-
-
-
+    }
 
     public void keyReleased(KeyEvent e) {
         if (e.getKeyCode() == KeyEvent.VK_W)
@@ -75,7 +72,6 @@ public class KeyboardInputHandler implements KeyListener {
                     break;
                 case 2:
                     System.exit(0);
-
             }
         }
     }
@@ -119,38 +115,22 @@ public class KeyboardInputHandler implements KeyListener {
     private void handleCharacterStatusState(KeyEvent e) {
         if (e.getKeyCode() == KeyEvent.VK_C || e.getKeyCode() == KeyEvent.VK_ESCAPE)
             gp.setGameState(GamePanel.PLAY_STATE);
-        else if (e.getKeyCode() == KeyEvent.VK_W) {
-            if (gp.getUi().getInventorySlotRow() != 0) {
-                gp.getUi().setInventorySlotRow(gp.getUi().getInventorySlotRow() - 1);
-                gp.playSoundEffect(9);
-            }
-        } else if (e.getKeyCode() == KeyEvent.VK_A) {
-            if (gp.getUi().getInventorySlotCol() != 0) {
-                gp.getUi().setInventorySlotCol(gp.getUi().getInventorySlotCol() - 1);
-                gp.playSoundEffect(9);
-            }
-        } else if (e.getKeyCode() == KeyEvent.VK_S) {
-            if (gp.getUi().getInventorySlotRow() != 3) {
-                gp.getUi().setInventorySlotRow(gp.getUi().getInventorySlotRow() + 1);
-                gp.playSoundEffect(9);
-            }
-        } else if (e.getKeyCode() == KeyEvent.VK_D) {
-            if (gp.getUi().getInventorySlotCol() != 4) {
-                gp.getUi().setInventorySlotCol(gp.getUi().getInventorySlotCol() + 1);
-                gp.playSoundEffect(9);
-            }
-        } else if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+
+        if (e.getKeyCode() == KeyEvent.VK_ENTER)
             gp.getPlayer().selectItem();
 
-        }
+        playerInventory(e.getKeyCode());
+
     }
+
+
 
     private void handleOptionsState(KeyEvent e) {
         if (e.getKeyCode() == KeyEvent.VK_ESCAPE)
             gp.setGameState(GamePanel.PLAY_STATE);
 
         int maxCommandNumber = 0;
-        switch (UI.optionsScreenSubStateNumber) {
+        switch (UI.subState) {
             case 0:
                 maxCommandNumber = 5;
                 break;
@@ -172,7 +152,7 @@ public class KeyboardInputHandler implements KeyListener {
         } else if (e.getKeyCode() == KeyEvent.VK_ENTER)
             enterPressed = true;
         else if (e.getKeyCode() == KeyEvent.VK_A) {
-            if (UI.optionsScreenSubStateNumber == 0) {
+            if (UI.subState == 0) {
                 if (UI.stateCommandNumber == 1 && gp.getThemeMusicHandler().getVolumeScale() > 0) {
                     gp.getThemeMusicHandler().setVolumeScale(gp.getThemeMusicHandler().getVolumeScale() - 1);
                     gp.getThemeMusicHandler().checkVolume();
@@ -183,7 +163,7 @@ public class KeyboardInputHandler implements KeyListener {
                 }
             }
         } else if (e.getKeyCode() == KeyEvent.VK_D) {
-            if (UI.optionsScreenSubStateNumber == 0) {
+            if (UI.subState == 0) {
                 if (UI.stateCommandNumber == 1 && gp.getThemeMusicHandler().getVolumeScale() < 5) {
                     gp.getThemeMusicHandler().setVolumeScale(gp.getThemeMusicHandler().getVolumeScale() + 1);
                     gp.getThemeMusicHandler().checkVolume();
@@ -205,8 +185,8 @@ public class KeyboardInputHandler implements KeyListener {
             gp.playSoundEffect(9);
         }
 
-        if (e.getKeyCode() == KeyEvent.VK_ENTER){
-            if (UI.stateCommandNumber == 0){
+        if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+            if (UI.stateCommandNumber == 0) {
                 gp.retry();
                 gp.playThemeSong(0);
                 gp.setGameState(GamePanel.PLAY_STATE);
@@ -215,8 +195,86 @@ public class KeyboardInputHandler implements KeyListener {
                 gp.setGameState(GamePanel.TITLE_STATE);
             }
         }
-
-
     }
+
+    private void handleTradeState(KeyEvent e) {
+        if (e.getKeyCode() == KeyEvent.VK_ENTER)
+            enterPressed = true;
+
+        if(UI.subState == 0){
+            if (e.getKeyCode() == KeyEvent.VK_W) {
+                UI.stateCommandNumber--;
+                gp.playSoundEffect(9);
+                if (UI.stateCommandNumber < 0)
+                    UI.stateCommandNumber = 2;
+            } else if (e.getKeyCode() == KeyEvent.VK_S) {
+                UI.stateCommandNumber++;
+                gp.playSoundEffect(9);
+                if (UI.stateCommandNumber > 2)
+                    UI.stateCommandNumber = 0;
+
+            }
+        } else if (UI.subState == 1) {
+            npcInventory(e.getKeyCode());
+            if (e.getKeyCode() == KeyEvent.VK_ESCAPE)
+                UI.subState = 0;
+        } else if (UI.subState == 2) {
+            playerInventory(e.getKeyCode());
+            if (e.getKeyCode() == KeyEvent.VK_ESCAPE)
+                UI.subState = 0;
+        }
+    }
+
+
+    /***************************************************************************************************************/
+
+    private void playerInventory(int keyCode){
+        if (keyCode == KeyEvent.VK_W) {
+            if (gp.getUi().getPlayerInventorySlotRow() != 0) {
+                gp.getUi().setPlayerInventorySlotRow(gp.getUi().getPlayerInventorySlotRow() - 1);
+                gp.playSoundEffect(9);
+            }
+        } else if (keyCode == KeyEvent.VK_A) {
+            if (gp.getUi().getPlayerInventorySlotCol() != 0) {
+                gp.getUi().setPlayerInventorySlotCol(gp.getUi().getPlayerInventorySlotCol() - 1);
+                gp.playSoundEffect(9);
+            }
+        } else if (keyCode == KeyEvent.VK_S) {
+            if (gp.getUi().getPlayerInventorySlotRow() != 3) {
+                gp.getUi().setPlayerInventorySlotRow(gp.getUi().getPlayerInventorySlotRow() + 1);
+                gp.playSoundEffect(9);
+            }
+        } else if (keyCode == KeyEvent.VK_D) {
+            if (gp.getUi().getPlayerInventorySlotCol() != 4) {
+                gp.getUi().setPlayerInventorySlotCol(gp.getUi().getPlayerInventorySlotCol() + 1);
+                gp.playSoundEffect(9);
+            }
+        }
+    }
+
+    private void npcInventory(int keyCode){
+        if (keyCode == KeyEvent.VK_W) {
+            if (gp.getUi().getNpcInventorySlotRow() != 0) {
+                gp.getUi().setNpcInventorySlotRow(gp.getUi().getNpcInventorySlotRow() - 1);
+                gp.playSoundEffect(9);
+            }
+        } else if (keyCode == KeyEvent.VK_A) {
+            if (gp.getUi().getNpcInventorySlotCol() != 0) {
+                gp.getUi().setNpcInventorySlotCol(gp.getUi().getNpcInventorySlotCol() - 1);
+                gp.playSoundEffect(9);
+            }
+        } else if (keyCode == KeyEvent.VK_S) {
+            if (gp.getUi().getNpcInventorySlotRow() != 3) {
+                gp.getUi().setNpcInventorySlotRow(gp.getUi().getNpcInventorySlotRow() + 1);
+                gp.playSoundEffect(9);
+            }
+        } else if (keyCode == KeyEvent.VK_D) {
+            if (gp.getUi().getNpcInventorySlotCol() != 4) {
+                gp.getUi().setNpcInventorySlotCol(gp.getUi().getNpcInventorySlotCol() + 1);
+                gp.playSoundEffect(9);
+            }
+        }
+    }
+
 
 }

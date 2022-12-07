@@ -6,6 +6,7 @@ import com.mae.constant.Enums.Directions;
 import com.mae.entity.particle.Particle;
 import com.mae.entity.projectile.Projectile;
 import com.mae.interfaces.Drawable;
+import com.mae.object.parent.SuperObject;
 import com.mae.object.parent.Weapon;
 import com.mae.panel.GamePanel;
 import com.mae.utility.UtilityTool;
@@ -16,6 +17,8 @@ import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import static com.mae.config.Settings.TILE_SIZE;
 
@@ -70,6 +73,10 @@ public abstract class Entity implements Drawable { // parent class for Player, N
 
     protected boolean hpBarOn = false;
     protected int hpBarCounter = 0;
+
+    private List<SuperObject> inventory = new ArrayList<>();
+
+    private final int maxInventorySize = 20;
 
     public Entity(GamePanel gp) {
         this.gp = gp;

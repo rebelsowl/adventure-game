@@ -2,6 +2,7 @@ package com.mae.handler;
 
 import com.mae.config.Settings;
 import com.mae.constant.Enums;
+import com.mae.entity.Entity;
 import com.mae.panel.GamePanel;
 import com.mae.utility.EventRectangle;
 
@@ -58,6 +59,9 @@ public class EventHandler {
                 teleport(1, 12, 13);
             else if (hit(1, 12, 13, Enums.Directions.ANY))
                 teleport(0, 10, 39);
+            else if (hit(1,12,9, Enums.Directions.UP)) { // close to merchant if you are in front of the table
+                speakTo(gp.getNpcs()[1][0]);
+            }
         }
 
 
@@ -108,11 +112,11 @@ public class EventHandler {
             gp.getAssetSetter().createMonsters(); // resets monsters
 
         }
-
     }
 
     private void teleport(int map, int col, int row) {
         GamePanel.currentMap = map;
+        gp.setGameState(GamePanel.LOADING_STATE);
         gp.getPlayer().setWorldX(TILE_SIZE * col);
         gp.getPlayer().setWorldY(TILE_SIZE * row);
         gp.playSoundEffect(13);
@@ -120,7 +124,13 @@ public class EventHandler {
         prevEventX = gp.getPlayer().getWorldX();
         prevEventY = gp.getPlayer().getWorldY();
         canTriggerEvent = false;
+    }
 
+    private void speakTo(Entity entity) {
+        if (gp.getKeyHandler().enterPressed){
+            gp.setGameState(GamePanel.DIALOGUE_STATE);
+            entity.speak();
+        }
     }
 
 }

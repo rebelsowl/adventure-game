@@ -14,6 +14,7 @@ public class OBJ_Axe extends Weapon {
         super(gp);
         setName("Woodcutter's Axe");
         setDescription("[" + getName() + "]\nA bit rusty but still \ncan cut some trees.");
+        setPrice(75);
         try {
             setImage(UtilityTool.scaleImage(ImageIO.read(getClass().getResourceAsStream("/objects/axe.png")), Settings.TILE_SIZE, Settings.TILE_SIZE));
         } catch (IOException e) {

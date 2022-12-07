@@ -14,6 +14,7 @@ public class OBJ_Shield_Blue extends Shield {
         super(gp);
         setName("Shield Blue");
         setDescription("[" + getName() + "]\nA shiny blue shield.");
+        setPrice(250);
         try {
             setImage(UtilityTool.scaleImage(ImageIO.read(getClass().getResourceAsStream("/objects/shield_blue.png")), Settings.TILE_SIZE, Settings.TILE_SIZE));
         } catch (IOException e) {

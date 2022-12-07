@@ -14,6 +14,7 @@ public class OBJ_Key extends SuperObject {
         super(gp);
         setName("Key");
         setDescription("[" + getName() + "]\nOpens a door.");
+        setPrice(100);
         try {
             setImage(UtilityTool.scaleImage(ImageIO.read(getClass().getResourceAsStream("/objects/key.png")), Settings.TILE_SIZE, Settings.TILE_SIZE));
         } catch (IOException e) {

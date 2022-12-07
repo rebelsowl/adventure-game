@@ -14,7 +14,7 @@ public class OBJ_Sword extends Weapon {
         super(gp);
         setName("Normal Sword");
         setDescription("[" + getName() + "]\nAn old sword.");
-
+        setPrice(20);
         try {
             setImage(UtilityTool.scaleImage(ImageIO.read(getClass().getResourceAsStream("/objects/sword_normal.png")), Settings.TILE_SIZE, Settings.TILE_SIZE));
         } catch (IOException e) {

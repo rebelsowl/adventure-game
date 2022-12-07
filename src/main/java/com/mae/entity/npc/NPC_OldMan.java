@@ -1,7 +1,8 @@
-package com.mae.entity;
+package com.mae.entity.npc;
 
 import com.mae.config.Settings;
 import com.mae.constant.Enums.Directions;
+import com.mae.entity.Entity;
 import com.mae.panel.GamePanel;
 import com.mae.utility.UtilityTool;
 
