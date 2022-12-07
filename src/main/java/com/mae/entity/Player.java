@@ -12,7 +12,6 @@ import lombok.Data;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.util.ArrayList;
 
 import static com.mae.config.Settings.TILE_SIZE;
 
@@ -22,7 +21,7 @@ public class Player extends Entity {
 
     private final int screenX = (Settings.SCREEN_WIDTH / 2) - (TILE_SIZE / 2); // coordinates on the visible screen
     private final int screenY = (Settings.SCREEN_HEIGHT / 2) - (TILE_SIZE / 2); // subtracted the half tile size because frame starts at top left with 0,0
-    private final int maxInventorySize = 20;
+
     KeyboardInputHandler keyHandler;
     private BufferedImage attackUp1, attackUp2, attackRight1, attackRight2, attackLeft1, attackLeft2, attackDown1, attackDown2;
     private int level;
@@ -34,7 +33,6 @@ public class Player extends Entity {
     private Shield currentShield;
     private boolean attacking = false;
     private boolean hitSoundEffectPlaying = false;
-    private ArrayList<SuperObject> inventory = new ArrayList<>();
 
 
     public Player(GamePanel gp, KeyboardInputHandler keyHandler) {
@@ -52,7 +50,7 @@ public class Player extends Entity {
         setItems();
     }
 
-    public void setDefaultValues(){
+    public void setDefaultValues() {
         solidArea = new Rectangle(8, 16, 27, 27);
         setSolidAreaDefaultX(solidArea.x);
         setSolidAreaDefaultY(solidArea.y);
@@ -68,7 +66,7 @@ public class Player extends Entity {
         dexterity = 1; // increases defence
         exp = 0;
         nextLvlExp = 5;
-        coin = 0;
+        coin = 500;
         currentWeapon = new OBJ_Sword(gp);
         currentShield = new OBJ_Shield(gp);
         attack = getFinalAttackValue();
@@ -113,18 +111,24 @@ public class Player extends Entity {
     }
 
 
-    public void setDefaultPositionAndDirection(){
+    public void setDefaultPositionAndDirection() {
         setWorldX(TILE_SIZE * 23);
         setWorldY(TILE_SIZE * 21);
         direction = Directions.DOWN;
+
+        // new world debug
+
+        setWorldX(TILE_SIZE * 13);
+        setWorldY(TILE_SIZE * 11);
+        GamePanel.currentMap = 1;
+
     }
 
-    public void restoreLifeAndMana(){
+    public void restoreLifeAndMana() {
         life = maxLife;
         mana = maxMana;
         invincible = false;
     }
-
 
 
     public void update() {
@@ -221,10 +225,10 @@ public class Player extends Entity {
     }
 
     public void selectItem() {
-        int itemIndex = gp.getUi().getInventoryItemIndexFromColAndRow();
+        int itemIndex = gp.getUi().getInventoryItemIndexFromColAndRow(gp.getUi().getPlayerInventorySlotCol(), gp.getUi().getPlayerInventorySlotRow());
 
-        if (itemIndex < inventory.size()) {
-            SuperObject selectedItem = inventory.get(itemIndex);
+        if (itemIndex < getInventory().size()) {
+            SuperObject selectedItem = getInventory().get(itemIndex);
             if (selectedItem instanceof Weapon) {
                 setCurrentWeapon((Weapon) selectedItem);
                 attack = getFinalAttackValue();
@@ -235,15 +239,15 @@ public class Player extends Entity {
             } else if (selectedItem instanceof Consumable) {
                 Consumable item = (Consumable) selectedItem;
                 item.use(this);
-                inventory.remove(itemIndex);
+                getInventory().remove(itemIndex);
             }
         }
     }
 
     public void setItems() {
-        inventory.clear();
-        inventory.add(currentWeapon);
-        inventory.add(currentShield);
+        getInventory().clear();
+        getInventory().add(currentWeapon);
+        getInventory().add(currentShield);
     }
 
     private void attack() {
@@ -364,8 +368,8 @@ public class Player extends Entity {
                 gp.getObjects()[GamePanel.currentMap][index] = null;
             } else {
                 String text;
-                if (inventory.size() < maxInventorySize) {
-                    inventory.add(gp.getObjects()[GamePanel.currentMap][index]);
+                if (getInventory().size() < getMaxInventorySize()) {
+                    getInventory().add(gp.getObjects()[GamePanel.currentMap][index]);
                     gp.playSoundEffect(1);
                     text = "Obtained a " + gp.getObjects()[GamePanel.currentMap][index].getName() + "!";
                     gp.getObjects()[GamePanel.currentMap][index] = null;

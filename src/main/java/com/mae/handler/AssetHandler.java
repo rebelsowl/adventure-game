@@ -1,7 +1,8 @@
 package com.mae.handler;
 
 import com.mae.entity.Entity;
-import com.mae.entity.NPC_OldMan;
+import com.mae.entity.npc.NPC_Merchant;
+import com.mae.entity.npc.NPC_OldMan;
 import com.mae.entity.monster.MON_GreenSlime;
 import com.mae.entity.monster.Monster;
 import com.mae.object.*;
@@ -74,16 +75,17 @@ public class AssetHandler {
 
     public void createNpcs() {
         int mapNumber = 0;
-
-        Entity[] arr = new Entity[10];
-
         Entity npc1 = new NPC_OldMan(gp);
         npc1.setWorldX(TILE_SIZE * 21);
         npc1.setWorldY(TILE_SIZE * 21);
+        gp.getNpcs()[mapNumber][0] = npc1;
 
-        arr[0] = npc1;
+        mapNumber = 1;
+        Entity npc2 = new NPC_Merchant(gp);
+        npc2.setWorldX(TILE_SIZE * 12);
+        npc2.setWorldY(TILE_SIZE * 7);
+        gp.getNpcs()[mapNumber][0] = npc2;
 
-        gp.getNpcs()[mapNumber] = (arr);
     }
 
     public void createMonsters() {
