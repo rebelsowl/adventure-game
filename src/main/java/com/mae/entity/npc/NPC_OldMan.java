@@ -7,6 +7,7 @@ import com.mae.panel.GamePanel;
 import com.mae.utility.UtilityTool;
 
 import javax.imageio.ImageIO;
+import java.awt.*;
 import java.io.IOException;
 import java.util.Random;
 
@@ -16,11 +17,9 @@ public class NPC_OldMan extends Entity {
 
     public NPC_OldMan(GamePanel gp) {
         super(gp);
-
         setDirection(Directions.DOWN);
+        solidArea = new Rectangle(4, 4, 40, 40);
         setSpeed(1);
-
-
         initImages();
         initDialogues();
     }
@@ -47,23 +46,42 @@ public class NPC_OldMan extends Entity {
         }
     }
 
+    @Override
     public void setAction() {
-        actionLockCounter++;
+        if (isOnPath()) {
 
-        if (actionLockCounter > Settings.FPS * 3) {
-            Random random = new Random();
-            int i = random.nextInt(100) + 1;
+            int goalCol = 12;
+            int goalRow = 9;
 
-            if (i <= 25) {
-                setDirection(Directions.UP);
-            } else if (i <= 50) {
-                setDirection(Directions.DOWN);
-            } else if (i <= 75) {
-                setDirection(Directions.LEFT);
-            } else {
-                setDirection(Directions.RIGHT);
+            // follow the player
+            goalCol = (gp.getPlayer().getWorldX() + gp.getPlayer().getSolidArea().x ) / TILE_SIZE;
+            goalRow = (gp.getPlayer().getWorldY() + gp.getPlayer().getSolidArea().y ) / TILE_SIZE;
+            searchPath(goalCol, goalRow);
+
+        } else {
+            actionLockCounter++;
+            if (actionLockCounter > Settings.FPS * 3) {
+                Random random = new Random();
+                int i = random.nextInt(100) + 1;
+
+                if (i <= 25) {
+                    setDirection(Directions.UP);
+                } else if (i <= 50) {
+                    setDirection(Directions.DOWN);
+                } else if (i <= 75) {
+                    setDirection(Directions.LEFT);
+                } else {
+                    setDirection(Directions.RIGHT);
+                }
+                actionLockCounter = 0;
             }
-            actionLockCounter = 0;
         }
     }
+
+    @Override
+    public void speak() {
+        super.speak();
+        setOnPath(true);
+    }
+
 }

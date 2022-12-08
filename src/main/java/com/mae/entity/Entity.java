@@ -25,25 +25,20 @@ import static com.mae.config.Settings.TILE_SIZE;
 @NoArgsConstructor
 @Data
 public abstract class Entity implements Drawable { // parent class for Player, NPCs, Monsters
+    private final int maxInventorySize = 20;
     protected GamePanel gp;
-
     protected String name;
     protected int worldX, worldY; // coordinates
     protected int speed;
     protected Enums.Directions direction = Directions.DOWN;
-
     protected BufferedImage up1, up2, down1, down2, left1, left2, right1, right2;
     protected int spriteCounter = 0;
     protected int spriteNumber = 0;
-
-
     protected Rectangle solidArea = new Rectangle(0, 0, TILE_SIZE, TILE_SIZE);
     protected int solidAreaDefaultX;
     protected int solidAreaDefaultY;
     protected boolean collision = false;
-
     protected Rectangle attackArea = new Rectangle(0, 0, 0, 0);
-
     protected Weapon currentWeapon;
     protected int actionLockCounter = 0; // for npc AI's movement to be smooth
     protected boolean invincible = false;
@@ -51,32 +46,23 @@ public abstract class Entity implements Drawable { // parent class for Player, N
     protected String[] dialogues = new String[20];
     protected int dialogueIndex = 0;
     protected int type; // 0 -> player 1 -> npc 2 -> monster
-
     protected boolean alive = true;
     protected boolean dying = false;
     protected int dyingCounter = 0;
-
     // CHARACTER STATUS
     protected int attack;
-
     protected int defence;
     protected int maxLife;
     protected int life;
     protected int exp;
-
     protected int maxMana;
     protected int mana;
     protected Projectile projectileSkill;
     protected int shotAvailableCounter = 1;
-
-
-
     protected boolean hpBarOn = false;
     protected int hpBarCounter = 0;
-
     private List<SuperObject> inventory = new ArrayList<>();
-
-    private final int maxInventorySize = 20;
+    private boolean onPath = false; // entity is following a path
 
     public Entity(GamePanel gp) {
         this.gp = gp;
@@ -179,24 +165,16 @@ public abstract class Entity implements Drawable { // parent class for Player, N
         g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha));
     }
 
-    public void setAction() {}
-    public void damageReaction(){}
+    public void setAction() {
+    }
+
+    public void damageReaction() {
+    }
 
 
     public void update() {
         setAction();
-
-        setCollision(false);
-        gp.getCollisionChecker().checkTile(this);
-        gp.getCollisionChecker().checkObject(this, false);
-        gp.getCollisionChecker().checkEntity(this, gp.getNpcs()[GamePanel.currentMap]);
-        gp.getCollisionChecker().checkEntity(this, gp.getMonsters()[GamePanel.currentMap]);
-        gp.getCollisionChecker().checkEntity(this, gp.getITiles()[GamePanel.currentMap]);
-        boolean playerContact = gp.getCollisionChecker().checkPlayer(this);
-        if (this.type == 2 && playerContact) {
-            damagePlayer(attack);
-        }
-
+        checkCollision();
         if (!isCollision()) {
             switch (direction) {
                 case UP:
@@ -236,11 +214,24 @@ public abstract class Entity implements Drawable { // parent class for Player, N
 
     }
 
-    public void damagePlayer(int attack){
+    private void checkCollision() {
+        setCollision(false);
+        gp.getCollisionChecker().checkTile(this);
+        gp.getCollisionChecker().checkObject(this, false);
+        gp.getCollisionChecker().checkEntity(this, gp.getNpcs()[GamePanel.currentMap]);
+        gp.getCollisionChecker().checkEntity(this, gp.getMonsters()[GamePanel.currentMap]);
+        gp.getCollisionChecker().checkEntity(this, gp.getITiles()[GamePanel.currentMap]);
+        boolean playerContact = gp.getCollisionChecker().checkPlayer(this);
+        if (this.type == 2 && playerContact) {
+            damagePlayer(attack);
+        }
+    }
+
+    public void damagePlayer(int attack) {
         if (!gp.getPlayer().isInvincible()) {
             gp.playSoundEffect(6);
 
-            int damage = attack  - gp.getPlayer().getDefence();
+            int damage = attack - gp.getPlayer().getDefence();
             damage = Math.max(damage, 0);
 
             gp.getPlayer().life -= damage;
@@ -284,24 +275,24 @@ public abstract class Entity implements Drawable { // parent class for Player, N
     // PARTICLE
     public void generateParticle(Entity generator, Entity target) {
         Color color = generator.getParticleColor();
-        int size =generator.getParticleSize();
+        int size = generator.getParticleSize();
         int speed = generator.getParticleSpeed();
         int maxLife = generator.getParticleMaxLife();
 
-        Particle p1 = new Particle(gp, target, color, size, speed,maxLife, -1,-1);
+        Particle p1 = new Particle(gp, target, color, size, speed, maxLife, -1, -1);
         gp.getParticles().add(p1);
-        Particle p2 = new Particle(gp, target, color, size, speed,maxLife, 1,-1);
+        Particle p2 = new Particle(gp, target, color, size, speed, maxLife, 1, -1);
         gp.getParticles().add(p2);
-        Particle p3 = new Particle(gp, target, color, size, speed,maxLife, -1,1);
+        Particle p3 = new Particle(gp, target, color, size, speed, maxLife, -1, 1);
         gp.getParticles().add(p3);
-        Particle p4 = new Particle(gp, target, color, size, speed,maxLife, 1,1);
+        Particle p4 = new Particle(gp, target, color, size, speed, maxLife, 1, 1);
         gp.getParticles().add(p4);
 
 
     }
 
     public Color getParticleColor() {
-        return new Color(0,0,0);
+        return new Color(0, 0, 0);
     }
 
     public int getParticleSize() {
@@ -316,6 +307,66 @@ public abstract class Entity implements Drawable { // parent class for Player, N
         return 20; // frames
     }
 
+    /**
+     * finds optimal path to destination
+     *
+     * @param goalCol
+     * @param goalRow
+     */
+    public void searchPath(int goalCol, int goalRow) {
+        int startCol = (worldX + solidArea.x) / TILE_SIZE;
+        int startRow = (worldY + solidArea.y) / TILE_SIZE;
 
+        gp.getPathFinder().setNodes(startCol, startRow, goalCol, goalRow);
+        if(gp.getPathFinder().search()) { //
+            int nextX = gp.getPathFinder().getPathList().get(0).getCol() * TILE_SIZE;
+            int nextY = gp.getPathFinder().getPathList().get(0).getRow() * TILE_SIZE;
+
+            // entity's solid area position
+            int enLeftX = worldX + solidArea.x;
+            int enRightX = worldX + solidArea.x + solidArea.width;
+            int enTopY = worldY + solidArea.y;
+            int enBottomY = worldY + solidArea.y + solidArea.height;
+
+            if(enTopY > nextY && enLeftX >= nextX && enRightX < (nextX + TILE_SIZE))
+                direction = Directions.UP;
+            else if(enTopY < nextY && enLeftX >= nextX && enRightX < (nextX + TILE_SIZE))
+                direction = Directions.DOWN;
+            else if (enTopY >= nextY && enBottomY < (nextY + TILE_SIZE)) {
+                if (enLeftX > nextX)
+                    direction = Directions.LEFT;
+                else if (enLeftX < nextX)
+                    direction = Directions.RIGHT;
+            } else if (enTopY > nextY && enLeftX > nextX) { // stuck on top right
+                direction = Directions.UP;
+                checkCollision();
+                if (collision)
+                    direction = Directions.LEFT;
+            } else if (enTopY > nextY && enLeftX < nextX) { // stuck on top left
+                direction = Directions.UP;
+                checkCollision();
+                if (collision)
+                    direction = Directions.RIGHT;
+            } else if (enTopY < nextY && enLeftX > nextX) { // stuck on bottom right
+                direction = Directions.DOWN;
+                checkCollision();
+                if (collision)
+                    direction = Directions.LEFT;
+            } else if (enTopY < nextY && enRightX < nextX) { // stuck on bottom left
+                direction = Directions.DOWN;
+                checkCollision();
+                if (collision)
+                    direction = Directions.RIGHT;
+            }
+            // stop when reaching the goal
+            /* TODO: Acabilirsin hedefe simdilik playeri takip ettigi icin kapali
+            int nextCol = gp.getPathFinder().getPathList().get(0).getCol();
+            int nextRow=  gp.getPathFinder().getPathList().get(0).getRow();
+            if (nextCol == goalCol && nextRow == goalRow){
+                onPath = false;
+            }
+             */
+        }
+    }
 
 }

@@ -117,10 +117,9 @@ public class Player extends Entity {
         direction = Directions.DOWN;
 
         // new world debug
-
-        setWorldX(TILE_SIZE * 13);
-        setWorldY(TILE_SIZE * 11);
-        GamePanel.currentMap = 1;
+//        setWorldX(TILE_SIZE * 13);
+//        setWorldY(TILE_SIZE * 11);
+//        GamePanel.currentMap = 1;
 
     }
 
