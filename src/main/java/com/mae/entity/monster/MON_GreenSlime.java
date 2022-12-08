@@ -60,37 +60,73 @@ public class MON_GreenSlime extends Monster {
     }
 
     public void setAction() {
-        actionLockCounter++;
+        if (isOnPath()) {
+            // follow the player
+            int goalCol = (gp.getPlayer().getWorldX() + gp.getPlayer().getSolidArea().x ) / TILE_SIZE;
+            int goalRow = (gp.getPlayer().getWorldY() + gp.getPlayer().getSolidArea().y ) / TILE_SIZE;
+            searchPath(goalCol, goalRow);
 
-        if (actionLockCounter > Settings.FPS * 3) {
-            Random random = new Random();
-            int i = random.nextInt(100) + 1;
-
-            if (i <= 25) {
-                setDirection(Enums.Directions.UP);
-            } else if (i <= 50) {
-                setDirection(Enums.Directions.DOWN);
-            } else if (i <= 75) {
-                setDirection(Enums.Directions.LEFT);
-            } else {
-                setDirection(Enums.Directions.RIGHT);
+            // can shoot when agroed
+            int i = new Random().nextInt(200) + 1;
+            if (i > 198 && !projectileSkill.isAlive() && shotAvailableCounter == 30) {
+                projectileSkill.set(worldX, worldY, direction, true, this);
+                gp.getProjectiles().add(projectileSkill);
+                shotAvailableCounter = 0;
             }
-            actionLockCounter = 0;
+        } else {
+            actionLockCounter++;
+
+            if (actionLockCounter > Settings.FPS * 3) {
+                Random random = new Random();
+                int i = random.nextInt(100) + 1;
+
+                if (i <= 25) {
+                    setDirection(Enums.Directions.UP);
+                } else if (i <= 50) {
+                    setDirection(Enums.Directions.DOWN);
+                } else if (i <= 75) {
+                    setDirection(Enums.Directions.LEFT);
+                } else {
+                    setDirection(Enums.Directions.RIGHT);
+                }
+                actionLockCounter = 0;
+            }
         }
 
-        int i = new Random().nextInt(100) + 1;
-        if (i > 99 && !projectileSkill.isAlive() && shotAvailableCounter == 30) {
-            projectileSkill.set(worldX, worldY, direction, true, this);
-            gp.getProjectiles().add(projectileSkill);
-            shotAvailableCounter = 0;
-        }
+
 
     }
 
     public void damageReaction() {
         actionLockCounter = 0;
-        direction = gp.getPlayer().getDirection(); // move away from the player
+//        direction = gp.getPlayer().getDirection(); // move away from the player
+        setOnPath(true); // follow the player to attack
     }
+
+    @Override
+    public void update(){
+        super.update();
+
+        // aggro
+        int xDistance = Math.abs(worldX - gp.getPlayer().getWorldX());
+        int yDistance = Math.abs(worldY - gp.getPlayer().getWorldY());
+        int distanceBetweenPlayer = (xDistance + yDistance) / TILE_SIZE;
+        if ( ! isOnPath() && distanceBetweenPlayer < 5 ) {
+            int i = new Random().nextInt(101);
+            if (i > 50)
+                setOnPath(true);
+        }
+
+        // remove aggro
+
+        if (isOnPath() && (distanceBetweenPlayer > 25))
+            setOnPath(false);
+
+
+
+
+    }
+
 
     @Override
     public void checkDrop() {
