@@ -1,6 +1,7 @@
 package com.mae.panel;
 
 import com.mae.App;
+import com.mae.ai.PathFinder;
 import com.mae.config.Configuration;
 import com.mae.config.Settings;
 import com.mae.entity.Entity;
@@ -46,6 +47,7 @@ public class GamePanel extends JPanel implements Runnable {
     public static int currentMap = 0; // current map that player is currently in.
     public CollisionHandler collisionChecker = new CollisionHandler(this);
     Configuration config = new Configuration(this);
+    PathFinder pathFinder = new PathFinder(this);
     // SYSTEM
     TileManager tileManager = new TileManager(this);
     KeyboardInputHandler keyHandler = new KeyboardInputHandler(this);

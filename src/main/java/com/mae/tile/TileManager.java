@@ -1,5 +1,6 @@
 package com.mae.tile;
 
+import com.mae.ai.Node;
 import com.mae.config.Settings;
 import com.mae.panel.GamePanel;
 import com.mae.utility.UtilityTool;
@@ -12,6 +13,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.List;
 
 import static com.mae.config.Settings.TILE_SIZE;
 
@@ -20,6 +22,7 @@ public class TileManager {
     public Tile[] tileTypes;
     GamePanel gp;
     int[][][] mapTileNum; // 3D array, first holds map number, 2nd and 3rd are for column and rows
+    private boolean drawPath = true;
 
     public TileManager(GamePanel gp) {
         this.gp = gp;
@@ -113,7 +116,7 @@ public class TileManager {
                     worldX - TILE_SIZE < gp.player.getWorldX() + gp.player.getScreenX() &&
                     worldY + TILE_SIZE > gp.player.getWorldY() - gp.player.getScreenY() &&
                     worldY - TILE_SIZE < gp.player.getWorldY() + gp.player.getScreenY()) { // Only draw the tiles around the player
-                g2.drawImage(tileTypes[tileNum].getImage(), screenX, screenY,null);
+                g2.drawImage(tileTypes[tileNum].getImage(), screenX, screenY, null);
             }
 
             worldCol++;
@@ -121,7 +124,18 @@ public class TileManager {
                 worldCol = 0;
                 worldRow++;
             }
+        }
 
+        if (drawPath) {
+            g2.setColor(new Color(255, 145, 0, 70));
+            List<Node> pathList = gp.getPathFinder().getPathList();
+            for (int i = 0; i < pathList.size(); i++) {
+                int worldX = pathList.get(i).getCol() * TILE_SIZE;
+                int worldY = pathList.get(i).getRow() * TILE_SIZE;
+                int screenX = worldX - gp.getPlayer().getWorldX() + gp.getPlayer().getScreenX();
+                int screenY = worldY - gp.getPlayer().getWorldY() + gp.getPlayer().getScreenY();
+                g2.fillRect(screenX, screenY, TILE_SIZE, TILE_SIZE);
+            }
         }
 
     }
