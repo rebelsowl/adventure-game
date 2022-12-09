@@ -137,7 +137,14 @@ public class Player extends Entity {
             attack();
         } else if (keyHandler.shotKeyPressed && !projectileSkill.isAlive() && shotAvailableCounter == 30 && projectileSkill.hasEnoughMana(this)) {
             projectileSkill.set(worldX, worldY, direction, true, this);
-            gp.getProjectiles().add(projectileSkill);
+
+            for (int i = 0; i < gp.getProjectiles()[GamePanel.currentMap].length; i++) {
+                if (gp.getProjectiles()[GamePanel.currentMap][i] == null) {
+                    gp.getProjectiles()[GamePanel.currentMap][i] = projectileSkill;
+                    break;
+                }
+            }
+
             projectileSkill.useMana(this);
             shotAvailableCounter = 0;
             gp.playSoundEffect(10);
@@ -294,6 +301,9 @@ public class Player extends Entity {
             int iTileIndex = gp.getCollisionChecker().checkEntity(this, gp.getITiles()[GamePanel.currentMap]);
             hitInteractiveTile(iTileIndex);
 
+            int projectileCollisionIndex = gp.getCollisionChecker().checkEntity(this, gp.getProjectiles()[GamePanel.currentMap]);
+            hitProjectile(projectileCollisionIndex);
+
 
             worldX = currentWorldX;
             worldY = currentWorldY;
@@ -344,6 +354,14 @@ public class Player extends Entity {
             }
         }
 
+    }
+
+    private void hitProjectile(int index) {
+        if (index > -1) {
+            Entity projectile = gp.getProjectiles()[GamePanel.currentMap][index];
+            projectile.setAlive(false);
+            generateParticle(projectile, projectile);
+        }
     }
 
     private void interactWithMonster(int index) {
