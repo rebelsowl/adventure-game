@@ -15,6 +15,7 @@ import java.awt.image.BufferedImage;
 public abstract class Projectile extends Entity {
     private Entity user;
     private int useCost;
+    private int knockBackPower = 0;
     private int spriteNum = 1;
 
 
@@ -36,7 +37,7 @@ public abstract class Projectile extends Entity {
         if (user.equals(gp.getPlayer())) {
             int monsterIndex = gp.collisionChecker.checkEntity(this, gp.getMonsters()[GamePanel.currentMap]);
             if (monsterIndex > -1){
-                gp.getPlayer().hitMonster(monsterIndex, attack);
+                gp.getPlayer().hitMonster(monsterIndex, attack, knockBackPower);
                 generateParticle(user.getProjectileSkill(), gp.getMonsters()[GamePanel.currentMap][monsterIndex]);
                 alive = false;
             }

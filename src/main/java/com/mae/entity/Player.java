@@ -41,7 +41,7 @@ public class Player extends Entity {
         this.keyHandler = keyHandler;
         // setting initial values
         setDefaultPositionAndDirection();
-        setSpeed(4);
+
 
         setDefaultValues();
 
@@ -62,6 +62,8 @@ public class Player extends Entity {
         level = 1;
         setMaxLife(6);
         setLife(maxLife);
+        setDefaultSpeed(4);
+        setSpeed(getDefaultSpeed());
         strength = 1; // increases attack
         dexterity = 1; // increases defence
         exp = 0;
@@ -135,11 +137,18 @@ public class Player extends Entity {
         if (keyHandler.spacePressed) {
             setAttacking(true);
             attack();
-        } else if (keyHandler.shotKeyPressed && !projectileSkill.isAlive() && shotAvailableCounter == 30 && projectileSkill.hasEnoughMana(this)) {
+        } else if (keyHandler.shotKeyPressed && !projectileSkill.isAlive() && shootAvailable == 30 && projectileSkill.hasEnoughMana(this)) {
             projectileSkill.set(worldX, worldY, direction, true, this);
-            gp.getProjectiles().add(projectileSkill);
+
+            for (int i = 0; i < gp.getProjectiles()[GamePanel.currentMap].length; i++) {
+                if (gp.getProjectiles()[GamePanel.currentMap][i] == null) {
+                    gp.getProjectiles()[GamePanel.currentMap][i] = projectileSkill;
+                    break;
+                }
+            }
+
             projectileSkill.useMana(this);
-            shotAvailableCounter = 0;
+            shootAvailable = 0;
             gp.playSoundEffect(10);
         } else if (movementKeyPressed() || interactKeyPressed()) {
             if (keyHandler.upPressed) {
@@ -211,8 +220,8 @@ public class Player extends Entity {
         }
 
         // projectile skill cooldown
-        if (shotAvailableCounter < 30) {
-            shotAvailableCounter++;
+        if (shootAvailable < 30) {
+            shootAvailable++;
         }
 
         if (life <= 0) {
@@ -289,10 +298,13 @@ public class Player extends Entity {
             solidArea.height = attackArea.height;
 
             int monsterIndex = gp.getCollisionChecker().checkEntity(this, gp.getMonsters()[GamePanel.currentMap]);
-            hitMonster(monsterIndex, attack);
+            hitMonster(monsterIndex, attack, currentWeapon.getKnockBackPower());
 
             int iTileIndex = gp.getCollisionChecker().checkEntity(this, gp.getITiles()[GamePanel.currentMap]);
             hitInteractiveTile(iTileIndex);
+
+            int projectileCollisionIndex = gp.getCollisionChecker().checkEntity(this, gp.getProjectiles()[GamePanel.currentMap]);
+            hitProjectile(projectileCollisionIndex);
 
 
             worldX = currentWorldX;
@@ -309,11 +321,12 @@ public class Player extends Entity {
 
     }
 
-
-    public void hitMonster(int index, int attack) {
+    public void hitMonster(int index, int attack, int knockBackPower) {
         if (index > -1) {
             if (!gp.getMonsters()[GamePanel.currentMap][index].isInvincible()) {
                 gp.playSoundEffect(6);
+
+                knockBack(gp.getMonsters()[GamePanel.currentMap][index], knockBackPower);
 
                 int damage = attack - gp.getMonsters()[GamePanel.currentMap][index].getDefence();
                 damage = Math.max(damage, 0);
@@ -344,6 +357,14 @@ public class Player extends Entity {
             }
         }
 
+    }
+
+    private void hitProjectile(int index) {
+        if (index > -1) {
+            Entity projectile = gp.getProjectiles()[GamePanel.currentMap][index];
+            projectile.setAlive(false);
+            generateParticle(projectile, projectile);
+        }
     }
 
     private void interactWithMonster(int index) {
@@ -381,6 +402,14 @@ public class Player extends Entity {
         }
     }
 
+    public void knockBack(Entity entity, int knockBackPower) {
+        if (knockBackPower > 0) {
+            entity.direction = direction;
+            entity.setSpeed(entity.getSpeed() + knockBackPower);
+            entity.setKnockBack(true);
+        }
+    }
+
     private void interactWithEntity(int entityIndex) {
         if (entityIndex > -1) {
             if (keyHandler.enterPressed) {
@@ -388,8 +417,8 @@ public class Player extends Entity {
                 gp.getNpcs()[GamePanel.currentMap][entityIndex].speak();
             }
         }
-
     }
+
 
     public void draw(Graphics2D g2) {
         BufferedImage img = null;

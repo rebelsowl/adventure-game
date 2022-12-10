@@ -8,7 +8,6 @@ import com.mae.entity.Entity;
 import com.mae.entity.Player;
 import com.mae.entity.monster.Monster;
 import com.mae.entity.particle.Particle;
-import com.mae.entity.projectile.Projectile;
 import com.mae.handler.*;
 import com.mae.interfaces.Drawable;
 import com.mae.object.parent.SuperObject;
@@ -29,8 +28,6 @@ import static com.mae.config.Settings.*;
 @Data
 public class GamePanel extends JPanel implements Runnable {
 
-    // GAME STATE
-    private int gameState;
     public static final int TITLE_STATE = 0;
     public static final int PLAY_STATE = 1;
     public static final int PAUSE_STATE = 2;
@@ -40,10 +37,9 @@ public class GamePanel extends JPanel implements Runnable {
     public static final int GAME_OVER_STATE = 6;
     public static final int LOADING_STATE = 7;
     public static final int TRADE_STATE = 8;
-
+    public static final int MAX_MAP = 10;
     // Settings
     public static boolean fullScreenOn = false;
-    public static final int MAX_MAP = 10;
     public static int currentMap = 0; // current map that player is currently in.
     public CollisionHandler collisionChecker = new CollisionHandler(this);
     Configuration config = new Configuration(this);
@@ -65,12 +61,13 @@ public class GamePanel extends JPanel implements Runnable {
     Monster[][] monsters = new Monster[MAX_MAP][20];
     InteractiveTile[][] iTiles = new InteractiveTile[MAX_MAP][50];
     ArrayList<Drawable> drawables = new ArrayList<>();
-    ArrayList<Projectile> projectiles = new ArrayList<>();
+    Entity[][] projectiles = new Entity[MAX_MAP][20];
     ArrayList<Particle> particles = new ArrayList<>();
     // FULL SCREEN
     BufferedImage tempScreen;
     Graphics2D g2;
-
+    // GAME STATE
+    private int gameState;
 
 
     public GamePanel() {
@@ -142,7 +139,7 @@ public class GamePanel extends JPanel implements Runnable {
         if (gameState == PLAY_STATE) {
             player.update();
 
-            for (int i = 0; i < npcs[currentMap].length; i++){
+            for (int i = 0; i < npcs[currentMap].length; i++) {
                 if (npcs[GamePanel.currentMap][i] != null)
                     npcs[currentMap][i].update();
             }
@@ -160,13 +157,13 @@ public class GamePanel extends JPanel implements Runnable {
                 }
             }
 
-            Iterator<Projectile> projectileIterator = projectiles.iterator();
-            while (projectileIterator.hasNext()) {
-                Projectile currentProjectile = projectileIterator.next();
-                if (currentProjectile.isAlive())
-                    currentProjectile.update();
-                else
-                    projectileIterator.remove();
+            for (int i = 0; i < projectiles[currentMap].length; i++) {
+                if (projectiles[currentMap][i] != null) {
+                    if (projectiles[currentMap][i].isAlive())
+                        projectiles[currentMap][i].update();
+                    else
+                        projectiles[currentMap][i] = null;
+                }
             }
 
             Iterator<Particle> particleIterator = particles.iterator();
@@ -214,7 +211,11 @@ public class GamePanel extends JPanel implements Runnable {
                     drawables.add(monsters[currentMap][i]);
             }
 
-            drawables.addAll(projectiles);
+            for (int i = 0; i < projectiles[currentMap].length; i++) {
+                if (projectiles[currentMap][i] != null)
+                    drawables.add(projectiles[currentMap][i]);
+            }
+
             drawables.addAll(particles);
             drawables.sort(Comparator.comparingInt(Drawable::getWorldY));
             for (Drawable drawable : drawables) {
@@ -232,14 +233,14 @@ public class GamePanel extends JPanel implements Runnable {
         g.dispose();
     }
 
-    public void retry(){
+    public void retry() {
         player.setDefaultPositionAndDirection();
         player.restoreLifeAndMana();
         assetSetter.createNpcs();
         assetSetter.createMonsters();
     }
 
-    public void restart(){
+    public void restart() {
         player.setDefaultValues();
         player.setDefaultPositionAndDirection();
         player.restoreLifeAndMana();

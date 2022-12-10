@@ -19,7 +19,7 @@ public class Fireball extends Projectile {
         setMaxLife(80);
         setLife(getMaxLife());
         setAttack(2);
-
+        setKnockBackPower(0);
         setUseCost(1);
         setAlive(false);
 

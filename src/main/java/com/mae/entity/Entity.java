@@ -25,44 +25,52 @@ import static com.mae.config.Settings.TILE_SIZE;
 @NoArgsConstructor
 @Data
 public abstract class Entity implements Drawable { // parent class for Player, NPCs, Monsters
+
+
     private final int maxInventorySize = 20;
     protected GamePanel gp;
-    protected String name;
-    protected int worldX, worldY; // coordinates
-    protected int speed;
-    protected Enums.Directions direction = Directions.DOWN;
     protected BufferedImage up1, up2, down1, down2, left1, left2, right1, right2;
-    protected int spriteCounter = 0;
-    protected int spriteNumber = 0;
     protected Rectangle solidArea = new Rectangle(0, 0, TILE_SIZE, TILE_SIZE);
+    protected Rectangle attackArea = new Rectangle(0, 0, 0, 0);
     protected int solidAreaDefaultX;
     protected int solidAreaDefaultY;
     protected boolean collision = false;
-    protected Rectangle attackArea = new Rectangle(0, 0, 0, 0);
-    protected Weapon currentWeapon;
-    protected int actionLockCounter = 0; // for npc AI's movement to be smooth
-    protected boolean invincible = false;
-    protected int invincibleCounter = 0;
     protected String[] dialogues = new String[20];
+    // STATE
+    protected int worldX, worldY; // coordinates
+    protected Enums.Directions direction = Directions.DOWN;
+    protected int spriteNumber = 0;
     protected int dialogueIndex = 0;
-    protected int type; // 0 -> player 1 -> npc 2 -> monster
-    protected boolean alive = true;
+    protected boolean invincible = false;
     protected boolean dying = false;
+    protected boolean alive = true;
+    protected boolean hpBarOn = false;
+    protected boolean onPath = false; // entity is following a path
+    protected boolean knockBack = false;
+    // COUNTER
+    protected int spriteCounter = 0;
+    protected int actionLockCounter = 0; // for npc AI's movement to be smooth
+    protected int invincibleCounter = 0;
     protected int dyingCounter = 0;
-    // CHARACTER STATUS
-    protected int attack;
-    protected int defence;
+    protected int hpBarCounter = 0;
+    protected int knockBackCounter = 0;
+    // CHARACTER ATTRIBUTES
+    protected String name;
+    protected int defaultSpeed;
+    protected int speed;
     protected int maxLife;
     protected int life;
-    protected int exp;
     protected int maxMana;
     protected int mana;
+    protected int attack;
+    protected int defence;
+    protected int exp;
+    protected int shootAvailable = 1;
+    protected Weapon currentWeapon;
     protected Projectile projectileSkill;
-    protected int shotAvailableCounter = 1;
-    protected boolean hpBarOn = false;
-    protected int hpBarCounter = 0;
+    protected int type; // 0 -> player 1 -> npc 2 -> monster
     private List<SuperObject> inventory = new ArrayList<>();
-    private boolean onPath = false; // entity is following a path
+
 
     public Entity(GamePanel gp) {
         this.gp = gp;
@@ -173,43 +181,73 @@ public abstract class Entity implements Drawable { // parent class for Player, N
 
 
     public void update() {
-        setAction();
-        checkCollision();
-        if (!isCollision()) {
-            switch (direction) {
-                case UP:
-                    setWorldY(getWorldY() - getSpeed());
-                    break;
-                case DOWN:
-                    setWorldY(getWorldY() + getSpeed());
-                    break;
-                case LEFT:
-                    setWorldX(getWorldX() - getSpeed());
-                    break;
-                case RIGHT:
-                    setWorldX(getWorldX() + getSpeed());
-                    break;
+        if (knockBack) {
+            checkCollision();
+            if (collision) {
+                knockBackCounter = 0;
+                knockBack = false;
+                speed = defaultSpeed;
+            } else {
+                switch (gp.getPlayer().getDirection()) {
+                    case UP:
+                        setWorldY(getWorldY() - getSpeed());
+                        break;
+                    case DOWN:
+                        setWorldY(getWorldY() + getSpeed());
+                        break;
+                    case LEFT:
+                        setWorldX(getWorldX() - getSpeed());
+                        break;
+                    case RIGHT:
+                        setWorldX(getWorldX() + getSpeed());
+                        break;
+                }
             }
-        }
-
-        spriteCounter++; // for movement animation
-        if (spriteCounter > 12) {
-            spriteNumber = (spriteNumber + 1) % 2;
-            spriteCounter = 0;
-        }
-
-        // invincible time
-        if (invincible) {
-            invincibleCounter++;
-            if (invincibleCounter > 40) {
-                invincible = false;
-                invincibleCounter = 0;
+            knockBackCounter++;
+            if (knockBackCounter > 8) {
+                knockBackCounter = 0;
+                knockBack = false;
+                speed = defaultSpeed;
             }
-        }
+        } else {
+            setAction();
+            checkCollision();
+            if (!isCollision()) {
+                switch (direction) {
+                    case UP:
+                        setWorldY(getWorldY() - getSpeed());
+                        break;
+                    case DOWN:
+                        setWorldY(getWorldY() + getSpeed());
+                        break;
+                    case LEFT:
+                        setWorldX(getWorldX() - getSpeed());
+                        break;
+                    case RIGHT:
+                        setWorldX(getWorldX() + getSpeed());
+                        break;
+                }
+            }
 
-        // projectile skill cooldown
-        if (shotAvailableCounter < 30) {
-            shotAvailableCounter++;
+            spriteCounter++; // for movement animation
+            if (spriteCounter > 12) {
+                spriteNumber = (spriteNumber + 1) % 2;
+                spriteCounter = 0;
+            }
+
+            // invincible time
+            if (invincible) {
+                invincibleCounter++;
+                if (invincibleCounter > 40) {
+                    invincible = false;
+                    invincibleCounter = 0;
+                }
+            }
+
+            // projectile skill cooldown
+            if (shootAvailable < 30) {
+                shootAvailable++;
+            }
         }
 
     }
@@ -318,7 +356,7 @@ public abstract class Entity implements Drawable { // parent class for Player, N
         int startRow = (worldY + solidArea.y) / TILE_SIZE;
 
         gp.getPathFinder().setNodes(startCol, startRow, goalCol, goalRow);
-        if(gp.getPathFinder().search()) { //
+        if (gp.getPathFinder().search()) { //
             int nextX = gp.getPathFinder().getPathList().get(0).getCol() * TILE_SIZE;
             int nextY = gp.getPathFinder().getPathList().get(0).getRow() * TILE_SIZE;
 
@@ -328,9 +366,9 @@ public abstract class Entity implements Drawable { // parent class for Player, N
             int enTopY = worldY + solidArea.y;
             int enBottomY = worldY + solidArea.y + solidArea.height;
 
-            if(enTopY > nextY && enLeftX >= nextX && enRightX < (nextX + TILE_SIZE))
+            if (enTopY > nextY && enLeftX >= nextX && enRightX < (nextX + TILE_SIZE))
                 direction = Directions.UP;
-            else if(enTopY < nextY && enLeftX >= nextX && enRightX < (nextX + TILE_SIZE))
+            else if (enTopY < nextY && enLeftX >= nextX && enRightX < (nextX + TILE_SIZE))
                 direction = Directions.DOWN;
             else if (enTopY >= nextY && enBottomY < (nextY + TILE_SIZE)) {
                 if (enLeftX > nextX)

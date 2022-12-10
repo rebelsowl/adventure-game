@@ -12,6 +12,7 @@ public abstract class Weapon extends SuperObject {
 
     protected Rectangle attackArea = new Rectangle(0, 0, 0, 0);
     protected int attackValue;
+    protected int knockBackPower = 0;
     protected WeaponType type;
     public Weapon(GamePanel gp) {
         super(gp);

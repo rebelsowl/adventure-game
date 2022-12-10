@@ -20,7 +20,8 @@ public class MON_GreenSlime extends Monster {
     public MON_GreenSlime(GamePanel gp) {
         super(gp);
         setName("Green Slime");
-        setSpeed(1);
+        setDefaultSpeed(1);
+        setSpeed(getDefaultSpeed());
         setMaxLife(4);
         setLife(getMaxLife());
         setType(2);
@@ -62,16 +63,22 @@ public class MON_GreenSlime extends Monster {
     public void setAction() {
         if (isOnPath()) {
             // follow the player
-            int goalCol = (gp.getPlayer().getWorldX() + gp.getPlayer().getSolidArea().x ) / TILE_SIZE;
-            int goalRow = (gp.getPlayer().getWorldY() + gp.getPlayer().getSolidArea().y ) / TILE_SIZE;
+            int goalCol = (gp.getPlayer().getWorldX() + gp.getPlayer().getSolidArea().x) / TILE_SIZE;
+            int goalRow = (gp.getPlayer().getWorldY() + gp.getPlayer().getSolidArea().y) / TILE_SIZE;
             searchPath(goalCol, goalRow);
 
             // can shoot when agroed
             int i = new Random().nextInt(200) + 1;
-            if (i > 198 && !projectileSkill.isAlive() && shotAvailableCounter == 30) {
+            if (i > 198 && !projectileSkill.isAlive() && shootAvailable == 30) {
                 projectileSkill.set(worldX, worldY, direction, true, this);
-                gp.getProjectiles().add(projectileSkill);
-                shotAvailableCounter = 0;
+
+                for (int y = 0; y < gp.getProjectiles()[GamePanel.currentMap].length; y++) {
+                    if (gp.getProjectiles()[GamePanel.currentMap][y] == null) {
+                        gp.getProjectiles()[GamePanel.currentMap][y] = projectileSkill;
+                        break;
+                    }
+                }
+                shootAvailable = 0;
             }
         } else {
             actionLockCounter++;
@@ -94,7 +101,6 @@ public class MON_GreenSlime extends Monster {
         }
 
 
-
     }
 
     public void damageReaction() {
@@ -104,14 +110,14 @@ public class MON_GreenSlime extends Monster {
     }
 
     @Override
-    public void update(){
+    public void update() {
         super.update();
 
         // aggro
         int xDistance = Math.abs(worldX - gp.getPlayer().getWorldX());
         int yDistance = Math.abs(worldY - gp.getPlayer().getWorldY());
         int distanceBetweenPlayer = (xDistance + yDistance) / TILE_SIZE;
-        if ( ! isOnPath() && distanceBetweenPlayer < 5 ) {
+        if (!isOnPath() && distanceBetweenPlayer < 5) {
             int i = new Random().nextInt(101);
             if (i > 50)
                 setOnPath(true);
@@ -121,8 +127,6 @@ public class MON_GreenSlime extends Monster {
 
         if (isOnPath() && (distanceBetweenPlayer > 25))
             setOnPath(false);
-
-
 
 
     }
