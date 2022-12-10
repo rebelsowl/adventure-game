@@ -41,7 +41,7 @@ public class Player extends Entity {
         this.keyHandler = keyHandler;
         // setting initial values
         setDefaultPositionAndDirection();
-        setSpeed(4);
+
 
         setDefaultValues();
 
@@ -62,6 +62,8 @@ public class Player extends Entity {
         level = 1;
         setMaxLife(6);
         setLife(maxLife);
+        setDefaultSpeed(4);
+        setSpeed(getDefaultSpeed());
         strength = 1; // increases attack
         dexterity = 1; // increases defence
         exp = 0;
@@ -135,7 +137,7 @@ public class Player extends Entity {
         if (keyHandler.spacePressed) {
             setAttacking(true);
             attack();
-        } else if (keyHandler.shotKeyPressed && !projectileSkill.isAlive() && shotAvailableCounter == 30 && projectileSkill.hasEnoughMana(this)) {
+        } else if (keyHandler.shotKeyPressed && !projectileSkill.isAlive() && shootAvailable == 30 && projectileSkill.hasEnoughMana(this)) {
             projectileSkill.set(worldX, worldY, direction, true, this);
 
             for (int i = 0; i < gp.getProjectiles()[GamePanel.currentMap].length; i++) {
@@ -146,7 +148,7 @@ public class Player extends Entity {
             }
 
             projectileSkill.useMana(this);
-            shotAvailableCounter = 0;
+            shootAvailable = 0;
             gp.playSoundEffect(10);
         } else if (movementKeyPressed() || interactKeyPressed()) {
             if (keyHandler.upPressed) {
@@ -218,8 +220,8 @@ public class Player extends Entity {
         }
 
         // projectile skill cooldown
-        if (shotAvailableCounter < 30) {
-            shotAvailableCounter++;
+        if (shootAvailable < 30) {
+            shootAvailable++;
         }
 
         if (life <= 0) {

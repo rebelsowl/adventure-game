@@ -20,7 +20,8 @@ public class MON_GreenSlime extends Monster {
     public MON_GreenSlime(GamePanel gp) {
         super(gp);
         setName("Green Slime");
-        setSpeed(1);
+        setDefaultSpeed(1);
+        setSpeed(getDefaultSpeed());
         setMaxLife(4);
         setLife(getMaxLife());
         setType(2);
@@ -68,7 +69,7 @@ public class MON_GreenSlime extends Monster {
 
             // can shoot when agroed
             int i = new Random().nextInt(200) + 1;
-            if (i > 198 && !projectileSkill.isAlive() && shotAvailableCounter == 30) {
+            if (i > 198 && !projectileSkill.isAlive() && shootAvailable == 30) {
                 projectileSkill.set(worldX, worldY, direction, true, this);
 
                 for (int y = 0; y < gp.getProjectiles()[GamePanel.currentMap].length; y++) {
@@ -77,7 +78,7 @@ public class MON_GreenSlime extends Monster {
                         break;
                     }
                 }
-                shotAvailableCounter = 0;
+                shootAvailable = 0;
             }
         } else {
             actionLockCounter++;
