@@ -298,7 +298,7 @@ public class Player extends Entity {
             solidArea.height = attackArea.height;
 
             int monsterIndex = gp.getCollisionChecker().checkEntity(this, gp.getMonsters()[GamePanel.currentMap]);
-            hitMonster(monsterIndex, attack);
+            hitMonster(monsterIndex, attack, currentWeapon.getKnockBackPower());
 
             int iTileIndex = gp.getCollisionChecker().checkEntity(this, gp.getITiles()[GamePanel.currentMap]);
             hitInteractiveTile(iTileIndex);
@@ -321,11 +321,12 @@ public class Player extends Entity {
 
     }
 
-
-    public void hitMonster(int index, int attack) {
+    public void hitMonster(int index, int attack, int knockBackPower) {
         if (index > -1) {
             if (!gp.getMonsters()[GamePanel.currentMap][index].isInvincible()) {
                 gp.playSoundEffect(6);
+
+                knockBack(gp.getMonsters()[GamePanel.currentMap][index], knockBackPower);
 
                 int damage = attack - gp.getMonsters()[GamePanel.currentMap][index].getDefence();
                 damage = Math.max(damage, 0);
@@ -401,6 +402,14 @@ public class Player extends Entity {
         }
     }
 
+    public void knockBack(Entity entity, int knockBackPower) {
+        if (knockBackPower > 0) {
+            entity.direction = direction;
+            entity.setSpeed(entity.getSpeed() + knockBackPower);
+            entity.setKnockBack(true);
+        }
+    }
+
     private void interactWithEntity(int entityIndex) {
         if (entityIndex > -1) {
             if (keyHandler.enterPressed) {
@@ -408,8 +417,8 @@ public class Player extends Entity {
                 gp.getNpcs()[GamePanel.currentMap][entityIndex].speak();
             }
         }
-
     }
+
 
     public void draw(Graphics2D g2) {
         BufferedImage img = null;
