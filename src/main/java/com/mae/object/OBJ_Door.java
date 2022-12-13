@@ -1,6 +1,7 @@
 package com.mae.object;
 
 import com.mae.config.Settings;
+import com.mae.interfaces.Interactable;
 import com.mae.object.parent.SuperObject;
 import com.mae.panel.GamePanel;
 import com.mae.utility.UtilityTool;
@@ -8,7 +9,7 @@ import com.mae.utility.UtilityTool;
 import javax.imageio.ImageIO;
 import java.io.IOException;
 
-public class OBJ_Door extends SuperObject {
+public class OBJ_Door extends SuperObject implements Interactable {
 
     public OBJ_Door(GamePanel gp) {
         super(gp);
@@ -22,4 +23,9 @@ public class OBJ_Door extends SuperObject {
     }
 
 
+    @Override
+    public void interact() {
+        gp.setGameState(GamePanel.DIALOGUE_STATE);
+        gp.getUi().setCurrentDialogue("You need a key to open the door!");
+    }
 }
