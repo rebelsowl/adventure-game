@@ -4,6 +4,8 @@ import com.mae.config.Settings;
 import com.mae.constant.Enums.Directions;
 import com.mae.entity.projectile.Fireball;
 import com.mae.handler.KeyboardInputHandler;
+import com.mae.interfaces.Interactable;
+import com.mae.interfaces.Usable;
 import com.mae.object.OBJ_Shield;
 import com.mae.object.OBJ_Sword;
 import com.mae.object.parent.*;
@@ -248,6 +250,9 @@ public class Player extends Entity {
                 Consumable item = (Consumable) selectedItem;
                 item.use(this);
                 getInventory().remove(itemIndex);
+            } else if (selectedItem instanceof Usable) {
+                if (((Usable) selectedItem).use()) // if item is used
+                    getInventory().remove(itemIndex);
             }
         }
     }
@@ -386,6 +391,10 @@ public class Player extends Entity {
             if (gp.getObjects()[GamePanel.currentMap][index] instanceof Collectable) { // collectable
                 ((Collectable) gp.getObjects()[GamePanel.currentMap][index]).use(this);
                 gp.getObjects()[GamePanel.currentMap][index] = null;
+            } else if (gp.getObjects()[GamePanel.currentMap][index] instanceof Interactable) {
+                if (keyHandler.enterPressed){
+                    ((Interactable) gp.getObjects()[GamePanel.currentMap][index]).interact();
+                }
             } else {
                 String text;
                 if (getInventory().size() < getMaxInventorySize()) {

@@ -6,6 +6,7 @@ import com.mae.constant.Enums.Directions;
 import com.mae.entity.particle.Particle;
 import com.mae.entity.projectile.Projectile;
 import com.mae.interfaces.Drawable;
+import com.mae.interfaces.Interactable;
 import com.mae.object.parent.SuperObject;
 import com.mae.object.parent.Weapon;
 import com.mae.panel.GamePanel;
@@ -407,4 +408,22 @@ public abstract class Entity implements Drawable { // parent class for Player, N
         }
     }
 
+    /**
+     * @return near object index
+     */
+    public int getDetectedObjectIndex() {
+        int index = -1;
+
+        for (int i = 0; i < gp.getObjects()[GamePanel.currentMap].length; i++) {
+            if (gp.getObjects()[GamePanel.currentMap][i] != null && gp.getObjects()[GamePanel.currentMap][i] instanceof Interactable) {
+                int xDistance = Math.abs(this.getWorldX() - gp.getObjects()[GamePanel.currentMap][i].getWorldX());
+                int yDistance = Math.abs(this.getWorldY() - gp.getObjects()[GamePanel.currentMap][i].getWorldY());
+                if ((xDistance + yDistance) < 100)
+                    index = i;
+
+            }
+        }
+
+        return index;
+    }
 }

@@ -70,6 +70,23 @@ public class AssetHandler {
         manaCrystal1.setWorldY(31 * TILE_SIZE);
         gp.getObjects()[mapNumber][i] = manaCrystal1;
 
+        i++;
+        OBJ_Door door1 = new OBJ_Door(gp);
+        door1.setWorldX(14 * TILE_SIZE);
+        door1.setWorldY(28 * TILE_SIZE);
+        gp.getObjects()[mapNumber][i] = door1;
+
+        i++;
+        OBJ_Door door2 = new OBJ_Door(gp);
+        door2.setWorldX(12 * TILE_SIZE);
+        door2.setWorldY(12 * TILE_SIZE);
+        gp.getObjects()[mapNumber][i] = door2;
+
+        i++;
+        OBJ_Chest chest = new OBJ_Chest(gp, new OBJ_Key(gp));
+        chest.setWorldX(38 * TILE_SIZE);
+        chest.setWorldY(9 * TILE_SIZE);
+        gp.getObjects()[mapNumber][i] = chest;
 
     }
 
